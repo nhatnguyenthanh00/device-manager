@@ -1,6 +1,6 @@
 package com.example.server.service;
 
-import com.example.server.model.Account;
+import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
 import com.example.server.repository.AccountRepository;
 import com.example.server.repository.DeviceRepository;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DeviceService {
@@ -26,8 +27,8 @@ public class DeviceService {
     }
 
     public boolean updateDevice(UpdateDeviceRequest request) {
-        Integer deviceId = request.getDeviceId();
-        Integer accountId = request.getAccountId();
+        UUID deviceId = request.getDeviceId();
+        UUID accountId = request.getAccountId();
         if (!deviceRepository.existsById(deviceId)) {
             return false;
         }
@@ -41,8 +42,8 @@ public class DeviceService {
                 if(!accountRepository.existsById(accountId)){
                     return false;
                 }
-                Account findAccount = accountRepository.findById(accountId).orElse(null);
-                if(findAccount!=null) foundDevice.setAccount(findAccount);
+                BkavUser findBkavUser = accountRepository.findById(accountId).orElse(null);
+                if(findBkavUser !=null) foundDevice.setBkavUser(findBkavUser);
             }
         }
 

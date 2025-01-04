@@ -1,6 +1,6 @@
 package com.example.server.controller;
 
-import com.example.server.model.Account;
+import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
 import com.example.server.model.enums.Role;
 import com.example.server.resquest.UpdateDeviceRequest;
@@ -9,12 +9,14 @@ import com.example.server.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
     @Autowired
@@ -24,14 +26,14 @@ public class AdminController {
     DeviceService deviceService;
 
     @GetMapping("/user")
-    public ResponseEntity<List<Account>> getAllUsers(){
+    public ResponseEntity<List<BkavUser>> getAllUsers(){
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
     @PostMapping("/user")
-    public ResponseEntity<Account> createUser(@RequestBody Account account) {
-        account.setRole(Role.USER);
-        return ResponseEntity.ok(accountService.saveAccount(account));
+    public ResponseEntity<BkavUser> createUser(@RequestBody BkavUser bkavUser) {
+        bkavUser.setRole(Role.USER);
+        return ResponseEntity.ok(accountService.saveAccount(bkavUser));
     }
 
     @GetMapping("/device")

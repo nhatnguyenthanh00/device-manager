@@ -1,6 +1,6 @@
 package com.example.server.service;
 
-import com.example.server.model.Account;
+import com.example.server.model.BkavUser;
 import com.example.server.repository.AccountRepository;
 import com.example.server.resquest.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,12 @@ public class AccountService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
 
-    public Account saveAccount(Account account){
-        account.setPassword(encoder.encode(account.getPassword()));
-        return accountRepository.save(account);
+    public BkavUser saveAccount(BkavUser bkavUser){
+        bkavUser.setPassword(encoder.encode(bkavUser.getPassword()));
+        return accountRepository.save(bkavUser);
     }
 
-    public List<Account> getAllAccounts(){
+    public List<BkavUser> getAllAccounts(){
         return accountRepository.findAll();
     }
 

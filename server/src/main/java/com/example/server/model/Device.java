@@ -4,12 +4,14 @@ import com.example.server.model.enums.DeviceCategory;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Entity
 @Data
 public class Device {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(unique = true)
     private String name;
@@ -25,6 +27,6 @@ public class Device {
     private int status;  // -1: Unassigned, 0: Assigned, 1: Requested for return
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;  // Relationship with Account
+    @JoinColumn(name = "bkav_user_id")
+    private BkavUser bkavUser;  // Relationship with Account
 }
