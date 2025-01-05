@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import com.example.server.model.BkavUser;
+import com.example.server.model.UserPrincipal;
 import com.example.server.repository.AccountRepository;
 import com.example.server.resquest.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,11 @@ public class AccountService {
     public String verify(LoginRequest request){
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
-        if(authentication.isAuthenticated()) return jwtService.generateToken(request.getUsername());
-        return "Fail";
+        if (authentication.isAuthenticated()){
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            return jwtService.generateToken(userPrincipal);
+        }
+        return null;
     }
 
 }

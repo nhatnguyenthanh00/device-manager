@@ -22,8 +22,9 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private int jwtExpirationInMs;
 
-    public String generateToken(String username){
+    public String generateToken(UserDetails userDetails){
         Map<String,Object> claims = new HashMap<>();
+        claims.put("role",userDetails.getAuthorities().iterator().next().getAuthority());
 
         Date now = new Date();
         Date expryDate = new Date(now.getTime() + jwtExpirationInMs);
@@ -31,7 +32,7 @@ public class JwtService {
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(username)
+                .subject(userDetails.getUsername())
                 .issuedAt(now)
                 .expiration(expryDate)
                 .and()
