@@ -1,3 +1,9 @@
+--- Thêm extension để sử dụng gen_random_uuid()
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+--- Tạo bảng bkav_user
+
 CREATE TABLE bkav_user (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),  
 	-- Primary key với kiểu UUID, tự động tạo giá trị
@@ -12,6 +18,8 @@ CREATE TABLE bkav_user (
     gender VARCHAR(6) CHECK (gender IN ('MALE', 'FEMALE')) NOT NULL  
 	-- Giới tính
 );
+
+--- Tạo bảng device
 
 CREATE TABLE device (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),  
@@ -30,6 +38,8 @@ CREATE TABLE device (
     bkav_user_id UUID REFERENCES bkav_user(id) ON DELETE SET NULL 
 	-- Quan hệ với bảng `bkav_user`
 );
+
+--- Thêm data mẫu vào database
 
 INSERT INTO bkav_user (id, username, password, name, role, gender)
 VALUES
