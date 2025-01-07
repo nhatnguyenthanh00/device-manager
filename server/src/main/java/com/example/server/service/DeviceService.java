@@ -2,7 +2,7 @@ package com.example.server.service;
 
 import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
-import com.example.server.repository.AccountRepository;
+import com.example.server.repository.UserRepository;
 import com.example.server.repository.DeviceRepository;
 import com.example.server.resquest.UpdateDeviceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class DeviceService {
     @Autowired
     DeviceRepository deviceRepository;
     @Autowired
-    AccountRepository accountRepository;
+    UserRepository userRepository;
 
     public Device saveDevice(Device device){
         return deviceRepository.save(device);
@@ -28,7 +28,7 @@ public class DeviceService {
 
     public boolean updateDevice(UpdateDeviceRequest request) {
         UUID deviceId = request.getDeviceId();
-        UUID accountId = request.getAccountId();
+        UUID userId = request.getUserId();
         if (!deviceRepository.existsById(deviceId)) {
             return false;
         }
@@ -38,17 +38,18 @@ public class DeviceService {
             foundDevice.setCategory(request.getCategory());
             foundDevice.setDescription(request.getDescription());
             foundDevice.setImage(request.getImage());
-            if (accountId != null){
-                if(!accountRepository.existsById(accountId)){
+            if (userId != null){
+                if(!userRepository.existsById(userId)){
                     return false;
                 }
-                BkavUser findBkavUser = accountRepository.findById(accountId).orElse(null);
+                BkavUser findBkavUser = userRepository.findById(userId).orElse(null);
                 if(findBkavUser !=null) foundDevice.setBkavUser(findBkavUser);
+                if(findBkavUser == null) return false;
             }
+            deviceRepository.save(foundDevice);
+            return true;
         }
 
-        deviceRepository.save(foundDevice);
-
-        return true; // Cập nhật thiết bị
+        return false;
     }
 }

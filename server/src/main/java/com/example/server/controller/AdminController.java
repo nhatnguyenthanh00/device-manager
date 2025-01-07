@@ -4,7 +4,7 @@ import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
 import com.example.server.model.enums.Role;
 import com.example.server.resquest.UpdateDeviceRequest;
-import com.example.server.service.AccountService;
+import com.example.server.service.UserService;
 import com.example.server.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,24 +20,24 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    AccountService accountService;
+    UserService userService;
 
     @Autowired
     DeviceService deviceService;
 
     @GetMapping("/user")
     public ResponseEntity<List<BkavUser>> getAllUsers(){
-        return ResponseEntity.ok(accountService.getAllAccounts());
+        return ResponseEntity.ok(userService.getAllUser());
     }
 
     @PostMapping("/user")
     public ResponseEntity<BkavUser> createUser(@RequestBody BkavUser bkavUser) {
         bkavUser.setRole(Role.USER);
-        return ResponseEntity.ok(accountService.saveAccount(bkavUser));
+        return ResponseEntity.ok(userService.saveUser(bkavUser));
     }
 
     @GetMapping("/device")
-    public ResponseEntity<List<Device>> getAllDevices(){
+    public ResponseEntity<List<Device>> getAllDevice(){
         return ResponseEntity.ok(deviceService.getAllDevice());
     }
 

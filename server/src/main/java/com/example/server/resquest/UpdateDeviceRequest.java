@@ -13,5 +13,5 @@ public class UpdateDeviceRequest {
     private String image;
     private DeviceCategory category;
     private int status;
-    private UUID accountId;
+    private UUID userId;
 }

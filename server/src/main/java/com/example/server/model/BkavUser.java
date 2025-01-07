@@ -2,6 +2,7 @@ package com.example.server.model;
 
 import com.example.server.model.enums.Gender;
 import com.example.server.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -36,6 +37,7 @@ public class BkavUser {
     private Gender gender;
 
     @OneToMany(mappedBy = "bkavUser")
+    @JsonManagedReference
     private List<Device> devices;
 
 

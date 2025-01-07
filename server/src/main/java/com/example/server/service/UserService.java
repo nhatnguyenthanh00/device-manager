@@ -2,7 +2,7 @@ package com.example.server.service;
 
 import com.example.server.model.BkavUser;
 import com.example.server.model.UserPrincipal;
-import com.example.server.repository.AccountRepository;
+import com.example.server.repository.UserRepository;
 import com.example.server.resquest.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AccountService {
+public class UserService {
 
     @Autowired
-    AccountRepository accountRepository;
+    UserRepository userRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -27,13 +27,13 @@ public class AccountService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
 
-    public BkavUser saveAccount(BkavUser bkavUser){
+    public BkavUser saveUser(BkavUser bkavUser){
         bkavUser.setPassword(encoder.encode(bkavUser.getPassword()));
-        return accountRepository.save(bkavUser);
+        return userRepository.save(bkavUser);
     }
 
-    public List<BkavUser> getAllAccounts(){
-        return accountRepository.findAll();
+    public List<BkavUser> getAllUser(){
+        return userRepository.findAll();
     }
 
     public String verify(LoginRequest request){

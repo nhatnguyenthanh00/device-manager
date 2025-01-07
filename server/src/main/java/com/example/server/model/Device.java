@@ -1,6 +1,7 @@
 package com.example.server.model;
 
 import com.example.server.model.enums.DeviceCategory;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,5 +29,6 @@ public class Device {
 
     @ManyToOne
     @JoinColumn(name = "bkav_user_id")
+    @JsonBackReference
     private BkavUser bkavUser;  // Relationship with Account
 }
