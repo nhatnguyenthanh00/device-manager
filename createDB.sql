@@ -1,3 +1,9 @@
+CREATE DATABASE TestDB;
+
+CREATE USER nhatnt WITH PASSWORD 'password';
+
+GRANT ALL PRIVILEGES ON DATABASE TestDB TO nhatnt;
+
 --- Thêm extension để sử dụng gen_random_uuid()
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
