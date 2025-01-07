@@ -1,4 +1,3 @@
-
 -- Create the user if it does not exist
 DO
 $$
