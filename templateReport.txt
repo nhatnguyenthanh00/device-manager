@@ -1,0 +1,13 @@
+[Báo cáo ngày 04/01/2025]:
+1. Hôm trước đã làm xong gì? Đang làm dở gì?
+    - Việc đã làm xong:
+        + thực hành spring-security
+        + thiết kế database và tạo các view
+    - Việc đang làm dở:
+        + học và thực hành JWT
+2. Có việc chưa có phương án hoặc phát sinh ngoài kế hoạch không?
+    - none
+3. Hôm nay sẽ làm gì?
+    - học và thực hành JWT
+4. Kế hoạch Sprint còn có thể hoàn thành không?
+    - có
