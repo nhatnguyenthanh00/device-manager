@@ -7,5 +7,6 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'admin', component: UserListComponent, canActivate: [authGuard], data: { role: 'ROLE_ADMIN' } },
     { path: 'admin/homepage', component: AdminHomePageComponent, canActivate: [authGuard], data: { role: 'ROLE_ADMIN' } },
+    { path: 'profile', component: UserListComponent, canActivate: [authGuard] },
     { path: '**', redirectTo: '/login' }
 ];

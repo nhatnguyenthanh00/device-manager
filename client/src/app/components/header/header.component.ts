@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -8,5 +9,13 @@ import { Component, Input } from '@angular/core';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  router = inject(Router); 
   @Input() name !: string ;
+  onLogout(){
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/login']);
+  }
+  goToProfile(){
+    this.router.navigate(['/profile']);
+  }
 }
