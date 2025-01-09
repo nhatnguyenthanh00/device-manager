@@ -1,2 +1,24 @@
 <app-header name="Admin"></app-header>
-<p>admin-home-page works!</p>
+<div class="admin-dashboard">
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <button (click)="activeTab = 'user'" [class.active]="activeTab === 'user'">
+      User Manage
+    </button>
+    <button
+      (click)="activeTab = 'device'"
+      [class.active]="activeTab === 'device'"
+    >
+      Device Manage
+    </button>
+  </div>
+
+  <div class="content">
+    <div *ngIf="activeTab === 'user'">
+      <app-user-manage></app-user-manage>
+    </div>
+    <div *ngIf="activeTab === 'device'">
+      <app-device-manage></app-device-manage>
+    </div>
+  </div>
+</div>

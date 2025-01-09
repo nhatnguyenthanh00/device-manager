@@ -39,17 +39,39 @@ CREATE TABLE device (
     bkav_user_id UUID REFERENCES bkav_user(id) ON DELETE SET NULL
 );
 
+DROP VIEW IF EXISTS device_info_view;
+
+CREATE VIEW device_info_view AS
+SELECT
+    d.id AS device_id,
+    d.name AS device_name,
+    d.description AS device_description,
+    d.image AS device_image,
+    d.category AS device_category,
+    d.status AS device_status,
+    u.username AS user_username,
+    u.name AS user_name,
+    u.role AS user_role
+FROM
+    device d
+LEFT JOIN
+    bkav_user u ON d.bkav_user_id = u.id;
+
+-- SELECT * FROM device
+-- SELECT * FROM bkav_user
+-- SELECT * FROM device_info_view
+
 -- Insert sample data into bkav_user
 INSERT INTO bkav_user (id, username, password, name, role, gender)
 VALUES
-(gen_random_uuid(), 'nhatnt', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'Nguyễn Thành Nhật', 'ADMIN', 'MALE'),
+(gen_random_uuid(), 'nhatnt', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'Nguyễn Thành Nhật', 'USER', 'MALE'),
 (gen_random_uuid(), 'admin', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'Admin', 'ADMIN', 'MALE'),
 (gen_random_uuid(), 'huyendt', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'Chị Huyền', 'USER', 'FEMALE');
 
 -- Insert sample data into device
 INSERT INTO device (id, name, description, category, status, bkav_user_id)
 VALUES
-(gen_random_uuid(), 'Laptop Dell XPS 13', 'Laptop Dell hiệu suất cao, phù hợp cho công việc và giải trí.', 'LAPTOP', -1, NULL),
+(gen_random_uuid(), 'Laptop Dell XPS 13', 'Laptop Dell hiệu suất cao, phù hợp cho công việc và giải trí.', 'LAPTOP', 0, (select id from bkav_user when username = 'nhatnt')),
 (gen_random_uuid(), 'iPhone 14 Pro', 'Smartphone cao cấp với camera đỉnh cao và hiệu năng mạnh mẽ.', 'PHONE', -1, NULL),
 (gen_random_uuid(), 'Logitech MX Master 3', 'Chuột không dây dành cho dân văn phòng và sáng tạo.', 'MOUSE', 1, NULL),
 (gen_random_uuid(), 'Lenovo ThinkPad T14', 'Laptop doanh nghiệp với độ bền cao và hiệu năng ổn định.', 'LAPTOP', -1, NULL),

@@ -12,6 +12,7 @@ public class UpdateDeviceRequest {
     private String description;
     private String image;
     private DeviceCategory category;
+//    private String category;
     private int status;
     private UUID userId;
 }

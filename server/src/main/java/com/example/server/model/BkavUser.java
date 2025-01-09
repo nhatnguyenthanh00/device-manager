@@ -37,7 +37,7 @@ public class BkavUser {
     private Gender gender;
 
     @OneToMany(mappedBy = "bkavUser")
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<Device> devices;
 
 

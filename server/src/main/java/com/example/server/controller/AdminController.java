@@ -3,9 +3,11 @@ package com.example.server.controller;
 import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
 import com.example.server.model.enums.Role;
+import com.example.server.model.view.DeviceInfoView;
+import com.example.server.resquest.GetUserListRequest;
 import com.example.server.resquest.UpdateDeviceRequest;
-import com.example.server.service.UserService;
-import com.example.server.service.DeviceService;
+import com.example.server.service.serviceImpl.UserService;
+import com.example.server.service.serviceImpl.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,24 +28,25 @@ public class AdminController {
     DeviceService deviceService;
 
     @GetMapping("/user")
-    public ResponseEntity<List<BkavUser>> getAllUsers(){
+    public ResponseEntity<List<?>> getUserList(@RequestBody GetUserListRequest request){
+
         return ResponseEntity.ok(userService.getAllUser());
     }
 
     @PostMapping("/user")
     public ResponseEntity<BkavUser> createUser(@RequestBody BkavUser bkavUser) {
         bkavUser.setRole(Role.USER);
-        return ResponseEntity.ok(userService.saveUser(bkavUser));
+        return ResponseEntity.ok(userService.save(bkavUser));
     }
 
     @GetMapping("/device")
-    public ResponseEntity<List<Device>> getAllDevice(){
+    public ResponseEntity<List<DeviceInfoView>> getAllDevice(){
         return ResponseEntity.ok(deviceService.getAllDevice());
     }
 
     @PostMapping("/device")
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
-        return ResponseEntity.ok(deviceService.saveDevice(device));
+        return ResponseEntity.ok(deviceService.save(device));
     }
 
     @PutMapping("/device")

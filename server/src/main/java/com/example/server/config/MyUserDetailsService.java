@@ -1,4 +1,4 @@
-package com.example.server.service;
+package com.example.server.config;
 
 import com.example.server.model.BkavUser;
 import com.example.server.model.UserPrincipal;

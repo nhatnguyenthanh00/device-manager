@@ -1,0 +1,65 @@
+<div class="user-manage-container">
+  <div class="controls">
+    <!-- Search Input and Button Container -->
+    <div class="search-container">
+      <!-- Search Input -->
+      <input type="text" [(ngModel)]="search" placeholder="Search by name" />
+
+      <!-- Search Button -->
+      <button (click)="onSearch()"><i class="fas fa-search"></i></button>
+    </div>
+
+    <!-- Gender Filter -->
+    <select [(ngModel)]="genderFilter" (change)="onGenderFilterChange()">
+      <option value="">All Gender</option>
+      <option value="MALE">Male</option>
+      <option value="FEMALE">Female</option>
+    </select>
+
+    <!-- Button to Create New User -->
+    <button (click)="onCreateNewUser()">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+
+  <!-- User Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Gender</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.gender }}</td>
+        <td class="actions">
+          <!-- View and Delete icons -->
+          <button (click)="viewDetails(user)">
+            <i class="fas fa-eye icon"></i>
+          </button>
+          <button (click)="deleteUser('1')">
+            <i class="fas fa-trash icon"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="pagination">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>

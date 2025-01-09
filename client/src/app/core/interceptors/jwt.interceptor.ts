@@ -6,6 +6,8 @@ import { catchError } from 'rxjs';
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router); // Sử dụng inject API để lấy Router
   const currentUser = localStorage.getItem('currentUser');
+  console.log('In jwt.in');
+  console.log(currentUser);
 
   // Kiểm tra xem user có đăng nhập không
   if (currentUser) {
@@ -13,6 +15,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
     if (token) {
       // Thêm Authorization header với token
+      console.log('Request ??')
       const clonedRequest = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
