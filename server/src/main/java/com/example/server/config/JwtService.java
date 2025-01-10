@@ -23,6 +23,7 @@ public class JwtService {
     private int jwtExpirationInMs;
 
     public String generateToken(UserDetails userDetails){
+
         Map<String,Object> claims = new HashMap<>();
         claims.put("role",userDetails.getAuthorities().iterator().next().getAuthority());
 

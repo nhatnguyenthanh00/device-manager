@@ -1,16 +1,16 @@
-package com.example.server.service.serviceImpl;
+package com.example.server.service.impl;
 
+import com.example.server.dao.JpaBkavUserDao;
 import com.example.server.dto.DeviceDto;
 import com.example.server.dto.UserDto;
 import com.example.server.model.BkavUser;
 import com.example.server.model.UserPrincipal;
 import com.example.server.model.view.BkavUserDeviceView;
-import com.example.server.repository.BkavUserDeviceViewRepository;
+import com.example.server.repository.view.BkavUserDeviceViewRepository;
 import com.example.server.repository.UserRepository;
 import com.example.server.resquest.LoginRequest;
 import com.example.server.config.JwtService;
-import com.example.server.service.iService.ISimpleEntity;
-import com.example.server.service.iService.IUserService;
+import com.example.server.service.iService.IUserServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +21,10 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class UserService implements IUserService, ISimpleEntity<BkavUser> {
+public class UserServiceImpl implements IUserServiceService {
+
+    @Autowired
+    JpaBkavUserDao jpaBkavUserDao;
 
     @Autowired
     UserRepository userRepository;
@@ -38,8 +41,8 @@ public class UserService implements IUserService, ISimpleEntity<BkavUser> {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
 
     @Override
-    public List<?> getAllUser() {
-        List<BkavUserDeviceView> viewData = bkavUserDeviceViewRepository.findAllBkavUser();
+    public List<?> getAllUser(String gender, String search) {
+        List<BkavUserDeviceView> viewData = jpaBkavUserDao.getUserByGenderAndName(gender,search);
         Map<UUID, UserDto> groupedData = new HashMap<>();
 
         for (BkavUserDeviceView record : viewData) {

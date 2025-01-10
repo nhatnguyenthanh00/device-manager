@@ -1,14 +1,14 @@
-package com.example.server.service.serviceImpl;
+package com.example.server.service.impl;
 
+import com.example.server.dao.JpaDeviceDao;
 import com.example.server.model.BkavUser;
 import com.example.server.model.Device;
 import com.example.server.model.view.DeviceInfoView;
-import com.example.server.repository.DeviceInfoViewRepository;
+import com.example.server.repository.view.DeviceInfoViewRepository;
 import com.example.server.repository.UserRepository;
 import com.example.server.repository.DeviceRepository;
 import com.example.server.resquest.UpdateDeviceRequest;
-import com.example.server.service.iService.IDeviceService;
-import com.example.server.service.iService.ISimpleEntity;
+import com.example.server.service.iService.IDeviceServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class DeviceService implements IDeviceService, ISimpleEntity<Device> {
+public class DeviceServiceImpl implements IDeviceServiceService {
+
+    @Autowired
+    JpaDeviceDao jpaDeviceDao;
 
     @Autowired
     DeviceRepository deviceRepository;
@@ -29,17 +32,18 @@ public class DeviceService implements IDeviceService, ISimpleEntity<Device> {
 
     @Override
     public Device save(Device device){
-        return deviceRepository.save(device);
+        return jpaDeviceDao.save(device);
     }
 
     @Override
-    public void delete(Device device){
+    public void delete(Device device) {
+        if(device.getId() != null) jpaDeviceDao.deleteById(device.getId());
         return;
     }
 
     @Override
     public List<DeviceInfoView> getAllDevice(){
-        return deviceInfoViewRepository.findAllDeviceInfo();
+        return jpaDeviceDao.getViewOfDevice();
     }
 
     @Override

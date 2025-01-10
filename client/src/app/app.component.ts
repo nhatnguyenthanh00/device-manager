@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule  } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +10,5 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'DM';
-  constructor(private http: HttpClient) {
-    this.http.get('https://jsonplaceholder.typicode.com/posts').subscribe({
-      next: (data) => console.log('Response:', data),
-      error: (err) => console.error('Error:', err),
-    });
-  }
+  title = 'Lucifer'
 }

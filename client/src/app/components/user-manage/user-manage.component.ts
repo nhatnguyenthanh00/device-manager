@@ -35,19 +35,12 @@ export class UserManageComponent {
       gender: this.genderFilter,
       page: this.currentPage,
     };
-
-    this.adminService.getListUser().subscribe(response => {
-      console.log('In user-manage component' + response);
-      this.users = response;  // Adjust depending on your response structure
+    this.adminService.getListUser(params).subscribe((data:any) => {
+      console.log('In user-manage component' + data);
+      this.users = data;  // Adjust depending on your response structure
       this.totalPages = 1;  // Adjust depending on your response structure
     });
-  
-    // this.users = this.fakeUsers;
-    // this.totalPages = 1;
-    // this.userService.getUsers(params).subscribe(response => {
-    //   this.users = response.data;  // Adjust depending on your response structure
-    //   this.totalPages = response.totalPages;  // Adjust depending on your response structure
-    // });
+
   }
 
   onSearch() {

@@ -1,4 +1,4 @@
-package com.example.server.repository;
+package com.example.server.repository.view;
 
 import com.example.server.model.view.DeviceInfoView;
 import org.springframework.data.jpa.repository.JpaRepository;

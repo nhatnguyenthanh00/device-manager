@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm cấu hình CORS
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/login")
+                        .requestMatchers("/api/login", "/api/admin/user")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
@@ -61,6 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:4200"); // Cho phép nguồn Angular
         configuration.addAllowedMethod("*"); // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)

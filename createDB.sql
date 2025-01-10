@@ -1,3 +1,6 @@
+-- DROP DATABASE device_manager;
+-- CREATE DATABASE device_manager;
+
 -- Create the user if it does not exist
 DO
 $$
@@ -18,7 +21,12 @@ GRANT ALL PRIVILEGES ON DATABASE "TestDB" TO nhatnt;
 -- Enable the pgcrypto extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+--Drop views and database
+DROP VIEW IF EXISTS device_info_view;
+DROP VIEW IF EXISTS bkav_user_device_view;
+DROP TABLE IF EXISTS device;
 DROP TABLE IF EXISTS bkav_user;
+
 -- Create the bkav_user table
 CREATE TABLE bkav_user (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -28,9 +36,7 @@ CREATE TABLE bkav_user (
     role VARCHAR(10) CHECK (role IN ('ADMIN', 'USER')) NOT NULL,
     gender VARCHAR(6) CHECK (gender IN ('MALE', 'FEMALE')) NOT NULL
 );
-
 -- Create the device table
-DROP TABLE IF EXISTS device;
 CREATE TABLE device (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -41,7 +47,6 @@ CREATE TABLE device (
     bkav_user_id UUID REFERENCES bkav_user(id) ON DELETE SET NULL
 );
 
-DROP VIEW IF EXISTS device_info_view;
 
 CREATE VIEW device_info_view AS
 SELECT
@@ -59,7 +64,6 @@ FROM
 LEFT JOIN
     bkav_user u ON d.bkav_user_id = u.id;
 
-DROP VIEW IF EXISTS bkav_user_device_view;
 
 CREATE VIEW bkav_user_device_view AS
 SELECT
@@ -77,11 +81,6 @@ SELECT
 FROM bkav_user
 LEFT JOIN device ON bkav_user.id = device.bkav_user_id;
 
--- SELECT * FROM device
--- SELECT * FROM bkav_user
--- SELECT * FROM device_info_view
--- SELECT * FROM bkav_user_device_view
-
 -- Insert sample data into bkav_user
 INSERT INTO bkav_user (id, username, password, name, role, gender)
 VALUES
@@ -97,3 +96,9 @@ VALUES
 (gen_random_uuid(), 'Logitech MX Master 3', 'Chuột không dây dành cho dân văn phòng và sáng tạo.', 'MOUSE', 0, (select id from bkav_user where username = 'nhatnt')),
 (gen_random_uuid(), 'Lenovo ThinkPad T14', 'Laptop doanh nghiệp với độ bền cao và hiệu năng ổn định.', 'LAPTOP', -1, NULL),
 (gen_random_uuid(), 'Razer DeathAdder V2', 'Chuột chơi game với thiết kế công thái học và cảm biến chính xác.', 'MOUSE', -1, NULL);
+
+--- Test query
+-- SELECT * FROM device
+-- SELECT * FROM bkav_user
+-- SELECT * FROM device_info_view
+-- SELECT * FROM bkav_user_device_view
