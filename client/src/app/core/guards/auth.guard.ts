@@ -5,24 +5,26 @@ import { TokenService } from '../services/token.service';
 export const authGuard: CanActivateFn = (route, state) => {
   const tokenService = inject (TokenService);
   const router = inject(Router); 
-  const currentUser = localStorage.getItem('currentUser');
+  let currentToken = localStorage.getItem('currentToken');
+  if(currentToken == null) currentToken = '';
+  const role = tokenService.getRoleFromToken(currentToken);
 
-  if (!currentUser) {
+  if (!currentToken) {
     router.navigate(['/login']);
     return false;
   }
 
-  const user = JSON.parse(currentUser);
   const requiredRole = route.data?.['role']; 
 
-  if (user.token && !tokenService.isTokenValid(user.token)) {
-    localStorage.removeItem('currentUser');
+  if (currentToken && !tokenService.isTokenValid(currentToken)) {
+    localStorage.removeItem('currentToken');
     router.navigate(['/login']);
+    alert('Token expired, please login again.');
     return false;
   }
   
   if (requiredRole) {
-    if (!user.role || user.role !== requiredRole) {
+    if ( (role==null) || (role !== requiredRole)) {
       router.navigate(['/unauthorized']); 
       return false;
     }

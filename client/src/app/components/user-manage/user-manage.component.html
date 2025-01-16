@@ -22,44 +22,133 @@
     </button>
   </div>
 
-  <!-- User Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Name</th>
-        <th>Username</th>
-        <th>Gender</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.gender }}</td>
-        <td class="actions">
-          <!-- View and Delete icons -->
-          <button (click)="viewDetails(user)">
-            <i class="fas fa-eye icon"></i>
-          </button>
-          <button (click)="deleteUser('1')">
-            <i class="fas fa-trash icon"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="totalItems === 0">
+    <p>No users found.</p>
+  </div>
+  <div *ngIf="totalItems > 0">
+    <div class="total-item">
+      Found
+      {{ totalItems > 1 ? totalItems + " items" : totalItems + " item" }}
+    </div>
+    <!-- User Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Gender</th>
+          <th>NoD</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ user?.name }}</td>
+          <td>{{ user?.username }}</td>
+          <td>{{ user?.gender }}</td>
+          <td>{{ user?.totalDevice }}</td>
+          <td class="actions">
+            <!-- View and Delete icons -->
+            <button (click)="viewDetails(user)">
+              <i class="fas fa-eye icon"></i>
+            </button>
+            <button (click)="deleteUser(user.id,user.username)">
+              <i class="fas fa-trash icon"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-  <!-- Pagination Controls -->
-  <div class="pagination">
-    <button (click)="previousPage()" [disabled]="currentPage === 1">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">
-      <i class="fas fa-chevron-right"></i>
-    </button>
+    <!-- Pagination Controls -->
+    <div class="pagination">
+      <button (click)="previousPage()" [disabled]="currentPage === 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Add New User Modal -->
+<div *ngIf="showCreateUserModal" class="modal-container">
+  <div class="modal-content">
+    <h2>Create New User</h2>
+    <form (submit)="createUser($event)">
+      <!-- Name Input -->
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="newUser.name"
+          name="name"
+          required
+        />
+      </div>
+
+      <!-- Username Input -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          [(ngModel)]="newUser.username"
+          name="username"
+          required
+        />
+      </div>
+
+      <!-- Gender Input -->
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select
+          id="gender"
+          [(ngModel)]="newUser.gender"
+          name="gender"
+          required
+          style="width: fit-content"
+        >
+          <option value="" disabled selected>Select Gender</option>
+          <option value="MALE">MALE</option>
+          <option value="FEMALE">FEMALE</option>
+        </select>
+      </div>
+
+      <!-- Password Generation -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-container">
+          <input
+            type="text"
+            id="password"
+            [(ngModel)]="newUser.password"
+            name="password"
+            readonly
+          />
+          <i class="fas" [class.fa-key]="true" (click)="generatePassword()"></i>
+        </div>
+      </div>
+
+      <div *ngIf="errMsg.length > 0" class="error-msg">
+        {{ errMsg }}
+      </div>
+
+      <!-- Buttons -->
+      <div class="modal-actions">
+        <button
+          style="background-color: red"
+          type="button"
+          (click)="closeModal()"
+        >
+          Cancel
+        </button>
+        <button type="submit">Create</button>
+      </div>
+    </form>
   </div>
 </div>

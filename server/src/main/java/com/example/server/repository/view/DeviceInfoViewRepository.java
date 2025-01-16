@@ -1,6 +1,6 @@
 package com.example.server.repository.view;
 
-import com.example.server.model.view.DeviceInfoView;
+import com.example.server.model.entity.view.DeviceInfoView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

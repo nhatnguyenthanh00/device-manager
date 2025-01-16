@@ -1,36 +1,37 @@
 package com.example.server.controller;
 
-import com.example.server.response.LoginResponse;
-import com.example.server.resquest.LoginRequest;
-import com.example.server.service.impl.UserServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.server.model.response.LoginResponse;
+import com.example.server.model.response.SampleResponse;
+import com.example.server.model.resquest.LoginRequest;
+import com.example.server.service.iservice.UserService;
+import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+
+import static com.example.server.utils.constants.Constants.ErrCode.*;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping(Constants.ApiEndpoint.COMMON_BASE_PATH)
 public class CommonController {
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+    @PostMapping(Constants.ApiEndpoint.LOGIN_PATH)
+    public SampleResponse<LoginResponse> login(@RequestBody LoginRequest request){
         try {
-            String token = userServiceImpl.verify(loginRequest);
-            return ResponseEntity.ok(new LoginResponse(token));
+            String token = userService.verify(request);
+            LoginResponse data = new LoginResponse(token);
+            return new SampleResponse<>(ERROR_CODE_0,data);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(null));
+            return new SampleResponse<>(ERROR_CODE_401,null,"Wrong username or password");
         }
     }
 
-    @GetMapping("/")
-    public String test(HttpServletRequest request){
-        return "WELCOME! " + request.getSession().getId();
+    @GetMapping(Constants.ApiEndpoint.EMPTY_PATH)
+    public String test(){
+        return "WELCOME TO LUCIFER";
     }
 
 

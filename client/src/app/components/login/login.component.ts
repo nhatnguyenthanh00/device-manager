@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { TokenService } from '../../core/services/token.service';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
@@ -15,30 +16,29 @@ export class LoginComponent {
   password: string = '';
   showPassword: boolean = false;
   authService = inject(AuthService);
-  router = inject(Router); 
+  tokenService = inject(TokenService);
+  router = inject(Router);
   onSubmit() {
-    console.log('Username: ' + this.username);
     this.authService.login(this.username, this.password).subscribe((result) => {
-      if (result) {
-        console.log('Login successful');
-        const storedUser = localStorage.getItem('currentUser');
-        let currentUser = null;
-        if (storedUser !== null) {
-          currentUser = JSON.parse(storedUser);
-        }
-        if (currentUser !== null) {
-          if(currentUser.role === 'ROLE_ADMIN') {
-            // alert('Welcome admin');
-            this.router.navigate(['/admin/homepage']);
-          }
-          else{
+      if (result == null) {
+        // const token = result?.data?.token;
+
+        let token = localStorage.getItem('currentToken');
+        if (token == null) token = '';
+        if (this.tokenService.getRoleFromToken(token) === 'ROLE_ADMIN') {
+          // alert('Welcome admin');
+          this.router.navigate(['/admin/homepage']);
+        } else {
+          if (this.tokenService.getRoleFromToken(token) === 'ROLE_USER') {
             // alert('Welcome user');
             this.router.navigate(['/dashboard']);
           }
+          else {
+            this.router.navigate(['/notfound']);
+          }
         }
-
       } else {
-        alert('Login failed');
+        alert(result);
       }
     });
   }

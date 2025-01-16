@@ -23,7 +23,6 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 --Drop views and database
 DROP VIEW IF EXISTS device_info_view;
-DROP VIEW IF EXISTS bkav_user_device_view;
 DROP TABLE IF EXISTS device;
 DROP TABLE IF EXISTS bkav_user;
 
@@ -65,22 +64,6 @@ LEFT JOIN
     bkav_user u ON d.bkav_user_id = u.id;
 
 
-CREATE VIEW bkav_user_device_view AS
-SELECT
-	CONCAT(bkav_user.id::text, '-', COALESCE(device.id::text, '0')) AS id,
-    bkav_user.id AS user_id,
-    bkav_user.name,
-    bkav_user.username,
-    bkav_user.role,
-    bkav_user.gender,
-    device.id AS device_id,
-    device.name AS device_name,
-    device.description AS device_description,
-    device.category AS device_category,
-    device.status AS device_status
-FROM bkav_user
-LEFT JOIN device ON bkav_user.id = device.bkav_user_id;
-
 -- Insert sample data into bkav_user
 INSERT INTO bkav_user (id, username, password, name, role, gender)
 VALUES
@@ -97,8 +80,11 @@ VALUES
 (gen_random_uuid(), 'Lenovo ThinkPad T14', 'Laptop doanh nghiệp với độ bền cao và hiệu năng ổn định.', 'LAPTOP', -1, NULL),
 (gen_random_uuid(), 'Razer DeathAdder V2', 'Chuột chơi game với thiết kế công thái học và cảm biến chính xác.', 'MOUSE', -1, NULL);
 
---- Test query
+
+-- INSERT INTO bkav_user (id, username, password, name, role, gender)
+-- VALUES
+-- (gen_random_uuid(), 'test1', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'TEST1', 'USER', 'MALE'),
+-- (gen_random_uuid(), 'test2', '$2y$11$IEe1lXgt6/0XPz5F9mI9ZOwdP2Xq3N.//qRUN8CG6gMqFAf2rcvl2', 'TES2', 'USER', 'MALE');
 -- SELECT * FROM device
 -- SELECT * FROM bkav_user
 -- SELECT * FROM device_info_view
--- SELECT * FROM bkav_user_device_view

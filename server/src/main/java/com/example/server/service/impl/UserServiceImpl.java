@@ -1,16 +1,17 @@
 package com.example.server.service.impl;
 
-import com.example.server.dao.JpaBkavUserDao;
-import com.example.server.dto.DeviceDto;
-import com.example.server.dto.UserDto;
-import com.example.server.model.BkavUser;
-import com.example.server.model.UserPrincipal;
-import com.example.server.model.view.BkavUserDeviceView;
-import com.example.server.repository.view.BkavUserDeviceViewRepository;
-import com.example.server.repository.UserRepository;
-import com.example.server.resquest.LoginRequest;
-import com.example.server.config.JwtService;
-import com.example.server.service.iService.IUserServiceService;
+import com.example.server.model.dto.BkavUserDto;
+import com.example.server.repository.dao.idao.BkavUserDao;
+import com.example.server.repository.dao.impl.JpaBkavUserDao;
+import com.example.server.model.entity.BkavUser;
+import com.example.server.config.security.UserPrincipal;
+import com.example.server.repository.BkavUserRepository;
+import com.example.server.model.response.PageResponse;
+import com.example.server.model.resquest.LoginRequest;
+import com.example.server.config.security.JwtService;
+import com.example.server.service.iservice.UserService;
+import com.example.server.utils.constants.Constants;
+import com.example.server.utils.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,19 +19,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.UUID;
 
 @Service
-public class UserServiceImpl implements IUserServiceService {
+public class UserServiceImpl implements UserService {
+
+
+    @Autowired
+    BkavUserDao bkavUserDao;
 
     @Autowired
     JpaBkavUserDao jpaBkavUserDao;
 
     @Autowired
-    UserRepository userRepository;
+    BkavUserRepository bkavUserRepository;
 
-    @Autowired
-    BkavUserDeviceViewRepository bkavUserDeviceViewRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -38,47 +41,11 @@ public class UserServiceImpl implements IUserServiceService {
     @Autowired
     JwtService jwtService;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(Constants.Common.NUMBER_11_INT);
 
     @Override
-    public List<?> getAllUser(String gender, String search) {
-        List<BkavUserDeviceView> viewData = jpaBkavUserDao.getUserByGenderAndName(gender,search);
-        Map<UUID, UserDto> groupedData = new HashMap<>();
-
-        for (BkavUserDeviceView record : viewData) {
-            UUID userId = record.getUserId();
-
-            // Check if the user already exists in the map
-            UserDto userDeviceDTO = groupedData.computeIfAbsent(userId, id -> {
-                UserDto newUserDeviceDTO = new UserDto();
-                newUserDeviceDTO.setUserId(record.getUserId());
-                newUserDeviceDTO.setName(record.getName());
-                newUserDeviceDTO.setUsername(record.getUsername());
-                newUserDeviceDTO.setRole(record.getRole());
-                newUserDeviceDTO.setGender(record.getGender());
-                newUserDeviceDTO.setDevices(new ArrayList<>());
-                return newUserDeviceDTO;
-            });
-
-            // Add device to the user's device list (only if it's not already there)
-            if (record.getDeviceId() != null) { // Skip if device is NULL
-                boolean deviceExists = userDeviceDTO.getDevices().stream()
-                        .anyMatch(device -> device.getDeviceId().equals(record.getDeviceId()));
-
-                if (!deviceExists) { // Add device if it's not already in the list
-                    DeviceDto deviceDTO = new DeviceDto();
-                    deviceDTO.setDeviceId(record.getDeviceId());
-                    deviceDTO.setDeviceName(record.getDeviceName());
-                    deviceDTO.setDeviceDescription(record.getDeviceDescription());
-                    deviceDTO.setDeviceCategory(record.getDeviceCategory());
-                    deviceDTO.setDeviceStatus(record.getDeviceStatus());
-                    userDeviceDTO.getDevices().add(deviceDTO);
-                }
-            }
-        }
-
-        return new ArrayList<>(groupedData.values());
-//        return viewData;
+    public PageResponse<BkavUserDto> getAllUser(String gender, String search, int page) {
+        return bkavUserDao.getAllUserPaging(gender,search,page);
     }
 
     @Override
@@ -93,13 +60,27 @@ public class UserServiceImpl implements IUserServiceService {
     }
 
     @Override
-    public BkavUser save(BkavUser bkavUser) {
-        bkavUser.setPassword(encoder.encode(bkavUser.getPassword()));
-        return userRepository.save(bkavUser);
+    public BkavUser save(BkavUser user) {
+
+        BkavUser findUser = bkavUserDao.findByUserName(user.getUsername());
+        if(findUser != null){
+            return null;
+        }
+        user.setPassword(encoder.encode(user.getPassword()));
+        return bkavUserDao.save(user);
     }
 
     @Override
-    public void delete(BkavUser bkavUser) {
-        return;
+    public boolean deleteById(UUID id) {
+        BkavUser findUser = bkavUserDao.getById(id).orElse(null);
+        if(findUser == null) return false;
+        if(findUser.getRole().name().equals("USER")){
+            if(!findUser.getDevices().isEmpty()){
+                return false;
+            }
+            bkavUserDao.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

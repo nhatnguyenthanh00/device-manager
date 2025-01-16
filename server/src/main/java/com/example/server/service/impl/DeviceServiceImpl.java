@@ -1,14 +1,14 @@
 package com.example.server.service.impl;
 
-import com.example.server.dao.JpaDeviceDao;
-import com.example.server.model.BkavUser;
-import com.example.server.model.Device;
-import com.example.server.model.view.DeviceInfoView;
+import com.example.server.repository.dao.impl.JpaDeviceDao;
+import com.example.server.model.entity.BkavUser;
+import com.example.server.model.entity.Device;
+import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.repository.view.DeviceInfoViewRepository;
-import com.example.server.repository.UserRepository;
+import com.example.server.repository.BkavUserRepository;
 import com.example.server.repository.DeviceRepository;
-import com.example.server.resquest.UpdateDeviceRequest;
-import com.example.server.service.iService.IDeviceServiceService;
+import com.example.server.model.resquest.UpdateDeviceRequest;
+import com.example.server.service.iservice.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class DeviceServiceImpl implements IDeviceServiceService {
+public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     JpaDeviceDao jpaDeviceDao;
@@ -28,7 +28,7 @@ public class DeviceServiceImpl implements IDeviceServiceService {
     DeviceInfoViewRepository deviceInfoViewRepository;
 
     @Autowired
-    UserRepository userRepository;
+    BkavUserRepository bkavUserRepository;
 
     @Override
     public Device save(Device device){
@@ -36,9 +36,8 @@ public class DeviceServiceImpl implements IDeviceServiceService {
     }
 
     @Override
-    public void delete(Device device) {
-        if(device.getId() != null) jpaDeviceDao.deleteById(device.getId());
-        return;
+    public boolean deleteById(UUID id) {
+        return false;
     }
 
     @Override
@@ -60,10 +59,10 @@ public class DeviceServiceImpl implements IDeviceServiceService {
             foundDevice.setDescription(request.getDescription());
             foundDevice.setImage(request.getImage());
             if (userId != null){
-                if(!userRepository.existsById(userId)){
+                if(!bkavUserRepository.existsById(userId)){
                     return false;
                 }
-                BkavUser findBkavUser = userRepository.findById(userId).orElse(null);
+                BkavUser findBkavUser = bkavUserRepository.findById(userId).orElse(null);
                 if(findBkavUser !=null) foundDevice.setBkavUser(findBkavUser);
                 if(findBkavUser == null) return false;
             }

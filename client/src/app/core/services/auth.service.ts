@@ -2,39 +2,33 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { HttpService } from './http.service';
-import { AxiosResponse } from 'axios';
 import { TokenService } from './token.service';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(private httpService: HttpService) {}
   tokenService: TokenService = new TokenService();
 
-  login(username: string, password: string): Observable<boolean> {
+  login(username: string, password: string): Observable<string | null> {
     const payload = { username, password };
-    return this.httpService.makeHttpRequest<any>('/api/login', 'post', payload).pipe(
-      map((response: AxiosResponse<any>) => {
-        if (response && response.data.token) {
-          const token = response.data.token;
-          const decodedToken = this.tokenService.decodeToken(token);
-          const currentUser = {
-            username: decodedToken.sub, // username
-            role: decodedToken.role,   // role từ JWT
-            token: token,
-          };
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          return true;
-        }
-        return false;
+    return this.httpService.post<any>('/api/login', payload).pipe(
+      map((response) => {
+        console.log('In auth service');
+        console.log(response);
+        if(response?.errCode !== 0) return response?.errMsg;
+        if(response?.data?.token){
+          localStorage.setItem('currentToken', (response?.data?.token));
+          return null;
+        } 
+        return 'System Busy, Please try again later';
       }),
-      catchError(() => of(false))
+      catchError(() => of('System Busy, Please try again later'))
     );
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentToken');
   }
 }

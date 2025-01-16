@@ -14,6 +14,11 @@ export class TokenService {
     }
   }
 
+  getRoleFromToken(token: string): string | null {
+    const decodedToken = this.decodeToken(token);
+    return decodedToken?.role || null;
+  }
+
   isTokenValid(token: string): boolean {
     try {
       const decodedToken: { exp: number } = jwtDecode(token);

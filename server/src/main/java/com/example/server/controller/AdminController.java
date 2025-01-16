@@ -1,12 +1,18 @@
 package com.example.server.controller;
 
-import com.example.server.model.BkavUser;
-import com.example.server.model.Device;
-import com.example.server.model.enums.Role;
-import com.example.server.model.view.DeviceInfoView;
-import com.example.server.resquest.GetUserListRequest;
-import com.example.server.resquest.UpdateDeviceRequest;
-import com.example.server.service.impl.UserServiceImpl;
+import com.example.server.model.dto.BkavUserDto;
+import com.example.server.model.entity.BkavUser;
+import com.example.server.model.entity.Device;
+import com.example.server.model.response.SampleResponse;
+import com.example.server.model.resquest.CreateNewUserRequest;
+import com.example.server.model.resquest.DeleteUserRequest;
+import com.example.server.service.iservice.UserService;
+import com.example.server.utils.constants.Constants;
+import com.example.server.utils.enums.Gender;
+import com.example.server.utils.enums.Role;
+import com.example.server.model.entity.view.DeviceInfoView;
+import com.example.server.model.response.PageResponse;
+import com.example.server.model.resquest.UpdateDeviceRequest;
 import com.example.server.service.impl.DeviceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,48 +21,88 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
+
+import static com.example.server.utils.constants.Constants.ErrCode.ERROR_CODE_0;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping(Constants.ApiEndpoint.ADMIN_BASE_PATH)
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService userService;
 
     @Autowired
     DeviceServiceImpl deviceService;
 
-//    @GetMapping("/user-list")
-    @RequestMapping(value = "/user-list", method = RequestMethod.GET)
-    public ResponseEntity<List<?>> getUserList(@RequestParam(required = false, defaultValue = "ALL") String gender, @RequestParam(required = false, defaultValue = "") String search){
-        System.out.println("NTN");
-        if(gender!=null) System.out.println(gender);
-        if(search!=null) System.out.println(search);
-        return ResponseEntity.ok(userServiceImpl.getAllUser(gender,search));
+    @GetMapping(Constants.ApiEndpoint.USER_PATH)
+    public SampleResponse<PageResponse<BkavUserDto>> getUserList(@RequestParam(required = false, defaultValue = "") String gender,
+                                                                @RequestParam(required = false, defaultValue = "") String search,
+                                                                @RequestParam(required = false, defaultValue = "1") String page){
+
+        int pageNum = Constants.Common.NUMBER_1_INT ;
+        try{
+            pageNum = Integer.parseInt(page);
+        } catch (Exception ignored){
+        }
+        PageResponse<BkavUserDto> data = userService.getAllUser(gender,search,pageNum);
+        return new SampleResponse<>(ERROR_CODE_0,data);
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<BkavUser> createUser(@RequestBody BkavUser bkavUser) {
-        bkavUser.setRole(Role.USER);
-        return ResponseEntity.ok(userServiceImpl.save(bkavUser));
+    @PostMapping(Constants.ApiEndpoint.USER_PATH)
+    public SampleResponse<Boolean> createUser(@RequestBody CreateNewUserRequest request) {
+
+        if(!Constants.Common.ALL_GENDER.contains(request.getGender())){
+            return new SampleResponse<>(400,false,"Invalid gender");
+        }
+
+        BkavUser newUser = new BkavUser();
+        newUser.setUsername(request.getUsername());
+        newUser.setName(request.getName());
+        newUser.setPassword(request.getPassword());
+        newUser.setRole(Role.USER);
+        newUser.setGender(request.getGender().equals(Constants.Common.MALE) ? Gender.MALE : Gender.FEMALE);
+
+        BkavUser saveUser = userService.save(newUser);
+        if(saveUser == null){
+            return new SampleResponse<>(400,false,"Username already exists");
+        }
+        return new SampleResponse<>(0,true);
     }
 
-    @GetMapping("/device")
+    @DeleteMapping(Constants.ApiEndpoint.USER_PATH)
+    public SampleResponse<Boolean> deleteUser(@RequestBody DeleteUserRequest request){
+        try{
+            UUID id = UUID.fromString(request.getUserId());
+            boolean check = userService.deleteById(id);
+            if (check){
+                return new SampleResponse<>(0, true);
+            }
+            return new SampleResponse<>(400,false,"Delete user fail");
+        } catch (Exception e){
+            return new SampleResponse<>(400,false,"Delete user fail");
+        }
+    }
+
+
+
+    @GetMapping(Constants.ApiEndpoint.DEVICE_PATH)
     public ResponseEntity<List<DeviceInfoView>> getAllDevice(){
         return ResponseEntity.ok(deviceService.getAllDevice());
     }
 
-    @PostMapping("/device")
+    @PostMapping(Constants.ApiEndpoint.DEVICE_PATH)
     public ResponseEntity<Device> createDevice(@RequestBody Device device) {
         return ResponseEntity.ok(deviceService.save(device));
     }
 
-    @PutMapping("/device")
-    public ResponseEntity<Device> updateDevice(@RequestBody UpdateDeviceRequest request) {
+    @PutMapping(Constants.ApiEndpoint.DEVICE_PATH)
+    public ResponseEntity<String> updateDevice(@RequestBody UpdateDeviceRequest request) {
         boolean check = deviceService.updateDevice(request);
-        if(check) return  ResponseEntity.ok(null);
+        if(check) return  ResponseEntity.ok("Success");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+                .body("Fail");
     }
+
 }
