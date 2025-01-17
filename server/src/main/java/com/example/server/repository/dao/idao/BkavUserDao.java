@@ -9,4 +9,6 @@ public interface BkavUserDao extends EntityDao<BkavUser> {
     PageResponse<BkavUserDto> getAllUserPaging(String gender, String name, int page);
 
     BkavUser findByUserName(String username);
+
+    BkavUserDto getProfileByUserName(String username);
 }

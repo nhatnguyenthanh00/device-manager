@@ -100,7 +100,7 @@ export class UserManageComponent {
             this.toastr.error(response?.errMsg, 'Error');
           }
           else{
-            this.toastr.success(`Delete user "${userName}" succes!`, 'Success');
+            this.toastr.success(`Delete user ${userName} succes!`, 'Success');
             this.getUsers();
           }
         })

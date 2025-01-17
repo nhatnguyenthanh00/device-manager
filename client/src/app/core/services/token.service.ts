@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenService {
-
-  constructor() { }
+  constructor() {
+  }
   decodeToken(token: string): any {
     try {
       return jwtDecode(token);
@@ -17,6 +17,11 @@ export class TokenService {
   getRoleFromToken(token: string): string | null {
     const decodedToken = this.decodeToken(token);
     return decodedToken?.role || null;
+  }
+
+  getUserNameFromToken(token: string): string | null {
+    const decodedToken = this.decodeToken(token);
+    return decodedToken?.sub || null;
   }
 
   isTokenValid(token: string): boolean {

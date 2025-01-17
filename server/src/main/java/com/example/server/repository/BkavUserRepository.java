@@ -17,6 +17,7 @@ public interface BkavUserRepository extends JpaRepository<BkavUser, UUID> {
 
     Page<BkavUser> findBkavUserByNameContainsIgnoreCase(String name, Pageable pageable);
 
+//    BkavUser updateBkavUserById
     Page<BkavUser> findBkavUserByGenderAndNameContainingIgnoreCase(Gender gender, String name, Pageable pageable);
 
 }

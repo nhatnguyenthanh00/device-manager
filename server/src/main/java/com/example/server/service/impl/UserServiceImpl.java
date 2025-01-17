@@ -49,6 +49,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public BkavUserDto getProfile(String userName){
+        return bkavUserDao.getProfileByUserName(userName);
+    }
+
+    @Override
+    public BkavUser getByUsername(String username) {
+        return bkavUserDao.findByUserName(username);
+    }
+
+    @Override
+    public Integer changePassWord(String username, String oldPassword, String newPassword) {
+        BkavUser user = bkavUserDao.findByUserName(username);
+        if(!encoder.matches(oldPassword,user.getPassword())){
+            return -1;
+        }
+        String encodeNewPassword = encoder.encode(newPassword);
+        user.setPassword(encodeNewPassword);
+        try{
+            BkavUser saveUser = bkavUserDao.save(user);
+            return 1;
+        } catch (Exception e){
+            return 0;
+        }
+    }
+
+    @Override
     public String verify(LoginRequest request){
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));

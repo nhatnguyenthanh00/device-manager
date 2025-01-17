@@ -79,4 +79,10 @@ public class JpaBkavUserDao implements BkavUserDao {
         return bkavUserRepository.findByUsername(username);
     }
 
+    @Override
+    public BkavUserDto getProfileByUserName(String username) {
+        BkavUser user = bkavUserRepository.findByUsername(username);
+        return new BkavUserDto(user);
+    }
+
 }

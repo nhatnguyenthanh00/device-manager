@@ -31,7 +31,7 @@ export class LoginComponent {
         } else {
           if (this.tokenService.getRoleFromToken(token) === 'ROLE_USER') {
             // alert('Welcome user');
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/homepage']);
           }
           else {
             this.router.navigate(['/notfound']);

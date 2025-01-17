@@ -1,5 +1,6 @@
 package com.example.server.config.security;
 
+import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import org.springframework.beans.factory.annotation.Autowired;

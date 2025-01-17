@@ -4,7 +4,7 @@
   </div>
 
   <div class="right-side">
-    <p>Hello {{ name }}</p>
+    <p>Hello {{ name !== null ? name : '' }}</p>
 
     <div class="icon-row">
       <div class="icon-wrapper" (click)="goToProfile()" title="Your Profile">
