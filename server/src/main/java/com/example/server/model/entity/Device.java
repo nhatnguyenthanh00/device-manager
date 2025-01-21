@@ -35,7 +35,6 @@ public class Device {
 //    @Column(nullable = false)
     private Integer status;  // -1: Unassigned, 0: Assigned, 1: Requested for return
 
-    @ManyToOne(optional = true)
     @JoinColumn(name = "bkav_user_id")
 //    @JsonBackReference
 //    @JsonIgnore
@@ -43,5 +42,5 @@ public class Device {
 //            generator = ObjectIdGenerators.PropertyGenerator.class,
 //            property = "id"
 //    )
-    private BkavUser bkavUser;  // Relationship with Account
+    private UUID bkavUserId;
 }

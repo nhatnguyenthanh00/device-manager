@@ -21,7 +21,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         SampleResponse<Object> responseBody = new SampleResponse<>(
-                HttpStatus.UNAUTHORIZED.value(),
                 null,
                 HttpStatus.UNAUTHORIZED.getReasonPhrase()
         );

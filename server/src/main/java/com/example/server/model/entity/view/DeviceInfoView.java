@@ -11,30 +11,25 @@ import java.util.UUID;
 @Entity
 public class DeviceInfoView{
     @Id
-    @Column(name = "device_id")
-    private UUID deviceId;
+    @Column(name = "id")
+    private UUID id;
 
-    @Column(name = "device_name")
-    private String deviceName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "device_description")
-    private String deviceDescription;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "device_image")
-    private String deviceImage;
+    @Column(name = "image")
+    private String image;
 
-    @Column(name = "device_category")
-    private String deviceCategory;
+    @Column(name = "category")
+    private String category;
 
-    @Column(name = "device_status")
-    private int deviceStatus;
+    @Column(name = "status")
+    private int status;
 
-    @Column(name = "user_username")
-    private String userUsername;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "user_name")
-    private String userName;
-
-    @Column(name = "user_role")
-    private String userRole;
 }

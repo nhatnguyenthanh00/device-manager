@@ -11,4 +11,5 @@ public class DeviceDto {
     private String deviceDescription;
     private String deviceCategory;
     private int deviceStatus;
+    private String userName;
 }

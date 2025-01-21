@@ -1,6 +1,5 @@
 package com.example.server.config.security;
 
-import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.utils.constants.Constants;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +14,9 @@ public class UserPrincipal implements UserDetails {
     private BkavUser bkavUser;
     public UserPrincipal(BkavUser bkavUser){
         this.bkavUser = bkavUser;
+    }
+    public BkavUser getBkavUser() {
+        return bkavUser;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

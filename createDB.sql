@@ -49,15 +49,13 @@ CREATE TABLE device (
 
 CREATE VIEW device_info_view AS
 SELECT
-    d.id AS device_id,
-    d.name AS device_name,
-    d.description AS device_description,
-    d.image AS device_image,
-    d.category AS device_category,
-    d.status AS device_status,
-    u.username AS user_username,
-    u.name AS user_name,
-    u.role AS user_role
+    d.id AS id,
+    d.name AS name,
+    d.description AS description,
+    d.image AS image,
+    d.category AS category,
+    d.status AS status,
+    u.username AS username
 FROM
     device d
 LEFT JOIN

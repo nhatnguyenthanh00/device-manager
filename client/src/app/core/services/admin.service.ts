@@ -25,11 +25,15 @@ export class AdminService {
     );
   }
 
+  getUser(userId: string): Observable<any> {
+    return this.httpService.post<any>('/api/test/v1', { userId: userId, page:'1' });
+  }
+
   addUser(user: NewUser): Observable<any> {
     return this.httpService.post<any>('/api/admin/user', user);
   }
 
   deleteUser(userId: string): Observable<any> {
-    return this.httpService.delete<any>('/api/admin/user',{userId});
+    return this.httpService.delete<any>('/api/admin/user',{id:userId});
   }
 }

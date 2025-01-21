@@ -6,12 +6,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SampleResponse<T> {
-    private int errCode;
     private T data;
     private String errMsg;
 
-    public SampleResponse(int errCode, T data) {
-        this.errCode = errCode;
+    public SampleResponse(T data) {
         this.data = data;
     }
 }

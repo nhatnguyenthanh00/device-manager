@@ -5,10 +5,9 @@ import com.example.server.model.response.PageResponse;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.repository.BkavUserRepository;
+import com.example.server.utils.MapperDto;
 import com.example.server.utils.constants.Constants;
 import com.example.server.utils.enums.Gender;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,14 +21,13 @@ import java.util.stream.Collectors;
 @Component
 public class JpaBkavUserDao implements BkavUserDao {
 
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Autowired
     BkavUserRepository bkavUserRepository;
 
-//    @Autowired
-//    BkavUserDeviceViewRepository bkavUserDeviceViewRepository;
+    @Autowired
+    MapperDto mapperDto;
+
 
     @Override
     public Optional<BkavUser> getById(UUID id) {
@@ -70,7 +68,7 @@ public class JpaBkavUserDao implements BkavUserDao {
 
         int totalItems = (int) pageUser.getTotalElements();
         int totalPages = pageUser.getTotalPages();
-        List<BkavUserDto> pageUserDto = pageUser.getContent().stream().map(BkavUserDto::new).collect(Collectors.toList());
+        List<BkavUserDto> pageUserDto = pageUser.getContent().stream().map(mapperDto::toDto).collect(Collectors.toList());
         return new PageResponse<>(pageUserDto, totalItems, totalPages);
     }
 
@@ -82,7 +80,8 @@ public class JpaBkavUserDao implements BkavUserDao {
     @Override
     public BkavUserDto getProfileByUserName(String username) {
         BkavUser user = bkavUserRepository.findByUsername(username);
-        return new BkavUserDto(user);
+//        return new BkavUserDto(user);
+        return mapperDto.toDto(user);
     }
 
 }

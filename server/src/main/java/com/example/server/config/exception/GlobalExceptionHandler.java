@@ -18,10 +18,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<SampleResponse<Object>> handleGlobalException(Exception ex, WebRequest request) {
         logger.error("Exception occurred: {}", ex.getMessage(), ex);
         SampleResponse<Object> response = new SampleResponse<>(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 null,
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
         );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

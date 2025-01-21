@@ -22,6 +22,8 @@ public class Constants {
 
         public static final List<String> ALL_GENDER = List.of("MALE","FEMALE");
 
+        public static final List<String> ALL_CATEGORY = List.of("LAPTOP","PC","MOUSE","PHONE");
+
     }
     public static class Security {
         public static final String AUTHORIZATION = "Authorization";

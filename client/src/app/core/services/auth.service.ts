@@ -17,7 +17,7 @@ export class AuthService {
       map((response) => {
         console.log('In auth service');
         console.log(response);
-        if(response?.errCode !== 0) return response?.errMsg;
+        if(response?.errMsg) return response?.errMsg;
         if(response?.data?.token){
           localStorage.setItem('currentToken', (response?.data?.token));
           return null;

@@ -3,6 +3,7 @@ package com.example.server.model.entity;
 import com.example.server.utils.enums.Gender;
 import com.example.server.utils.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -37,13 +38,14 @@ public class BkavUser {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(mappedBy = "bkavUser")
-//    @JsonManagedReference
-//    @JsonIdentityInfo(
-//            generator = ObjectIdGenerators.PropertyGenerator.class,
-//            property = "id"
-//    )
-    private List<Device> devices;
+//    @OneToMany(mappedBy = "bkavUser")
+////    @JsonManagedReference
+////    @JsonIdentityInfo(
+////            generator = ObjectIdGenerators.PropertyGenerator.class,
+////            property = "id"
+////    )
+//    @JsonIgnore
+//    private List<Device> devices;
 
 
 }

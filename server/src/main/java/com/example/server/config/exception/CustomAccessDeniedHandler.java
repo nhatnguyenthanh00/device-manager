@@ -21,7 +21,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
         SampleResponse<Object> responseBody = new SampleResponse<>(
-                HttpStatus.FORBIDDEN.value(),
                 null,
                 HttpStatus.FORBIDDEN.getReasonPhrase()
         );

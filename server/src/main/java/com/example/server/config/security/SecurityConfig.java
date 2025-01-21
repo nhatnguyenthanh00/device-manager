@@ -23,7 +23,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
+/**
+ * Security configurations:
+ * - CORS enabled
+ * - CSRF disabled for API endpoints
+ * - JWT authentication
+ * - Public endpoints: /api/login/
+ * - Role-based authorization
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -45,7 +52,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm cấu hình CORS
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/login", "/api/test/**")
+                        .requestMatchers("/api/login","/api/test/**")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
