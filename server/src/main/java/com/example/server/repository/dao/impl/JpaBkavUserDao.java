@@ -84,4 +84,9 @@ public class JpaBkavUserDao implements BkavUserDao {
         return mapperDto.toDto(user);
     }
 
+    @Override
+    public List<String> findAllUsername() {
+        return bkavUserRepository.findAllUsernames();
+    }
+
 }

@@ -1,5 +1,8 @@
 <div class="device-manage-container">
-  <div *ngIf="getAll == true" class="controls">
+  <div
+    *ngIf="getAll == 'device-manager' || getAll == 'my-device'"
+    class="controls"
+  >
     <!-- Search Input and Button Container -->
     <div class="search-container">
       <!-- Search Input -->
@@ -27,7 +30,7 @@
     </select>
 
     <!-- Button to Create New Device -->
-    <button (click)="onCreateNewDevice()">
+    <button *ngIf="getAll == 'device-manager'" (click)="onCreateNewDevice()">
       <i class="fas fa-plus"></i>
     </button>
   </div>
@@ -65,9 +68,20 @@
             <button (click)="viewDetails(device)">
               <i class="fas fa-eye icon"></i>
             </button>
-            <button (click)="deleteDevice(device.id,device.name)">
-              <i class="fas fa-trash icon"></i>
+
+            <button *ngIf="getAll == 'my-device'; else elseBlock" (click)="requestReturnDevice(device)">
+              <i class="fas fa-undo icon" style="color: #eed202"></i>
             </button>
+
+            <ng-template #elseBlock>
+              <button (click)="acceptRequestReturnDevice(device)">
+                <i class="fas fa-check icon" style="color: green" ></i>
+              </button>
+              <button (click)="deleteDevice(device.id, device.name)">
+                <i class="fas fa-trash icon" style="color: red"></i>
+              </button>
+            </ng-template>
+
           </td>
         </tr>
       </tbody>
@@ -175,6 +189,8 @@
           [(ngModel)]="updateDevice.name"
           name="detail_name"
           required
+          [readonly]="getAll === 'my-device'"
+          [class.readonly-field]="getAll === 'my-device'"
         />
       </div>
       <div class="form-group">
@@ -185,6 +201,8 @@
           name="detail_description"
           rows="3"
           style="width: 100%"
+          [readonly]="getAll === 'my-device'"
+          [class.readonly-field]="getAll === 'my-device'"
         >
         </textarea>
       </div>
@@ -198,6 +216,8 @@
               [(ngModel)]="updateDevice.category"
               name="detail_category"
               required
+              [disabled]="getAll === 'my-device'"
+              [class.readonly-field]="getAll === 'my-device'"
             >
               <option value="" disabled selected>Select Category</option>
               <option value="LAPTOP">LAPTOP</option>
@@ -207,44 +227,43 @@
             </select>
           </div>
           <div class="col">
-            <label for="detail_username_device">{{'UserName '+getStatusViewDetail()}}</label>
-            <input
-              type="text"
-              id="detail_username_device"
-              [(ngModel)]="selectedDeviceUserName"
-              name="detail_username_device"
-            />
+            <label for="detail_username_device">{{
+              "UserName " + getStatusViewDetail()
+            }}</label>
+            <div class="dropdown">
+              <div class="dropdown-input-wrapper">
+                <input
+                  *ngIf="getAll !== 'my-device'; else noClick"
+                  type="text"
+                  class="dropdown-input"
+                  [value]="selectedDeviceUserName"
+                  readonly
+                  (click)="toggleDropdown()"
+                />
+                <ng-template #noClick>
+                  <input
+                  type="text"
+                  class="dropdown-input readonly-field"
+                  [value]="selectedDeviceUserName"
+                  readonly
+                />
+                </ng-template>
+                <span class="dropdown-arrow"></span>
+              </div>
+              <ul class="dropdown-menu" *ngIf="isDropdownOpen">
+                <li
+                  *ngFor="let option of usernames"
+                  (click)="selectOption(option)"
+                  [class.readonly-field]="option === selectedDeviceUserName"
+                >
+                  {{ option }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-
-        <!-- <div class="form-group">
-          <label for="username">UserName</label>
-          <input
-            type="text"
-            id="name"
-            [(ngModel)]="selectedDeviceId"
-            name="username"
-            required
-          />
-        </div> -->
       </div>
 
-      <!-- <div class="form-group">
-        <label for="gender">Category</label>
-        <select
-          id="gender"
-          [(ngModel)]="updateDevice.category"
-          name="gender"
-          required
-          style="width: fit-content"
-        >
-          <option value="" disabled selected>Select Category</option>
-          <option value="LAPTOP">LAPTOP</option>
-          <option value="PC">PC</option>
-          <option value="MOUSE">MOUSE</option>
-          <option value="PHONE">PHONE</option>
-        </select>
-      </div> -->
       <div class="form-group">
         <label for="detail_image">Image</label>
 
@@ -256,6 +275,7 @@
           alt="Hình ảnh"
         />
         <input
+          *ngIf="getAll !== 'my-device'"
           type="file"
           id="detail_image"
           (change)="onImageUpdateChange($event)"
@@ -275,7 +295,7 @@
         >
           Cancel
         </button>
-        <button type="submit">Save</button>
+        <button *ngIf="getAll !== 'my-device'" type="submit">Save</button>
       </div>
     </form>
   </div>

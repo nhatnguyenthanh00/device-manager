@@ -23,6 +23,7 @@ export class UserDetailManageComponent {
   newPassword: string = '';
   adminPassword: string = '';
   totalDevice: number = 0;
+  role: string = '';
   private subscription: Subscription;
   constructor(private homePageService: HomePageService, private adminService: AdminService) {
     this.subscription = new Subscription();
@@ -44,9 +45,9 @@ export class UserDetailManageComponent {
     this.showPassword = !this.showPassword;
   }
 
-  getUserDetails() {
+  getUserDetails(page: number = 1) {
     if(this.userId == null) return
-    this.adminService.getUser(this.userId).subscribe((res)=>{
+    this.adminService.getUser(this.userId, page).subscribe((res)=>{
       if(res.errMsg){
         alert(res?.errMsg);
       }
@@ -56,16 +57,16 @@ export class UserDetailManageComponent {
         this.gender = res?.data?.userDetail?.gender;
         this.totalDevice = res?.data?.devices?.content?.length;
         this.listDevice = res?.data?.devices;
+        this.role = res?.data?.userDetail?.role;
       }
     }
       
     )
   }
 
-  onDeviceUpdated() {
+  onDeviceUpdated(event: { page: number }) {
     console.log('hay hay update')
-    // Gọi lại API để lấy data mới
-    this.getUserDetails();
+    this.getUserDetails(event.page);
   }
 
   generatePassword() {

@@ -5,10 +5,14 @@ import com.example.server.model.response.PageResponse;
 import com.example.server.repository.dao.EntityDao;
 import com.example.server.model.entity.BkavUser;
 
+import java.util.List;
+
 public interface BkavUserDao extends EntityDao<BkavUser> {
     PageResponse<BkavUserDto> getAllUserPaging(String gender, String name, int page);
 
     BkavUser findByUserName(String username);
 
     BkavUserDto getProfileByUserName(String username);
+
+    List<String> findAllUsername();
 }

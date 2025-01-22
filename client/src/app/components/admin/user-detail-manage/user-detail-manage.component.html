@@ -43,6 +43,20 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="role">Gender</label>
+          <select
+            id="role"
+            [(ngModel)]="role"
+            name="role"
+            required
+            style="width: 100%"
+          >
+            <option value="" disabled selected>Select Role</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="USER">USER</option>
+          </select>
+        </div>
+        <!-- <div class="form-group">
           <label for="total-device">Total device</label>
           <div class="password-container">
             <input
@@ -53,9 +67,8 @@
               readonly
               disabled
             />
-            <!-- <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword" (click)="togglePasswordVisibility()"></i> -->
           </div>
-        </div>
+        </div> -->
       </div>
 
       <button class="update-user-btn" type="submit">Update</button>
@@ -158,7 +171,7 @@
 </div> -->
 
 <app-device-manage
-  [getAll]="false"
+  getAll='user-detail'
   [dataDeviceByAccount]="listDevice"
-  (deviceUpdated)="onDeviceUpdated()"
+  (deviceUpdated)="onDeviceUpdated($event)"
 ></app-device-manage>

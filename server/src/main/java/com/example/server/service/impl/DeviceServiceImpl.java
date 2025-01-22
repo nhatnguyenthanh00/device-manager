@@ -1,9 +1,10 @@
 package com.example.server.service.impl;
 
+import com.example.server.config.security.UserPrincipal;
 import com.example.server.model.response.PageResponse;
 import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.CreateNewDeviceRequest;
-import com.example.server.model.resquest.DeleteByIdRequest;
+import com.example.server.model.resquest.ActionByIdRequest;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.repository.dao.idao.DeviceDao;
 import com.example.server.model.entity.BkavUser;
@@ -14,6 +15,7 @@ import com.example.server.service.iservice.DeviceService;
 import com.example.server.utils.constants.Constants;
 import com.example.server.utils.enums.DeviceCategory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -63,6 +65,17 @@ public class DeviceServiceImpl implements DeviceService {
         }
         return deviceDao.getAllDevicePaging(search, category, statusNum, page);
     }
+    @Override
+    public PageResponse<DeviceInfoView> getDeviceByUsername(String username, String search, String category, String status, int page){
+        Integer statusNum = null ;
+        try{
+            statusNum = Integer.parseInt(status);
+        } catch (Exception ignored){
+        }
+        return deviceDao.getAllDevicePagingByUsername(username,search, category, statusNum, page);
+    }
+
+
 
     @Override
     public SampleResponse<Boolean> updateDevice(UpdateDeviceRequest request) {
@@ -132,7 +145,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public SampleResponse<Boolean> deleteDeviceById(DeleteByIdRequest request) {
+    public SampleResponse<Boolean> deleteDeviceById(ActionByIdRequest request) {
         try{
             UUID id = UUID.fromString(request.getId());
             boolean check = deleteById(id);
@@ -143,5 +156,21 @@ public class DeviceServiceImpl implements DeviceService {
         } catch (Exception e){
             return new SampleResponse<>(false,"Delete device fail");
         }
+    }
+
+    @Override
+    public SampleResponse<Boolean> requestReturnDevice(ActionByIdRequest request) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal)principal;
+        Boolean check = deviceDao.requestReturnDevice(userPrincipal.getUsername(),request.getId());
+        if(!check) return new SampleResponse<>(false,"Request return fail");
+        return new SampleResponse<>(true);
+    }
+
+    @Override
+    public SampleResponse<Boolean> acceptReturnDevice(ActionByIdRequest request) {
+        Boolean check = deviceDao.acceptReturnDevice(request.getId());
+        if(!check) return new SampleResponse<>(false,"Accept return fail");
+        return new SampleResponse<>(true);
     }
 }

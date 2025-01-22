@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class BkavUserDto {
     private String id;
     private String username;
+    private String password;
     private String name;
     private Role role;
     private Gender gender;

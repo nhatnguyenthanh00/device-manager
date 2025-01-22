@@ -18,7 +18,17 @@ public interface DeviceInfoViewRepository extends JpaRepository<DeviceInfoView, 
 
     Page<DeviceInfoView> findDeviceInfoViewByNameContainingIgnoreCaseAndStatus(String name, int status, Pageable pageable);
 
+    Page<DeviceInfoView> findDeviceInfoViewByUsernameAndNameContainingIgnoreCase(String username, String name, Pageable pageable);
+
+    Page<DeviceInfoView> findDeviceInfoViewByUsernameAndNameContainingIgnoreCaseAndCategory(String username, String name, String category, Pageable pageable);
+
+    Page<DeviceInfoView> findDeviceInfoViewByUsernameAndNameContainingIgnoreCaseAndCategoryAndStatus(String username, String name, String category, int status, Pageable pageable);
+
+    Page<DeviceInfoView> findDeviceInfoViewByUsernameAndNameContainingIgnoreCaseAndStatus(String username, String name, int status, Pageable pageable);
+
     Page<DeviceInfoView> findDeviceInfoViewByUsername(String username, Pageable pageable);
+
+    DeviceInfoView findDeviceInfoViewById(UUID id);
 
     long countDeviceInfoViewByUsername(String username);
 }

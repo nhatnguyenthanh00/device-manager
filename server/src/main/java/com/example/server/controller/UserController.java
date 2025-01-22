@@ -1,17 +1,19 @@
 package com.example.server.controller;
 
 import com.example.server.model.dto.BkavUserDto;
+import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.PageResponse;
 import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.CreateNewUserRequest;
-import com.example.server.model.resquest.DeleteByIdRequest;
+import com.example.server.model.resquest.ActionByIdRequest;
+import com.example.server.model.resquest.DetailUserRequest;
 import com.example.server.service.iservice.UserService;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping(Constants.ApiEndpoint.COMMON_BASE_PATH)
@@ -50,8 +52,14 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/user")
+    public SampleResponse<Boolean> updateUser(@RequestBody BkavUserDto userDto) {
+        return userService.updateUser(userDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/user")
-    public SampleResponse<Boolean> deleteUser(@RequestBody DeleteByIdRequest request){
+    public SampleResponse<Boolean> deleteUser(@RequestBody ActionByIdRequest request){
         return userService.deleteUserById(request);
     }
 
@@ -61,15 +69,14 @@ public class UserController {
      * @return BkavUserDto
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/user-detail")
-    public SampleResponse<BkavUserDto> getDetailUser(@RequestBody DeleteByIdRequest request){
-        try{
-            UUID id = UUID.fromString(request.getId());
-            BkavUserDto data = userService.getById(id);
-            if(data == null) return new SampleResponse<>(null,"Not found user");
-            return new SampleResponse<>(data);
-        } catch (Exception e){
-            return new SampleResponse<>(null,"Bad request");
-        }
+    @PostMapping("/admin/user-detail")
+    public SampleResponse<DetailUserResponse> getDetailUser(@RequestBody DetailUserRequest request){
+        return userService.getDetailUser(request);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/admin/user-name")
+    public SampleResponse<List<String>> getAllUsername(){
+        return userService.getAllUsername();
     }
 }

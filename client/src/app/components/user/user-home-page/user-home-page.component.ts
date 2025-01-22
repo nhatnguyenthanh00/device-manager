@@ -27,6 +27,9 @@ export class UserHomePageComponent {
         label: 'My Devices',
         icon: 'fas fa-mobile-alt',
         component: DeviceManageComponent,
+        inputs: {
+          getAll: 'my-device'
+        },
         hidden: true
       }
     ]

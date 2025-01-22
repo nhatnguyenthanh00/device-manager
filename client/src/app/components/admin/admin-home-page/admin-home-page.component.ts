@@ -40,7 +40,7 @@ export class AdminHomePageComponent {
         component: DeviceManageComponent,
         hidden: true,
         inputs: {
-          getAll: true
+          getAll: 'device-manager'
         }
       },
       {

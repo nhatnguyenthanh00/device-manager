@@ -1,10 +1,14 @@
 package com.example.server.service.impl;
 
 import com.example.server.model.dto.BkavUserDto;
+import com.example.server.model.entity.view.DeviceInfoView;
+import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.CreateNewUserRequest;
-import com.example.server.model.resquest.DeleteByIdRequest;
+import com.example.server.model.resquest.ActionByIdRequest;
+import com.example.server.model.resquest.DetailUserRequest;
 import com.example.server.repository.dao.idao.BkavUserDao;
+import com.example.server.repository.dao.idao.DeviceDao;
 import com.example.server.repository.dao.impl.JpaBkavUserDao;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.config.security.UserPrincipal;
@@ -25,6 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,6 +38,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     BkavUserDao bkavUserDao;
+
+    @Autowired
+    DeviceDao deviceDao;
 
     @Autowired
     JpaBkavUserDao jpaBkavUserDao;
@@ -73,10 +81,10 @@ public class UserServiceImpl implements UserService {
         return bkavUserDao.getProfileByUserName(userName);
     }
 
-    @Override
-    public BkavUser getByUsername(String username) {
-        return bkavUserDao.findByUserName(username);
-    }
+//    @Override
+//    public BkavUser getByUsername(String username) {
+//        return bkavUserDao.findByUserName(username);
+//    }
 
     @Override
     public Integer changePassWord(String username, String oldPassword, String newPassword) {
@@ -124,7 +132,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SampleResponse<Boolean> deleteUserById(DeleteByIdRequest request) {
+    public SampleResponse<Boolean> updateUser(BkavUserDto bkavUserDto) {
+
+        return null;
+    }
+
+
+    @Override
+    public SampleResponse<Boolean> deleteUserById(ActionByIdRequest request) {
         try{
             UUID id = UUID.fromString(request.getId());
             boolean check = deleteById(id);
@@ -138,7 +153,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BkavUser save(BkavUser user) {
+    public SampleResponse<List<String>> getAllUsername() {
+        return new SampleResponse<>(bkavUserDao.findAllUsername());
+    }
+
+    @Override
+    public SampleResponse<DetailUserResponse> getDetailUser(DetailUserRequest request) {
+        try{
+            UUID id = UUID.fromString(request.getUserId());
+            Integer page = request.getPage();
+            BkavUserDto userDto = getById(id);
+            if(userDto == null) return new SampleResponse<>(null,"Not found user");
+            PageResponse<DeviceInfoView> pageResponse = deviceDao.getAllDeviceByUsername(userDto.getUsername(),page);
+            return new SampleResponse<>(new DetailUserResponse(userDto,pageResponse));
+        } catch (Exception e){
+            return new SampleResponse<>(null,"Bad request");
+        }
+    }
+
+    @Override
+    public BkavUserDto save(BkavUserDto user) {
+
+
 
         BkavUser findUser = bkavUserDao.findByUserName(user.getUsername());
         if (findUser != null) {

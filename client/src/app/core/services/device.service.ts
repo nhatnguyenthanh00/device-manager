@@ -17,6 +17,15 @@ export class DeviceService {
         );
   }
 
+  getMyDevice(params : object) {
+    return this.httpService.get<any>('/api/my-device', params).pipe(
+          catchError((error) => {
+            console.error('Error fetching device list:', error);
+            return of(null);
+          })
+        );
+  }
+
   addDevice(device: NewDevice): Observable<any> {
     return this.httpService.post<any>('/api/admin/device', device);
   }
@@ -27,5 +36,13 @@ export class DeviceService {
 
   deleteDevice(deviceId: string): Observable<any> {
     return this.httpService.delete<any>('/api/admin/device',{id:deviceId});
+  }
+
+  requestReturnDevice(deviceId: string): Observable<any> {
+    return this.httpService.post<any>('/api/device-return',{id:deviceId});
+  }
+
+  acceptReturnDevice(deviceId: string): Observable<any> {
+    return this.httpService.post<any>('/api/admin/accept-return',{id:deviceId});
   }
 }

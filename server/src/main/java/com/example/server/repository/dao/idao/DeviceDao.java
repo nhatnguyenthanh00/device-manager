@@ -12,6 +12,12 @@ public interface DeviceDao extends EntityDao<Device> {
     List<DeviceInfoView> getViewOfDevice();
 
     PageResponse<DeviceInfoView> getAllDevicePaging(String search, String category, Integer status, int page);
+    PageResponse<DeviceInfoView> getAllDevicePagingByUsername(String username, String search, String category, Integer status, int page);
+
+    PageResponse<DeviceInfoView> getAllDeviceByUsername(String username, Integer page);
 
     Device findDeviceByName(String name);
+
+    Boolean requestReturnDevice(String username,String deviceId);
+    Boolean acceptReturnDevice(String deviceId);
 }

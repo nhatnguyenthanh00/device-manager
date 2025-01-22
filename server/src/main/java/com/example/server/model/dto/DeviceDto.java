@@ -10,6 +10,7 @@ public class DeviceDto {
     private String deviceName;
     private String deviceDescription;
     private String deviceCategory;
+    private String deviceImage;
     private int deviceStatus;
-    private String userName;
+    private UUID userId;
 }

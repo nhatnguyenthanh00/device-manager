@@ -25,8 +25,8 @@ export class AdminService {
     );
   }
 
-  getUser(userId: string): Observable<any> {
-    return this.httpService.post<any>('/api/test/v1', { userId: userId, page:'1' });
+  getUser(userId: string, page: number): Observable<any> {
+    return this.httpService.post<any>('/api/admin/user-detail', { userId: userId, page:page });
   }
 
   addUser(user: NewUser): Observable<any> {
@@ -35,5 +35,9 @@ export class AdminService {
 
   deleteUser(userId: string): Observable<any> {
     return this.httpService.delete<any>('/api/admin/user',{id:userId});
+  }
+
+  getUsernames(): Observable<any> {
+    return this.httpService.get<any>('/api/admin/user-name',{});
   }
 }

@@ -268,9 +268,103 @@ input {
 
 .modal-content img {
   grid-row: 1; /* Ảnh nằm ở hàng đầu */
-  max-width: 50px;
-  height: auto;
+  width: auto;
+  max-height: 80px;
   margin-bottom: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown {
+  position: relative;
+  width: 200px;
+}
+
+.dropdown-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.dropdown-input {
+  width: 100%;
+  padding: 10px;
+  padding-right: 30px; /* Chừa chỗ cho mũi tên */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+.dropdown-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+
+/* Mũi tên xuống */
+.dropdown-arrow {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+}
+
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 120px; /* Chiều cao tối đa */
+  overflow-y: auto; /* Hiển thị thanh cuộn */
+  background: #fff;
+  border: 1px solid #ccc;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu li.active {
+  background-color: #007bff !important; 
+  color: white; 
+}
+
+.dropdown-menu li:hover {
+  background: #f0f0f0;
+}
+
+
+
+.readonly-field {
+  background-color: #f5f5f5; /* Xám nhạt */
+  color: #888; /* Màu chữ nhạt */
+  border: 1px solid #ddd; /* Viền nhạt */
+  pointer-events: none; /* Vô hiệu hóa tương tác */
+}
+
+.readonly-field:focus {
+  outline: none;
+}
+
+/* Nút dropdown trong chế độ readonly */
+.dropdown.readonly-field .dropdown-input-wrapper {
+  background-color: #f5f5f5;
+  color: #888;
+}
+
+.dropdown.readonly-field .dropdown-arrow {
+  display: none; /* Ẩn mũi tên trong chế độ readonly */
 }

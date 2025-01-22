@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         logger.error("Exception occurred: {}", ex.getMessage(), ex);
         SampleResponse<Object> response = new SampleResponse<>(
                 null,
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()
+                ex.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

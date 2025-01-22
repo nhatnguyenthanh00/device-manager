@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class DetailUserRequest {
     String userId;
-    String page;
+    Integer page;
 }

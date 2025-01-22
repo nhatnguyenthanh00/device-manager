@@ -2,6 +2,7 @@ import { Component, inject, Input, SimpleChanges, Output, EventEmitter } from '@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeviceService } from '../../../core/services/device.service';
+import { AdminService } from '../../../core/services/admin.service';
 import { NewDevice } from '../../../models/new-device.model';
 import { ToastrService } from 'ngx-toastr';
 import { Device } from '../../../models/device.model';
@@ -15,13 +16,15 @@ import { PageDevice } from '../../../models/page-device.model';
   styleUrl: './device-manage.component.css',
 })
 export class DeviceManageComponent {
-  @Input() getAll!: boolean;
+  @Input() getAll!: string;
   @Input() dataDeviceByAccount: PageDevice | null = null;
-  @Output() deviceUpdated = new EventEmitter<void>();
+  @Output() deviceUpdated = new EventEmitter<any>();
   deviceService = inject(DeviceService);
+  adminService = inject(AdminService);
   toastr = inject(ToastrService);
 
   devices: Device[] = [];
+  usernames: any[] = [];
   search: string = '';
   categoryFilter: string = '';
   statusFilter: string = '';
@@ -48,22 +51,46 @@ export class DeviceManageComponent {
   selectedDeviceId: String = '';
   selectedDeviceUserName: String = '';
   selectedDeviceStatus: number | null = null;
+  selectedOption: string | null = null;
+  isDropdownOpen = false;
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  selectOption(option: string) {
+    if(this.selectedDeviceUserName == option) this.selectedDeviceUserName = '';
+    else{
+      this.selectedDeviceUserName = option;
+    }
+    this.isDropdownOpen = false;
+  }
 
   ngOnInit(): void {
     this.getDevices();
+    if(this.getAll == 'user-detail' || this.getAll == 'device-manager') this.getUsernames();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataDeviceByAccount'] && 
         changes['dataDeviceByAccount'].currentValue && 
-        !this.getAll) {
-      this.getDevicesOfUser();
+        this.getAll == 'user-detail') {
+      this.getDevicesOfUserDetails();
     }
   }
 
   getDevices(): void {
-    if (this.getAll == true) this.getAllDevices();
-    else if (this.getAll == false) this.getDevicesOfUser();
+    if (this.getAll == 'device-manager') this.getAllDevices();
+    else if (this.getAll == 'user-detail') this.getDevicesOfUserDetails();
+    else if(this.getAll = 'my-device') this.getMyDevices();
+  }
+
+  getUsernames(): void {
+    this.adminService.getUsernames().subscribe((response) => {
+      console.log('In getUsernames', response?.data);
+      if(response?.errMsg) this.toastr.error(response?.errMsg, 'Error');
+      else this.usernames = response?.data;
+    });
   }
 
   getAllDevices(): void {
@@ -80,7 +107,22 @@ export class DeviceManageComponent {
     });
   }
 
-  getDevicesOfUser(): void {
+  getMyDevices(): void {
+    console.log('Hahaa',this.getAll);
+    const params = {
+      search: this.search,
+      category: this.categoryFilter,
+      status: this.statusFilter,
+      page: this.currentPage,
+    };
+    this.deviceService.getMyDevice(params).subscribe((response) => {
+      this.devices = response?.data.content;
+      this.totalPages = response?.data?.totalPages; // Adjust depending on your response structure
+      this.totalItems = response?.data?.totalItems;
+    });
+  }
+
+  getDevicesOfUserDetails(): void {
     if (this.dataDeviceByAccount) {
       this.devices = this.dataDeviceByAccount.content;
       this.totalPages = this.dataDeviceByAccount.totalPages;
@@ -103,6 +145,7 @@ export class DeviceManageComponent {
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.deviceUpdated.emit({page: this.currentPage}); 
       this.getDevices();
     }
   }
@@ -110,6 +153,7 @@ export class DeviceManageComponent {
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.deviceUpdated.emit({page: this.currentPage}); 
       this.getDevices();
     }
   }
@@ -174,6 +218,8 @@ export class DeviceManageComponent {
   }
 
   viewDetails(device: Device) {
+
+    console.log('In viewDetails', this.usernames);
     this.selectedDeviceId = device.id;
     this.selectedDeviceUserName =
       device.username == null ? '' : device.username;
@@ -195,6 +241,7 @@ export class DeviceManageComponent {
   closeModalDetails() {
     this.selectedDevice = null;
     this.showDetailsModal = false;
+    this.isDropdownOpen = false;
   }
 
   onImageUpdateChange(event: any) {
@@ -223,10 +270,8 @@ export class DeviceManageComponent {
         this.toastr.error(response?.errMsg, 'Error');
       } else {
         this.toastr.success('Device updated successfully!', 'Success');
-        if(this.getAll == true) this.getDevices()
-        else this.deviceUpdated.emit(); 
-        // this.deviceUpdated.emit();
-        // this.getDevices();
+        if(this.getAll == 'device-manager') this.getDevices()
+        else if(this.getAll == 'user-detail') this.deviceUpdated.emit({page: this.currentPage}); 
         this.closeModalDetails();
       }
     });
@@ -251,11 +296,71 @@ export class DeviceManageComponent {
             this.toastr.error(response?.errMsg, 'Error');
           } else {
             this.toastr.success(`Delete user ${deviceName} succes!`, 'Success');
-            this.deviceUpdated.emit(); 
+            this.deviceUpdated.emit({page: this.currentPage}); 
             this.getDevices();
           }
         });
       }
     });
+  }
+
+  requestReturnDevice(device: Device) {
+    if(device.status == 1) {
+      this.toastr.error('Device is already have request return!', 'Error');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to return device ${device.name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, return it!',
+      cancelButtonText: 'No, cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deviceService.requestReturnDevice(device.id).subscribe((response) => {
+          if (response?.errMsg) {
+            this.toastr.error(response?.errMsg, 'Error');
+          } else {
+            this.toastr.success('Request return device successfully!', 'Success');
+            this.deviceUpdated.emit({page: this.currentPage}); 
+            this.getDevices();
+          }
+        });
+      }
+    })
+  }
+
+  acceptRequestReturnDevice(device: Device) {
+    if(device.status != 1) {
+      this.toastr.error('Device does not have request return!', 'Error');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to accept return device ${device.name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, accept!',
+      cancelButtonText: 'No, cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deviceService.acceptReturnDevice(device.id).subscribe((response) => {
+          if (response?.errMsg) {
+            this.toastr.error(response?.errMsg, 'Error');
+          } else {
+            this.toastr.success('Accept return device successfully!', 'Success');
+            this.deviceUpdated.emit({page: this.currentPage}); 
+            this.getDevices();
+          }
+        });
+      }
+    })
   }
 }
