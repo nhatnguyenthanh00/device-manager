@@ -14,7 +14,7 @@ import com.example.server.service.EntityService;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserService extends EntityService<BkavUserDto> {
+public interface UserService extends EntityService<BkavUser> {
 
     PageResponse<BkavUserDto> getAllUser(String gender, String search, int page);
 

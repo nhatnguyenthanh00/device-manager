@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BkavUserDto save(BkavUserDto user) {
+    public BkavUser save(BkavUser user) {
 
 
 
