@@ -37,19 +37,7 @@ public class TestController {
         return "WELCOME TO LUCIFER";
     }
     @PostMapping("/v1")
-    public SampleResponse<DetailUserResponse> getDetailUser(@RequestBody DetailUserRequest request){
-//        throw new RuntimeException();
-        try{
-            UUID id = UUID.fromString(request.getUserId());
-            Integer page = request.getPage();
-            BkavUserDto data = userService.getById(id);
-            if(data == null) return new SampleResponse<>(null,"Not found user");
-            Pageable pageable = PageRequest.of(page-1,Constants.Common.NUMBER_5_INT, Sort.by("name").ascending());
-            Page<DeviceInfoView> infoViewPage = deviceInfoViewRepository.findDeviceInfoViewByUsername(data.getUsername(),pageable);
-            PageResponse<DeviceInfoView> pageResponse = deviceDao.getAllDeviceByUsername(data.getUsername(),page);
-            return new SampleResponse<>(new DetailUserResponse(data,pageResponse));
-        } catch (Exception e){
-            return new SampleResponse<>(null,"Bad request");
-        }
+    public SampleResponse<DetailUserResponse> getDetailUser(@RequestBody BkavUserDto request){
+        return null;
     }
 }

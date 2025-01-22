@@ -1,5 +1,6 @@
 package com.example.server.service.iservice;
 
+import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.Device;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.response.PageResponse;
@@ -9,7 +10,7 @@ import com.example.server.model.resquest.ActionByIdRequest;
 import com.example.server.model.resquest.UpdateDeviceRequest;
 import com.example.server.service.EntityService;
 
-public interface DeviceService extends EntityService<Device> {
+public interface DeviceService extends EntityService<DeviceDto> {
 
     PageResponse<DeviceInfoView>getAllDevice(String search, String category, String status, int page);
     PageResponse<DeviceInfoView>getDeviceByUsername(String username, String search, String category, String status, int page);

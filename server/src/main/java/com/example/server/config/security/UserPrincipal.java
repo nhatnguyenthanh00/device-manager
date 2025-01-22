@@ -1,6 +1,8 @@
 package com.example.server.config.security;
 
+import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.entity.BkavUser;
+import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.utils.constants.Constants;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,11 +13,11 @@ import java.util.Collections;
 
 public class UserPrincipal implements UserDetails {
 
-    private BkavUser bkavUser;
-    public UserPrincipal(BkavUser bkavUser){
+    private BkavUserDto bkavUser;
+    public UserPrincipal(BkavUserDto bkavUser){
         this.bkavUser = bkavUser;
     }
-    public BkavUser getBkavUser() {
+    public BkavUserDto getBkavUser() {
         return bkavUser;
     }
     @Override

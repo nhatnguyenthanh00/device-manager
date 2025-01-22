@@ -1,11 +1,13 @@
 package com.example.server.controller;
 
+import com.example.server.config.security.JwtService;
 import com.example.server.config.security.UserPrincipal;
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.response.LoginResponse;
 import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.ChangePasswordRequest;
 import com.example.server.model.resquest.LoginRequest;
+import com.example.server.service.AuthenService;
 import com.example.server.service.iservice.UserService;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,13 @@ public class AuthenController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AuthenService authenService;
+
     @PostMapping(Constants.ApiEndpoint.LOGIN_PATH)
     public SampleResponse<LoginResponse> login(@RequestBody LoginRequest request){
         try {
-            String token = userService.verify(request);
+            String token = authenService.verify(request);
             LoginResponse data = new LoginResponse(token);
             return new SampleResponse<>(data);
         } catch (Exception e) {

@@ -30,18 +30,24 @@ public class JpaBkavUserDao implements BkavUserDao {
 
 
     @Override
-    public Optional<BkavUser> getById(UUID id) {
-        return bkavUserRepository.findById(id);
+    public Optional<BkavUserDto> getById(UUID id) {
+        BkavUser user = bkavUserRepository.findById(id).orElse(null);
+        return Optional.of(mapperDto.toDto(user));
     }
 
     @Override
-    public List<BkavUser> getAll() {
-        return bkavUserRepository.findAll();
+    public List<BkavUserDto> getAll() {
+        List<BkavUser> users = bkavUserRepository.findAll();
+        return users.
+                stream().map(mapperDto::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public BkavUser save(BkavUser bkavUser) {
-        return bkavUserRepository.save(bkavUser);
+    public BkavUserDto save(BkavUserDto bkavUserDto) {
+        BkavUser saveUser = mapperDto.toBkavUser(bkavUserDto);
+        BkavUser user = bkavUserRepository.save(saveUser);
+        return mapperDto.toDto(user);
     }
 
     @Override
@@ -73,8 +79,8 @@ public class JpaBkavUserDao implements BkavUserDao {
     }
 
     @Override
-    public BkavUser findByUserName(String username) {
-        return bkavUserRepository.findByUsername(username);
+    public BkavUserDto findByUserName(String username) {
+        return mapperDto.toDto(bkavUserRepository.findByUsername(username));
     }
 
     @Override

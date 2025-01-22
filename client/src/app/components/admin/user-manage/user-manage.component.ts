@@ -86,7 +86,7 @@ export class UserManageComponent {
     // Navigate to user detail page (use Angular Router)
     console.log('View details for user:', user);
     this.homePageService.setActiveTab('user-detail');
-    this.homePageService.setDetaileUserId(user.id);
+    this.homePageService.setDetaileUserId(user.userId);
   }
 
   deleteUser(userId: string,userName: string) {

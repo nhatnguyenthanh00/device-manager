@@ -7,10 +7,10 @@ import com.example.server.model.entity.BkavUser;
 
 import java.util.List;
 
-public interface BkavUserDao extends EntityDao<BkavUser> {
+public interface BkavUserDao extends EntityDao<BkavUserDto> {
     PageResponse<BkavUserDto> getAllUserPaging(String gender, String name, int page);
 
-    BkavUser findByUserName(String username);
+    BkavUserDto findByUserName(String username);
 
     BkavUserDto getProfileByUserName(String username);
 

@@ -33,6 +33,14 @@ export class AdminService {
     return this.httpService.post<any>('/api/admin/user', user);
   }
 
+  updateUser(payload : any):Observable<any> {
+    return this.httpService.put<any>('/api/admin/user',payload);
+  }
+
+  resetPassword(payload : any):Observable<any> {
+    return this.httpService.put<any>('/api/admin/reset-password',payload);
+  }
+
   deleteUser(userId: string): Observable<any> {
     return this.httpService.delete<any>('/api/admin/user',{id:userId});
   }

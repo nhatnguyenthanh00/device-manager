@@ -20,7 +20,11 @@ public class Constants {
         public static final String MALE = "MALE";
         public static final String FEMALE = "FEMALE";
 
+        public static final String USER = "USER";
+        public static final String ADMIN = "ADMIN";
+
         public static final List<String> ALL_GENDER = List.of("MALE","FEMALE");
+        public static final List<String> ALL_ROLE = List.of("USER","ADMIN");
 
         public static final List<String> ALL_CATEGORY = List.of("LAPTOP","PC","MOUSE","PHONE");
 

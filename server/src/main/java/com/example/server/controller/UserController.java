@@ -1,16 +1,16 @@
 package com.example.server.controller;
 
+import com.example.server.config.security.UserPrincipal;
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.PageResponse;
 import com.example.server.model.response.SampleResponse;
-import com.example.server.model.resquest.CreateNewUserRequest;
-import com.example.server.model.resquest.ActionByIdRequest;
-import com.example.server.model.resquest.DetailUserRequest;
+import com.example.server.model.resquest.*;
 import com.example.server.service.iservice.UserService;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,22 +39,32 @@ public class UserController {
         return new SampleResponse<>(data);
     }
 
-    /**
-     * @description Create new user
-     * @endpoint  POST /api/admin/user
-     * @param    request CreateNewUserRequest object containing user information
-     * @return    Boolean
-     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/user")
-    public SampleResponse<Boolean> createUser(@RequestBody CreateNewUserRequest request) {
-        return userService.saveNewUser(request);
+    public SampleResponse<Boolean> createUser(@RequestBody BkavUserDto request) {
+        try{
+            userService.save(request);
+            return new SampleResponse<>(true);
+        } catch (Exception e){
+            return new SampleResponse<>(false, e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/user")
-    public SampleResponse<Boolean> updateUser(@RequestBody BkavUserDto userDto) {
-        return userService.updateUser(userDto);
+    public SampleResponse<Boolean> updateUser(@RequestBody BkavUserDto request) {
+        try{
+            userService.save(request);
+            return new SampleResponse<>(true);
+        } catch (Exception e){
+            return new SampleResponse<>(false, e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/reset-password")
+    public SampleResponse<Boolean> resetPassword(@RequestBody ResetPasswordRequest request) throws Exception {
+        return userService.resetPassword(request);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

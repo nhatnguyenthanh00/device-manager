@@ -1,5 +1,6 @@
 package com.example.server.repository.dao.impl;
 
+import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.model.response.PageResponse;
 import com.example.server.repository.BkavUserRepository;
@@ -8,6 +9,7 @@ import com.example.server.model.entity.Device;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.repository.view.DeviceInfoViewRepository;
 import com.example.server.repository.DeviceRepository;
+import com.example.server.utils.MapperDto;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class JpaDeviceDao implements DeviceDao {
@@ -35,19 +38,26 @@ public class JpaDeviceDao implements DeviceDao {
     @Autowired
     DeviceInfoViewRepository deviceInfoViewRepository;
 
+    @Autowired
+    MapperDto mapperDto;
+
     @Override
-    public Optional<Device> getById(UUID id) {
-        return deviceRepository.findById(id);
+    public Optional<DeviceDto> getById(UUID id) {
+        return Optional.of(mapperDto.toDto(deviceRepository.findById(id).orElse(null)));
     }
 
     @Override
-    public List<Device> getAll() {
-        return deviceRepository.findAll();
+    public List<DeviceDto> getAll() {
+        List<Device> devices = deviceRepository.findAll();
+        return devices.stream()
+                .map(mapperDto::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public Device save(Device device) {
-        return deviceRepository.save(device);
+    public DeviceDto save(DeviceDto deviceDto) {
+        Device saveDevice = mapperDto.toDevice(deviceDto);
+        Device device = deviceRepository.save(saveDevice);
+        return mapperDto.toDto(device);
     }
 
     @Override
@@ -126,8 +136,8 @@ public class JpaDeviceDao implements DeviceDao {
     }
 
     @Override
-    public Device findDeviceByName(String name){
-        return deviceRepository.findByName(name);
+    public DeviceDto findDeviceByName(String name){
+        return mapperDto.toDto(deviceRepository.findByName(name));
     }
 
     @Override

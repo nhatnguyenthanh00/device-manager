@@ -1,5 +1,6 @@
 package com.example.server.repository.dao.idao;
 
+import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.response.PageResponse;
 import com.example.server.repository.dao.EntityDao;
 import com.example.server.model.entity.Device;
@@ -8,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface DeviceDao extends EntityDao<Device> {
+public interface DeviceDao extends EntityDao<DeviceDto> {
     List<DeviceInfoView> getViewOfDevice();
 
     PageResponse<DeviceInfoView> getAllDevicePaging(String search, String category, Integer status, int page);
@@ -16,7 +17,7 @@ public interface DeviceDao extends EntityDao<Device> {
 
     PageResponse<DeviceInfoView> getAllDeviceByUsername(String username, Integer page);
 
-    Device findDeviceByName(String name);
+    DeviceDto findDeviceByName(String name);
 
     Boolean requestReturnDevice(String username,String deviceId);
     Boolean acceptReturnDevice(String deviceId);

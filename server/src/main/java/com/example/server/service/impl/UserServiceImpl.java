@@ -1,21 +1,14 @@
 package com.example.server.service.impl;
 
+import com.example.server.config.security.UserPrincipal;
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.SampleResponse;
-import com.example.server.model.resquest.CreateNewUserRequest;
-import com.example.server.model.resquest.ActionByIdRequest;
-import com.example.server.model.resquest.DetailUserRequest;
+import com.example.server.model.resquest.*;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.repository.dao.idao.DeviceDao;
-import com.example.server.repository.dao.impl.JpaBkavUserDao;
-import com.example.server.model.entity.BkavUser;
-import com.example.server.config.security.UserPrincipal;
-import com.example.server.repository.BkavUserRepository;
 import com.example.server.model.response.PageResponse;
-import com.example.server.model.resquest.LoginRequest;
-import com.example.server.config.security.JwtService;
 import com.example.server.repository.view.DeviceInfoViewRepository;
 import com.example.server.service.iservice.UserService;
 import com.example.server.utils.MapperDto;
@@ -23,14 +16,13 @@ import com.example.server.utils.constants.Constants;
 import com.example.server.utils.enums.Gender;
 import com.example.server.utils.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -43,20 +35,7 @@ public class UserServiceImpl implements UserService {
     DeviceDao deviceDao;
 
     @Autowired
-    JpaBkavUserDao jpaBkavUserDao;
-
-    @Autowired
-    BkavUserRepository bkavUserRepository;
-
-    @Autowired
     DeviceInfoViewRepository deviceInfoViewRepository;
-
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtService jwtService;
 
     @Autowired
     MapperDto mapperDto;
@@ -70,10 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BkavUserDto getById(UUID id) {
-        BkavUser user = bkavUserDao.getById(id).orElse(null);
-        if (user == null) return null;
-//        return new BkavUserDto(user);
-        return mapperDto.toDto(user);
+        return bkavUserDao.getById(id).orElse(null);
     }
 
     @Override
@@ -81,14 +57,10 @@ public class UserServiceImpl implements UserService {
         return bkavUserDao.getProfileByUserName(userName);
     }
 
-//    @Override
-//    public BkavUser getByUsername(String username) {
-//        return bkavUserDao.findByUserName(username);
-//    }
 
     @Override
     public Integer changePassWord(String username, String oldPassword, String newPassword) {
-        BkavUser user = bkavUserDao.findByUserName(username);
+        BkavUserDto user = bkavUserDao.findByUserName(username);
         if (!encoder.matches(oldPassword, user.getPassword())) {
             return -1;
         }
@@ -103,38 +75,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String verify(LoginRequest request) {
-        Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        if (authentication.isAuthenticated()) {
-            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            return jwtService.generateToken(userPrincipal);
+    public SampleResponse<Boolean> resetPassword(ResetPasswordRequest request) throws Exception {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal)principal;
+        if(!encoder.matches(request.getAdminPassword(), userPrincipal.getPassword())) {
+            throw new Exception("Admin password incorrect");
         }
-        return null;
-    }
-
-    @Override
-    public SampleResponse<Boolean> saveNewUser(CreateNewUserRequest request) {
-
-        if(!Constants.Common.ALL_GENDER.contains(request.getGender())){
-            return new SampleResponse<>(false,"Invalid gender");
-        }
-
-        BkavUser newUser = new BkavUser();
-        newUser.setUsername(request.getUsername());
-        newUser.setName(request.getName());
-        newUser.setPassword(request.getPassword());
-        newUser.setRole(Role.USER);
-        newUser.setGender(request.getGender().equals(Constants.Common.MALE) ? Gender.MALE : Gender.FEMALE);
-        BkavUser user = save(newUser);
-        if (user == null) return new SampleResponse<>(false, "Username already exists");
+        BkavUserDto userDto = new BkavUserDto();
+        userDto.setUserId(request.getUserId());
+        userDto.setPassword(request.getPassword());
+        save(userDto);
         return new SampleResponse<>(true);
-    }
-
-    @Override
-    public SampleResponse<Boolean> updateUser(BkavUserDto bkavUserDto) {
-
-        return null;
     }
 
 
@@ -172,21 +123,54 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BkavUser save(BkavUser user) {
+    public BkavUserDto save(BkavUserDto userDto) throws Exception {
 
-
-
-        BkavUser findUser = bkavUserDao.findByUserName(user.getUsername());
-        if (findUser != null) {
-            return null;
+        UUID userId = userDto.getUserId();
+        // case create
+        if(userId == null){
+            //validate
+            if(!validateInputCreateUser(userDto)) throw new Exception("Invalid input");
+            //check username existed or not
+            BkavUserDto findUser = bkavUserDao.findByUserName(userDto.getUsername());
+            if(findUser != null) throw new Exception("Username already exists");
+            BkavUserDto newUser = new BkavUserDto();
+            newUser.setName(userDto.getName());
+            newUser.setUsername(userDto.getUsername());
+            newUser.setPassword(encoder.encode(userDto.getPassword()));
+            newUser.setRole(Role.USER);
+            newUser.setGender(userDto.getGender());
+            return bkavUserDao.save(newUser);
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-        return bkavUserDao.save(user);
+        // case update
+        else{
+            if(!validateInputUpdateUser(userDto)) throw new Exception("Invalid input");
+            BkavUserDto findUser = bkavUserDao.getById(userId).orElse(null);
+            if(findUser == null) throw new Exception("Not found user");
+            String username = userDto.getUsername();;
+            if(!isNullOrEmpty(username)){
+                if(!username.equals(findUser.getUsername())){
+                    BkavUserDto findExistUser = bkavUserDao.findByUserName(username);
+                    if(findExistUser != null) throw new Exception("Username already exists");
+                }
+                findUser.setUsername(userDto.getUsername());
+            }
+            String name = userDto.getName();
+            String password = userDto.getPassword();
+            Role role = userDto.getRole();
+            Gender gender = userDto.getGender();
+            if(!isNullOrEmpty(name)) findUser.setName(name);
+            if(!isNullOrEmpty(password)) findUser.setPassword(encoder.encode(password));
+            if(role != null) findUser.setRole(role);
+            if(gender != null) findUser.setGender(gender);
+
+            return bkavUserDao.save(findUser);
+
+        }
     }
 
     @Override
     public boolean deleteById(UUID id) {
-        BkavUser findUser = bkavUserDao.getById(id).orElse(null);
+        BkavUserDto findUser = bkavUserDao.getById(id).orElse(null);
         if (findUser == null) return false;
         if (findUser.getRole().name().equals("USER")) {
             if(deviceInfoViewRepository.countDeviceInfoViewByUsername(findUser.getUsername()) > 0){
@@ -197,4 +181,43 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    private static boolean isNullOrEmpty(String str){
+        if(str == null) return true;
+        if(str.trim().isEmpty()) return true;
+        return false;
+    }
+
+    private static boolean validateInputCreateUser(BkavUserDto bkavUserDto){
+        if(isNullOrEmpty(bkavUserDto.getName())
+                || isNullOrEmpty(bkavUserDto.getUsername())) return false;
+        return true;
+    }
+
+    private static boolean validateInputUpdateUser(BkavUserDto bkavUserDto) {
+        String nameRegex = "^[\\p{L}\\s]+$";  // Matches letters (including Vietnamese) and spaces
+        String usernameRegex = "^[a-zA-Z0-9]{6,}$";  // Alphanumeric, min 6 chars, no spaces
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()])[A-Za-z\\d!@#$%^&*()]{8,}$";
+
+        if (!isNullOrEmpty(bkavUserDto.getName())) {
+            if (!Pattern.matches(nameRegex, bkavUserDto.getName())) {
+                return false;
+            }
+        }
+
+        if (!isNullOrEmpty(bkavUserDto.getUsername())) {
+            if (!Pattern.matches(usernameRegex, bkavUserDto.getUsername())) {
+                return false;
+            }
+        }
+
+        if (!isNullOrEmpty(bkavUserDto.getPassword())) {
+            if (!Pattern.matches(passwordRegex, bkavUserDto.getPassword())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
