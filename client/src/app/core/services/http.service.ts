@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { from, Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +9,9 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 export class HttpService {
   constructor(private http: HttpClient) {}
 
-  get<T>(url: string, params: { [key: string]: any }): Observable<T> {
+  get<T>(url: string, params?: { [key: string]: any }): Observable<T> {
     const httpParams = new HttpParams({
-      fromObject: params, // Chuyển object thành query parameters
+      fromObject: params,
     });
     return this.http.get<T>(`${environment.apiBaseUrl}${url}`, {
       params: httpParams,
@@ -28,9 +26,9 @@ export class HttpService {
     return this.http.put<T>(`${environment.apiBaseUrl}${url}`, body);
   }
 
-  delete<T>(url: string, body: any): Observable<any> {
+  delete<T>(url: string, params?: any): Observable<any> {
     return this.http.delete<T>(`${environment.apiBaseUrl}${url}`, {
-      body: body // This is the key change - wrap the body in a 'body' property
+      params: params
     });
   }
 }

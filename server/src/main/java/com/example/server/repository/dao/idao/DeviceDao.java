@@ -10,8 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface DeviceDao extends EntityDao<DeviceDto> {
-    List<DeviceInfoView> getViewOfDevice();
-
+    
     PageResponse<DeviceInfoView> getAllDevicePaging(String search, String category, Integer status, int page);
     PageResponse<DeviceInfoView> getAllDevicePagingByUsername(String username, String search, String category, Integer status, int page);
 

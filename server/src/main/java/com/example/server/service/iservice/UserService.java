@@ -24,7 +24,7 @@ public interface UserService extends EntityService<BkavUserDto> {
     Integer changePassWord(String username, String oldPassword, String newPassword);
 
     SampleResponse<Boolean> resetPassword(ResetPasswordRequest request) throws Exception;
-    SampleResponse<Boolean> deleteUserById(ActionByIdRequest request);
+    SampleResponse<Boolean> deleteUserById(String id);
 
     SampleResponse<List<String>> getAllUsername();
 

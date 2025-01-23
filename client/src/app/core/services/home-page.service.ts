@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -15,12 +16,11 @@ export class HomePageService {
     this.activeTabSource.next(tabId);
   }
 
-  setDetaileUserId(userId: string) {
+  setDetailUserId(userId: string) {
     this.detailUserId.next(userId);
   }
 
-  // Optional: Get the current value of userId
-  // getCurrentUserId(): string | null {
-  //   return this.detailUserId.getValue();
-  // }
+  getCurrentUserId(): string | null {
+    return this.detailUserId.getValue();
+  }
 }

@@ -65,10 +65,6 @@ public class JpaDeviceDao implements DeviceDao {
         deviceRepository.deleteById(id);
     }
 
-    @Override
-    public List<DeviceInfoView> getViewOfDevice(){
-        return deviceInfoViewRepository.findAll();
-    }
 
     @Override
     public PageResponse<DeviceInfoView> getAllDevicePaging(String search, String category, Integer status, int page) {

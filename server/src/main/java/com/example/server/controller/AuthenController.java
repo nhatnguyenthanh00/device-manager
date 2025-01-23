@@ -24,6 +24,12 @@ public class AuthenController {
     @Autowired
     AuthenService authenService;
 
+    /**
+     * @description Authenticate user and generate a JWT token
+     * @endpoint  POST /api/login
+     * @param    request LoginRequest containing username and password
+     * @return   LoginResponse with JWT token if authentication is successful
+     */
     @PostMapping(Constants.ApiEndpoint.LOGIN_PATH)
     public SampleResponse<LoginResponse> login(@RequestBody LoginRequest request){
         try {
@@ -35,6 +41,11 @@ public class AuthenController {
         }
     }
 
+    /**
+     * @description Retrieve the profile of the authenticated user
+     * @endpoint  GET /api/profile
+     * @return   BkavUserDto containing the user's profile information
+     */
     @GetMapping("/profile")
     public SampleResponse<BkavUserDto> getMyProfile(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -43,6 +54,12 @@ public class AuthenController {
         return new SampleResponse<>(userDto);
     }
 
+    /**
+     * @description Change the password for the authenticated user
+     * @endpoint  POST /api/changePassword
+     * @param    request ChangePasswordRequest containing old and new passwords
+     * @return   Boolean true if the password is changed successfully
+     */
     @PostMapping("/changePassword")
     public SampleResponse<Boolean> changePassword(@RequestBody ChangePasswordRequest request){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

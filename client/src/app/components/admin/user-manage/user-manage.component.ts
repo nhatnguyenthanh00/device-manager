@@ -5,7 +5,6 @@ import { User } from '../../../models/user.model';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
 import { NewUser } from '../../../models/new-user.model';
-import { SampleData } from '../../../models/sample-data.model';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { HomePageService } from '../../../core/services/home-page.service';
@@ -86,7 +85,7 @@ export class UserManageComponent {
     // Navigate to user detail page (use Angular Router)
     console.log('View details for user:', user);
     this.homePageService.setActiveTab('user-detail');
-    this.homePageService.setDetaileUserId(user.userId);
+    this.homePageService.setDetailUserId(user.userId);
   }
 
   deleteUser(userId: string,userName: string) {

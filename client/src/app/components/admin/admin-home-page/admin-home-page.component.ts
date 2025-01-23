@@ -7,6 +7,15 @@ import { UserProfileComponent } from '../../common/user-profile/user-profile.com
 import { CommonModule } from '@angular/common';
 import { BaseDashboardComponent } from '../../common/base-dashboard/base-dashboard.component';
 import { DashboardConfig } from '../../../models/dashboard.model';
+
+/**
+ * @description This component represents the admin home page.
+ * It is the entry point to the admin panel, where the admin can manage users, devices, and their profile.
+ * The component dynamically loads different management components based on the active tab.
+ * 
+ * @imports CommonModule, HeaderComponent, BaseDashboardComponent
+ * @component UserManageComponent, UserDetailManageComponent, DeviceManageComponent, UserProfileComponent
+ */
 @Component({
   selector: 'app-admin-home-page',
   standalone: true,

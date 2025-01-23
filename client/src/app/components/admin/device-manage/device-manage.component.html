@@ -254,7 +254,8 @@
                 <li
                   *ngFor="let option of usernames"
                   (click)="selectOption(option)"
-                  [class.readonly-field]="option === selectedDeviceUserName"
+                  [class.readonly-field]="getAll === 'my-device' && option === selectedDeviceUserName"
+                  [class.active]="option === selectedDeviceUserName"
                 >
                   {{ option }}
                 </li>

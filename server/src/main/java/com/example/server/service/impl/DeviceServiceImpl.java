@@ -5,21 +5,19 @@ import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.response.PageResponse;
 import com.example.server.model.response.SampleResponse;
-import com.example.server.model.resquest.CreateNewDeviceRequest;
 import com.example.server.model.resquest.ActionByIdRequest;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.repository.dao.idao.DeviceDao;
-import com.example.server.model.entity.Device;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.resquest.UpdateDeviceRequest;
 import com.example.server.service.iservice.DeviceService;
-import com.example.server.utils.constants.Constants;
 import com.example.server.utils.enums.DeviceCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
@@ -32,12 +30,38 @@ public class DeviceServiceImpl implements DeviceService {
     BkavUserDao bkavUserDao;
 
     @Override
-    public DeviceDto save(DeviceDto deviceDto) {
+    public DeviceDto save(DeviceDto deviceDto) throws Exception {
 
-        DeviceDto findDevice = deviceDao.findDeviceByName(deviceDto.getName());
-        if (findDevice != null) return null;
+        UUID id = deviceDto.getId();
+        // case create
+        if(id == null){
 
-        return deviceDao.save(deviceDto);
+            if(!validateInputCreateDevice(deviceDto)) throw new Exception("Invalid input");
+
+            String name = deviceDto.getName();
+            DeviceDto findDevice = deviceDao.findDeviceByName(name);
+            if(findDevice != null) throw new Exception("Name already existed");
+            String description = deviceDto.getDescription();
+            String image = deviceDto.getImage();
+            DeviceCategory category = deviceDto.getCategory();
+
+            DeviceDto newDevice = new DeviceDto();
+            newDevice.setName(name);
+            newDevice.setDescription(description);
+            newDevice.setCategory(category);
+            newDevice.setImage(image);
+            newDevice.setStatus(-1);
+
+            return deviceDao.save(newDevice);
+        }
+        else{
+            return deviceDao.save(deviceDto);
+        }
+
+//        DeviceDto findDevice = deviceDao.findDeviceByName(deviceDto.getName());
+//        if (findDevice != null) return null;
+//
+//        return deviceDao.save(deviceDto);
     }
 
     @Override
@@ -90,14 +114,14 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         if(!foundDevice.getName().equals(request.getName())){
-            DeviceDto foundByNameDevice = deviceDao.findDeviceByName(request.getName());
-            if(foundByNameDevice != null){
+            DeviceDto findExistDevice = deviceDao.findDeviceByName(request.getName());
+            if(findExistDevice != null){
                 return new SampleResponse<>(false,"Device name existed");
             }
         }
 
 
-        if (!username.isEmpty()) {
+        if (!isNullOrEmpty(username)) {
             BkavUserDto bkavUser = bkavUserDao.findByUserName(username);
             if(bkavUser == null){
                 return new SampleResponse<>(false,"Not found user "+username);
@@ -124,31 +148,9 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public SampleResponse<Boolean> saveNewDevice(CreateNewDeviceRequest request) {
-        if(!Constants.Common.ALL_CATEGORY.contains(request.getCategory())){
-            return new SampleResponse<>(false,"Invalid category");
-        }
-
-        DeviceDto newDevice = new DeviceDto();
-        newDevice.setName(request.getName());
-        newDevice.setDescription(request.getDescription());
-        if(request.getCategory().equals("PC")) newDevice.setCategory(DeviceCategory.PC);
-        if(request.getCategory().equals("LAPTOP")) newDevice.setCategory(DeviceCategory.LAPTOP);
-        if(request.getCategory().equals("MOUSE")) newDevice.setCategory(DeviceCategory.MOUSE);
-        if(request.getCategory().equals("PHONE")) newDevice.setCategory(DeviceCategory.PHONE);
-        newDevice.setImage(request.getImage());
-        newDevice.setStatus(-1);
-        DeviceDto saveDevice = save(newDevice);
-        if(saveDevice == null){
-            return new SampleResponse<>(false,"Name already exists");
-        }
-        return new SampleResponse<>(true);
-    }
-
-    @Override
-    public SampleResponse<Boolean> deleteDeviceById(ActionByIdRequest request) {
+    public SampleResponse<Boolean> deleteDeviceById(String idRequest) {
         try{
-            UUID id = UUID.fromString(request.getId());
+            UUID id = UUID.fromString(idRequest);
             boolean check = deleteById(id);
             if (check){
                 return new SampleResponse<>( true);
@@ -173,5 +175,21 @@ public class DeviceServiceImpl implements DeviceService {
         Boolean check = deviceDao.acceptReturnDevice(request.getId());
         if(!check) return new SampleResponse<>(false,"Accept return fail");
         return new SampleResponse<>(true);
+    }
+
+    private static boolean isNullOrEmpty(String str){
+        if(str == null) return true;
+        if(str.trim().isEmpty()) return true;
+        return false;
+    }
+
+    private static boolean validateInputCreateDevice(DeviceDto deviceDto){
+        if(isNullOrEmpty(deviceDto.getName())
+                || deviceDto.getCategory() == null) return false;
+        String nameRegex = "^[a-zA-Z0-9]{6,}$";
+        if (!Pattern.matches(nameRegex, deviceDto.getName())) {
+            return false;
+        }
+        return true;
     }
 }

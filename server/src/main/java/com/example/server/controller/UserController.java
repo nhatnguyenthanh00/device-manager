@@ -39,6 +39,12 @@ public class UserController {
         return new SampleResponse<>(data);
     }
 
+    /**
+     * @description Create a new user
+     * @endpoint  POST /api/admin/user
+     * @param    request User information to create
+     * @return   Boolean true if successful, otherwise false with error message
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/user")
     public SampleResponse<Boolean> createUser(@RequestBody BkavUserDto request) {
@@ -50,6 +56,12 @@ public class UserController {
         }
     }
 
+    /**
+     * @description Update user information
+     * @endpoint  PUT /api/admin/user
+     * @param    request User information to update
+     * @return   SampleResponse<Boolean> true if successful, otherwise false with error message
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/user")
     public SampleResponse<Boolean> updateUser(@RequestBody BkavUserDto request) {
@@ -61,22 +73,36 @@ public class UserController {
         }
     }
 
+    /**
+     * @description Reset user password
+     * @endpoint  PUT /api/admin/reset-password
+     * @param    request View ResetPasswordRequest to see details of the required fields
+     * @return   Boolean true if password reset is successful
+     * @throws   Exception if the reset fails
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/reset-password")
     public SampleResponse<Boolean> resetPassword(@RequestBody ResetPasswordRequest request) throws Exception {
         return userService.resetPassword(request);
     }
 
+    /**
+     * @description Delete a user by ID
+     * @endpoint  DELETE /api/admin/user
+     * @param    id ID of the user to delete
+     * @return   Boolean true if deletion is successful
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/user")
-    public SampleResponse<Boolean> deleteUser(@RequestBody ActionByIdRequest request){
-        return userService.deleteUserById(request);
+    public SampleResponse<Boolean> deleteUser(@RequestParam String id ){
+        return userService.deleteUserById(id);
     }
 
     /**
-     *
-     * @param request DeleteUserRequest
-     * @return BkavUserDto
+     * @description Get detailed user information
+     * @endpoint  POST /api/admin/user-detail
+     * @param    request View DetailUserRequest to see details of the required fields
+     * @return   DetailUserResponse containing user details
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/user-detail")
@@ -84,6 +110,11 @@ public class UserController {
         return userService.getDetailUser(request);
     }
 
+    /**
+     * @description Get all usernames
+     * @endpoint  GET /api/admin/user-name
+     * @return   List<String> list of all usernames
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/user-name")
     public SampleResponse<List<String>> getAllUsername(){

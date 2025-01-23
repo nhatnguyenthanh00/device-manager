@@ -90,9 +90,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public SampleResponse<Boolean> deleteUserById(ActionByIdRequest request) {
+    public SampleResponse<Boolean> deleteUserById(String idRequest) {
         try{
-            UUID id = UUID.fromString(request.getId());
+            UUID id = UUID.fromString(idRequest);
             boolean check = deleteById(id);
             if (check){
                 return new SampleResponse<>(true);
@@ -191,6 +191,14 @@ public class UserServiceImpl implements UserService {
     private static boolean validateInputCreateUser(BkavUserDto bkavUserDto){
         if(isNullOrEmpty(bkavUserDto.getName())
                 || isNullOrEmpty(bkavUserDto.getUsername())) return false;
+        String nameRegex = "^[\\p{L}\\s]+$";  // Matches letters (including Vietnamese) and spaces
+        String usernameRegex = "^[a-zA-Z0-9]{6,}$";  // Alphanumeric, min 6 chars, no spaces
+        if (!Pattern.matches(nameRegex, bkavUserDto.getName())) {
+            return false;
+        }
+        if (!Pattern.matches(usernameRegex, bkavUserDto.getUsername())) {
+            return false;
+        }
         return true;
     }
 
