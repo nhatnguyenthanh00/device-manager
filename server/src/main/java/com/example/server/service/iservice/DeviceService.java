@@ -2,22 +2,17 @@ package com.example.server.service.iservice;
 
 import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.view.DeviceInfoView;
-import com.example.server.model.response.PageResponse;
+import com.example.server.model.response.PageView;
 import com.example.server.model.response.SampleResponse;
-import com.example.server.model.resquest.ActionByIdRequest;
-import com.example.server.model.resquest.UpdateDeviceRequest;
 import com.example.server.service.EntityService;
 
 public interface DeviceService extends EntityService<DeviceDto> {
 
-    PageResponse<DeviceInfoView>getAllDevice(String search, String category, String status, int page);
-    PageResponse<DeviceInfoView>getDeviceByUsername(String username, String search, String category, String status, int page);
-
-    SampleResponse<Boolean> updateDevice(UpdateDeviceRequest request);
+    PageView<DeviceInfoView> findAllDevice(String search, String category, Integer status, int page);
+    PageView<DeviceInfoView> findDeviceByUsername(String username, String search, String category, Integer status, int page);
 
 
-    SampleResponse<Boolean> deleteDeviceById(String id);
 
-    SampleResponse<Boolean> requestReturnDevice(ActionByIdRequest request);
-    SampleResponse<Boolean> acceptReturnDevice(ActionByIdRequest request);
+    SampleResponse<Boolean> requestReturnDevice(String username, String id);
+    SampleResponse<Boolean> acceptReturnDevice(String username, String id);
 }

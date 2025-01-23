@@ -30,7 +30,7 @@
     </select>
 
     <!-- Button to Create New Device -->
-    <button *ngIf="getAll == 'device-manager'" (click)="onCreateNewDevice()">
+    <button *ngIf="getAll == 'device-manager'" (click)="onOpenModalCreateNewDevice()">
       <i class="fas fa-plus"></i>
     </button>
   </div>
@@ -153,7 +153,7 @@
         <input
           type="file"
           id="image"
-          (change)="onImageChange($event)"
+          (change)="onImageChange($event,'create')"
           accept="image/*"
         />
       </div>
@@ -254,10 +254,10 @@
                 <li
                   *ngFor="let option of usernames"
                   (click)="selectOption(option)"
-                  [class.readonly-field]="getAll === 'my-device' && option === selectedDeviceUserName"
-                  [class.active]="option === selectedDeviceUserName"
+                  [class.readonly-field]="getAll === 'my-device' && option.username === selectedDeviceUserName"
+                  [class.active]="option.username === selectedDeviceUserName"
                 >
-                  {{ option }}
+                  {{ option.username }}
                 </li>
               </ul>
             </div>
@@ -279,7 +279,7 @@
           *ngIf="getAll !== 'my-device'"
           type="file"
           id="detail_image"
-          (change)="onImageUpdateChange($event)"
+          (change)="onImageChange($event,'update')"
           accept="image/*"
         />
       </div>

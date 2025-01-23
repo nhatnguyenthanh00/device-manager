@@ -18,8 +18,13 @@ export class HttpService {
     });
   }
 
-  post<T>(url: string, body: any): Observable<any> {
-    return this.http.post<T>(`${environment.apiBaseUrl}${url}`, body);
+  post<T>(url: string, body: any, params?: { [key: string]: any }): Observable<any> {
+    const httpParams = new HttpParams({
+      fromObject: params,
+    });
+    return this.http.post<T>(`${environment.apiBaseUrl}${url}`, body, {
+      params: httpParams
+    });
   }
 
   put<T>(url: string, body: any): Observable<any> {

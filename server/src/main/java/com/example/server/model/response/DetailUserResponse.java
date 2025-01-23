@@ -9,5 +9,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class DetailUserResponse {
     private BkavUserDto userDetail;
-    private PageResponse<DeviceInfoView> devices;
+    private PageView<DeviceInfoView> devices;
 }

@@ -28,7 +28,5 @@ public interface DeviceInfoViewRepository extends JpaRepository<DeviceInfoView, 
 
     Page<DeviceInfoView> findDeviceInfoViewByUsername(String username, Pageable pageable);
 
-    DeviceInfoView findDeviceInfoViewById(UUID id);
-
     long countDeviceInfoViewByUsername(String username);
 }

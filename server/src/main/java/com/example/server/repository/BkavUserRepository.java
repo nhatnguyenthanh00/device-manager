@@ -1,5 +1,6 @@
 package com.example.server.repository;
 
+import com.example.server.model.dto.SelectUser;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.utils.enums.Gender;
 import org.springframework.data.domain.Page;
@@ -18,10 +19,9 @@ public interface BkavUserRepository extends JpaRepository<BkavUser, UUID> {
 
     Page<BkavUser> findBkavUserByNameContainsIgnoreCase(String name, Pageable pageable);
 
-//    BkavUser updateBkavUserById
     Page<BkavUser> findBkavUserByGenderAndNameContainingIgnoreCase(Gender gender, String name, Pageable pageable);
 
-    @Query("SELECT u.username FROM BkavUser u")
-    List<String> findAllUsernames();
+    @Query("SELECT new com.example.server.model.dto.SelectUser(u.id,u.username) FROM BkavUser u")
+    List<SelectUser> findAllSelectUser();
 
 }

@@ -160,17 +160,14 @@ export class UserDetailManageComponent {
       next: (response) => {
         console.log('In onResetPassword');
         console.log(response);
-        if (response?.errMsg) {
-          this.toastr.error(response?.errMsg, 'Error');
-        } else {
+        if(response && response.errMsg == null && response.data == true){
           this.toastr.success('User password reset successfully!', 'Success');
           this.getUserDetails();
         }
-      },
-      error: (error) => {
-        // Bắt error ở đây
-        this.toastr.error(error.error.errMsg, 'Error');
-      },
+        else{
+          this.toastr.error(response?.errMsg || 'Internal server error', 'Error');
+        }
+      }
     });
   }
 }

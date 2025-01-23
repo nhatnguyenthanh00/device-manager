@@ -27,9 +27,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   // If the user is authenticated, check if the token is still valid
   if (currentToken && !tokenService.isTokenValid(currentToken)) {
     localStorage.removeItem('currentToken');
+    toastr.error('Token expired, please login again.');
     router.navigate(['/login']);
     // Show a toast message indicating that the token has expired
-    toastr.error('Token expired, please login again.');
     return false;
   }
   

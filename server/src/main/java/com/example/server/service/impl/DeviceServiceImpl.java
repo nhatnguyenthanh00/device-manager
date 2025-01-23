@@ -1,19 +1,16 @@
 package com.example.server.service.impl;
 
-import com.example.server.config.security.UserPrincipal;
+import ch.qos.logback.core.util.StringUtil;
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.dto.DeviceDto;
-import com.example.server.model.response.PageResponse;
+import com.example.server.model.response.PageView;
 import com.example.server.model.response.SampleResponse;
-import com.example.server.model.resquest.ActionByIdRequest;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.repository.dao.idao.DeviceDao;
 import com.example.server.model.entity.view.DeviceInfoView;
-import com.example.server.model.resquest.UpdateDeviceRequest;
 import com.example.server.service.iservice.DeviceService;
-import com.example.server.utils.enums.DeviceCategory;
+import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -30,163 +27,105 @@ public class DeviceServiceImpl implements DeviceService {
     BkavUserDao bkavUserDao;
 
     @Override
-    public DeviceDto save(DeviceDto deviceDto) throws Exception {
+    public SampleResponse<DeviceDto> save(DeviceDto deviceDto) {
+
+        if (!validateInputDevice(deviceDto)) {
+            return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
+        }
 
         UUID id = deviceDto.getId();
         // case create
-        if(id == null){
-
-            if(!validateInputCreateDevice(deviceDto)) throw new Exception("Invalid input");
+        if (id == null) {
+            
 
             String name = deviceDto.getName();
             DeviceDto findDevice = deviceDao.findDeviceByName(name);
-            if(findDevice != null) throw new Exception("Name already existed");
-            String description = deviceDto.getDescription();
-            String image = deviceDto.getImage();
-            DeviceCategory category = deviceDto.getCategory();
+            if (findDevice != null) {
+                return new SampleResponse<>(null, Constants.ErrorMessage.NAME_EXISTED);
+            }
+            deviceDto.setUserId(null);
+            deviceDto.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
 
-            DeviceDto newDevice = new DeviceDto();
-            newDevice.setName(name);
-            newDevice.setDescription(description);
-            newDevice.setCategory(category);
-            newDevice.setImage(image);
-            newDevice.setStatus(-1);
+            return new SampleResponse<>(deviceDao.save(deviceDto));
+        } else {
+            DeviceDto foundDevice = deviceDao.findById(id).orElse(null);
+            if (foundDevice == null) {
+                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_DEVICE);
+            }
 
-            return deviceDao.save(newDevice);
+            if (!foundDevice.getName().equals(deviceDto.getName())) {
+                DeviceDto findExistDevice = deviceDao.findDeviceByName(deviceDto.getName());
+                if (findExistDevice != null) {
+                    return new SampleResponse<>(null, Constants.ErrorMessage.NAME_EXISTED);
+                }
+            }
+            UUID userId = deviceDto.getUserId();
+            if (userId != null) {
+                BkavUserDto userDto = bkavUserDao.findById(userId).orElse(null);
+                if (userDto == null) {
+                    return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
+                }
+                deviceDto.setStatus(Constants.Common.NUMBER_0_INT);
+            } else {
+                deviceDto.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
+            }
+
+            try {
+                return new SampleResponse<>(deviceDao.save(deviceDto));
+            } catch (Exception e) {
+                return new SampleResponse<>(null, e.getMessage());
+            }
         }
-        else{
-            return deviceDao.save(deviceDto);
-        }
 
-//        DeviceDto findDevice = deviceDao.findDeviceByName(deviceDto.getName());
-//        if (findDevice != null) return null;
-//
-//        return deviceDao.save(deviceDto);
     }
 
     @Override
-    public boolean deleteById(UUID id) {
-        DeviceDto findDevice = deviceDao.getById(id).orElse(null);
-        if(findDevice == null){
-            return false;
-        }
-        if(findDevice.getStatus() != -1){
-            return false;
-        }
-        try{
+    public SampleResponse<Boolean> deleteById(UUID id) {
+
+        try {
+            DeviceDto findDevice = deviceDao.findById(id).orElse(null);
+            if (findDevice == null) {
+                return new SampleResponse<>(false, Constants.ErrorMessage.NOT_FOUND_DEVICE);
+            }
+            if (findDevice.getStatus() != Constants.Common.NUMBER_1_INT_NEGATIVE) {
+                return new SampleResponse<>(false, Constants.ErrorMessage.DEVICE_ASSIGNED);
+            }
             deviceDao.deleteById(id);
-            return true;
-        } catch (Exception e){
-            return false;
-        }
-    }
-
-    @Override
-    public PageResponse<DeviceInfoView> getAllDevice(String search, String category, String status, int page) {
-        Integer statusNum = null ;
-        try{
-            statusNum = Integer.parseInt(status);
-        } catch (Exception ignored){
-        }
-        return deviceDao.getAllDevicePaging(search, category, statusNum, page);
-    }
-    @Override
-    public PageResponse<DeviceInfoView> getDeviceByUsername(String username, String search, String category, String status, int page){
-        Integer statusNum = null ;
-        try{
-            statusNum = Integer.parseInt(status);
-        } catch (Exception ignored){
-        }
-        return deviceDao.getAllDevicePagingByUsername(username,search, category, statusNum, page);
-    }
-
-
-
-    @Override
-    public SampleResponse<Boolean> updateDevice(UpdateDeviceRequest request) {
-        String username = request.getUserName();
-        UUID deviceId = UUID.fromString(request.getDeviceId());
-
-        DeviceDto foundDevice = deviceDao.getById(deviceId).orElse(null);
-
-        if (foundDevice == null) {
-            return new SampleResponse<>(false,"Not found device");
-        }
-
-        if(!foundDevice.getName().equals(request.getName())){
-            DeviceDto findExistDevice = deviceDao.findDeviceByName(request.getName());
-            if(findExistDevice != null){
-                return new SampleResponse<>(false,"Device name existed");
-            }
-        }
-
-
-        if (!isNullOrEmpty(username)) {
-            BkavUserDto bkavUser = bkavUserDao.findByUserName(username);
-            if(bkavUser == null){
-                return new SampleResponse<>(false,"Not found user "+username);
-            }
-            foundDevice.setStatus(0);
-            foundDevice.setUserId(bkavUser.getUserId());
-        }
-
-        else{
-            foundDevice.setStatus(-1);
-            foundDevice.setUserId(null);
-        }
-
-        foundDevice.setName(request.getName());
-        foundDevice.setCategory(request.getCategory());
-        foundDevice.setDescription(request.getDescription());
-        foundDevice.setImage(request.getImage());
-        try{
-            deviceDao.save(foundDevice);
             return new SampleResponse<>(true);
-        } catch (Exception e){
-            return new SampleResponse<>(false,"Internal server error");
+        } catch (Exception e) {
+            return new SampleResponse<>(false, e.getMessage());
         }
     }
 
     @Override
-    public SampleResponse<Boolean> deleteDeviceById(String idRequest) {
-        try{
-            UUID id = UUID.fromString(idRequest);
-            boolean check = deleteById(id);
-            if (check){
-                return new SampleResponse<>( true);
-            }
-            return new SampleResponse<>(false,"Delete device fail");
-        } catch (Exception e){
-            return new SampleResponse<>(false,"Delete device fail");
-        }
+    public PageView<DeviceInfoView> findAllDevice(String search, String category, Integer status, int page) {
+        return deviceDao.findAllDevicePaging(search, category, status, page);
     }
 
     @Override
-    public SampleResponse<Boolean> requestReturnDevice(ActionByIdRequest request) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserPrincipal userPrincipal = (UserPrincipal)principal;
-        Boolean check = deviceDao.requestReturnDevice(userPrincipal.getUsername(),request.getId());
-        if(!check) return new SampleResponse<>(false,"Request return fail");
+    public PageView<DeviceInfoView> findDeviceByUsername(String username, String search, String category, Integer status, int page) {
+        return deviceDao.findAllDevicePagingByUsername(username, search, category, status, page);
+    }
+
+    @Override
+    public SampleResponse<Boolean> requestReturnDevice(String username, String id) {
+        Boolean check = deviceDao.requestReturnDevice(username, id);
+        if (!check) return new SampleResponse<>(false, Constants.ErrorMessage.REQUEST_RETURN_FAIL);
         return new SampleResponse<>(true);
     }
 
     @Override
-    public SampleResponse<Boolean> acceptReturnDevice(ActionByIdRequest request) {
-        Boolean check = deviceDao.acceptReturnDevice(request.getId());
-        if(!check) return new SampleResponse<>(false,"Accept return fail");
+    public SampleResponse<Boolean> acceptReturnDevice(String username, String id) {
+        Boolean check = deviceDao.acceptReturnDevice(id);
+        if (!check) return new SampleResponse<>(false, Constants.ErrorMessage.ACCEPT_RETURN_FAIL);
         return new SampleResponse<>(true);
     }
 
-    private static boolean isNullOrEmpty(String str){
-        if(str == null) return true;
-        if(str.trim().isEmpty()) return true;
-        return false;
-    }
 
-    private static boolean validateInputCreateDevice(DeviceDto deviceDto){
-        if(isNullOrEmpty(deviceDto.getName())
+    private static boolean validateInputDevice(DeviceDto deviceDto) {
+        if (StringUtil.isNullOrEmpty(deviceDto.getName())
                 || deviceDto.getCategory() == null) return false;
-        String nameRegex = "^[a-zA-Z0-9]{6,}$";
+        String nameRegex = "^[a-zA-Z0-9_]{5,}$";
         if (!Pattern.matches(nameRegex, deviceDto.getName())) {
             return false;
         }

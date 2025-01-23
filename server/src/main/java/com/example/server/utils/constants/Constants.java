@@ -11,8 +11,15 @@ public class Constants {
     }
 
     public static class Common {
+
+        public static final String EMPTY = "";
+
+        public static final String NUMBER_1_STRING = "1";
+
         public static final String SPACE = " ";
 
+        public static final int NUMBER_1_INT_NEGATIVE = -1;
+        public static final int NUMBER_0_INT = 0;
         public static final int NUMBER_1_INT = 1;
         public static final int NUMBER_5_INT = 5;
         public static final int NUMBER_7_INT = 7;
@@ -40,8 +47,44 @@ public class Constants {
         public static final String ADMIN_BASE_PATH = "/api/admin";
         public static final String COMMON_BASE_PATH = "/api";
         public static final String LOGIN_PATH = "/login";
+        public static final String PROFILE_PATH = "/profile";
+        public static final String CHANGE_PASSWORD_PATH = "/changePassword";
+        public static final String ADMIN_DEVICE_PATH = "/admin/device";
+        public static final String MY_DEVICE_PATH = "/my-device";
+        public static final String DEVICE_RETURN = "/device-return";
+        public static final String ADMIN_ACCEPT_RETURN = "/admin/accept-return";
         public static final String EMPTY_PATH = "/";
+
+        public static final String ADMIN_USER_PATH = "/admin/user";
+        public static final String ADMIN_RESET_PASSWORD = "/admin/reset-password";
+        public static final String ADMIN_USER_DETAIL = "/admin/user-detail";
+        public static final String ADMIN_USER_SELECT = "/admin/user-select";
         public static final String USER_PATH = "/user";
         public static final String DEVICE_PATH = "/device";
+    }
+
+    public static class ErrorMessage {
+        public static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password";
+        public static final String INCORRECT_PASSWORD = "Password incorrect";
+        public static final String SYSTEM_BUSY = "Internal Server Error";
+        public static final String NEW_PASSWORD_SAME_OLD_PASSWORD = "New password is same old password";
+        public static final String ADMIN_PASSWORD_INCORRECT = "Admin password incorrect";
+        public static final String NOT_FOUND_USER = "Not found user";
+        public static final String NOT_FOUND_DEVICE = "Not found device";
+        public static final String DEVICE_ASSIGNED = "Device assigned to someone";
+
+        public static final String REQUEST_RETURN_FAIL = "Request return fail";
+        public static final String ACCEPT_RETURN_FAIL = "Accept return fail";
+
+        public static final String USER_NOW_CONTROL_DEVICES = "User are having some device";
+        public static final String INVALID_INPUT = "Invalid input";
+        public static final String USERNAME_EXISTED = "Username already existed";
+        public static final String NAME_EXISTED = "Name already existed";
+    }
+
+    public static class RegexString {
+        public static final String NAME_REGEX = "^[\\p{L}\\s]+$";  // Matches letters (including Vietnamese) and spaces
+        public static final String USERNAME_REGEX = "^[a-zA-Z0-9]{6,}$";  // Alphanumeric, min 6 chars, no spaces
+        public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()])[A-Za-z\\d!@#$%^&*()]{8,}$";
     }
 }

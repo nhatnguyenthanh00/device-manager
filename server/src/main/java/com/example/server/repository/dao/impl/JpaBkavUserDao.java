@@ -1,7 +1,8 @@
 package com.example.server.repository.dao.impl;
 
 import com.example.server.model.dto.BkavUserDto;
-import com.example.server.model.response.PageResponse;
+import com.example.server.model.dto.SelectUser;
+import com.example.server.model.response.PageView;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.model.entity.BkavUser;
 import com.example.server.repository.BkavUserRepository;
@@ -30,13 +31,13 @@ public class JpaBkavUserDao implements BkavUserDao {
 
 
     @Override
-    public Optional<BkavUserDto> getById(UUID id) {
+    public Optional<BkavUserDto> findById(UUID id) {
         BkavUser user = bkavUserRepository.findById(id).orElse(null);
         return Optional.of(mapperDto.toDto(user));
     }
 
     @Override
-    public List<BkavUserDto> getAll() {
+    public List<BkavUserDto> findAll() {
         List<BkavUser> users = bkavUserRepository.findAll();
         return users.
                 stream().map(mapperDto::toDto)
@@ -57,7 +58,7 @@ public class JpaBkavUserDao implements BkavUserDao {
 
 
     @Override
-    public PageResponse<BkavUserDto> getAllUserPaging(String gender, String name, int page){
+    public PageView<BkavUserDto> findAllUserPaging(String gender, String name, int page){
 
         Pageable pageable = PageRequest.of(page - Constants.Common.NUMBER_1_INT,Constants.Common.NUMBER_5_INT);
         Page<BkavUser> pageUser = Page.empty(pageable);
@@ -69,13 +70,13 @@ public class JpaBkavUserDao implements BkavUserDao {
         if(gender.equals(Constants.Common.FEMALE)) pageUser = bkavUserRepository.findBkavUserByGenderAndNameContainingIgnoreCase(Gender.FEMALE,name, pageable);
 
         if (pageUser.isEmpty()){
-            return new PageResponse<>();
+            return new PageView<>();
         }
 
         int totalItems = (int) pageUser.getTotalElements();
         int totalPages = pageUser.getTotalPages();
         List<BkavUserDto> pageUserDto = pageUser.getContent().stream().map(mapperDto::toDto).collect(Collectors.toList());
-        return new PageResponse<>(pageUserDto, totalItems, totalPages);
+        return new PageView<>(pageUserDto, totalItems, totalPages);
     }
 
     @Override
@@ -84,15 +85,15 @@ public class JpaBkavUserDao implements BkavUserDao {
     }
 
     @Override
-    public BkavUserDto getProfileByUserName(String username) {
+    public BkavUserDto findProfileByUserName(String username) {
         BkavUser user = bkavUserRepository.findByUsername(username);
-//        return new BkavUserDto(user);
         return mapperDto.toDto(user);
     }
 
+
     @Override
-    public List<String> findAllUsername() {
-        return bkavUserRepository.findAllUsernames();
+    public List<SelectUser> findAllSelectUser() {
+        return bkavUserRepository.findAllSelectUser();
     }
 
 }

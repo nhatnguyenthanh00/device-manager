@@ -17,9 +17,6 @@ public class UserPrincipal implements UserDetails {
     public UserPrincipal(BkavUserDto bkavUser){
         this.bkavUser = bkavUser;
     }
-    public BkavUserDto getBkavUser() {
-        return bkavUser;
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(Constants.Security.ROLE_UNDER + bkavUser.getRole().name()));

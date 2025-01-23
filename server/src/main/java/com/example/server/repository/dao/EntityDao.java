@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EntityDao<T> {
-    Optional<T> getById(UUID id);
+    Optional<T> findById(UUID id);
 
-    List<T> getAll();
+    List<T> findAll();
 
     T save(T t);
 

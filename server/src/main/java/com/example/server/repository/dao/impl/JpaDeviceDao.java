@@ -2,7 +2,7 @@ package com.example.server.repository.dao.impl;
 
 import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.BkavUser;
-import com.example.server.model.response.PageResponse;
+import com.example.server.model.response.PageView;
 import com.example.server.repository.BkavUserRepository;
 import com.example.server.repository.dao.idao.DeviceDao;
 import com.example.server.model.entity.Device;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,12 +41,12 @@ public class JpaDeviceDao implements DeviceDao {
     MapperDto mapperDto;
 
     @Override
-    public Optional<DeviceDto> getById(UUID id) {
+    public Optional<DeviceDto> findById(UUID id) {
         return Optional.of(mapperDto.toDto(deviceRepository.findById(id).orElse(null)));
     }
 
     @Override
-    public List<DeviceDto> getAll() {
+    public List<DeviceDto> findAll() {
         List<Device> devices = deviceRepository.findAll();
         return devices.stream()
                 .map(mapperDto::toDto).collect(Collectors.toList());
@@ -67,7 +66,7 @@ public class JpaDeviceDao implements DeviceDao {
 
 
     @Override
-    public PageResponse<DeviceInfoView> getAllDevicePaging(String search, String category, Integer status, int page) {
+    public PageView<DeviceInfoView> findAllDevicePaging(String search, String category, Integer status, int page) {
         Pageable pageable = PageRequest.of(page - Constants.Common.NUMBER_1_INT,Constants.Common.NUMBER_5_INT, Sort.by("name").ascending());
         Page<DeviceInfoView> pageDevice = Page.empty();
 
@@ -85,16 +84,16 @@ public class JpaDeviceDao implements DeviceDao {
         }
 
         if(pageDevice.isEmpty()){
-            return new PageResponse<>();
+            return new PageView<>();
         }
         int totalItems = (int) pageDevice.getTotalElements();
         int totalPages = pageDevice.getTotalPages();
         List<DeviceInfoView> list = pageDevice.getContent();
-        return new PageResponse<>(list,totalItems,totalPages);
+        return new PageView<>(list,totalItems,totalPages);
     }
 
     @Override
-    public PageResponse<DeviceInfoView> getAllDevicePagingByUsername(String username, String search, String category, Integer status, int page) {
+    public PageView<DeviceInfoView> findAllDevicePagingByUsername(String username, String search, String category, Integer status, int page) {
         Pageable pageable = PageRequest.of(page - Constants.Common.NUMBER_1_INT,Constants.Common.NUMBER_5_INT, Sort.by("name").ascending());
         Page<DeviceInfoView> pageDevice = Page.empty();
 
@@ -112,23 +111,23 @@ public class JpaDeviceDao implements DeviceDao {
         }
 
         if(pageDevice.isEmpty()){
-            return new PageResponse<>();
+            return new PageView<>();
         }
         int totalItems = (int) pageDevice.getTotalElements();
         int totalPages = pageDevice.getTotalPages();
         List<DeviceInfoView> list = pageDevice.getContent();
-        return new PageResponse<>(list,totalItems,totalPages);
+        return new PageView<>(list,totalItems,totalPages);
     }
 
     @Override
-    public PageResponse<DeviceInfoView> getAllDeviceByUsername(String username, Integer page) {
-        Pageable pageable = PageRequest.of(page-1,Constants.Common.NUMBER_5_INT, Sort.by("name").ascending());
+    public PageView<DeviceInfoView> findAllDeviceByUsername(String username, Integer page) {
+        Pageable pageable = PageRequest.of(page-Constants.Common.NUMBER_1_INT,Constants.Common.NUMBER_5_INT, Sort.by("name").ascending());
         Page<DeviceInfoView> infoViewPage = deviceInfoViewRepository.findDeviceInfoViewByUsername(username,pageable);
-        if(infoViewPage.isEmpty()) return new PageResponse<>();
+        if(infoViewPage.isEmpty()) return new PageView<>();
         int totalItems = (int) infoViewPage.getTotalElements();
         int totalPages = infoViewPage.getTotalPages();
         List<DeviceInfoView> list = infoViewPage.getContent();
-        return new PageResponse<>(list,totalItems,totalPages);
+        return new PageView<>(list,totalItems,totalPages);
     }
 
     @Override
@@ -144,8 +143,8 @@ public class JpaDeviceDao implements DeviceDao {
         if(device.getBkavUserId() == null) return false;
         BkavUser user = bkavUserRepository.findByUsername(username);
         if(!user.getId().equals(device.getBkavUserId())) throw new AccessDeniedException("User don't have access this function");
-        if(device.getStatus() != 0) return false;
-        device.setStatus(1);
+        if(device.getStatus() != Constants.Common.NUMBER_0_INT) return false;
+        device.setStatus(Constants.Common.NUMBER_1_INT);
         try{
             deviceRepository.save(device);
             return true;
@@ -160,8 +159,8 @@ public class JpaDeviceDao implements DeviceDao {
         Device device = deviceRepository.findById(id).orElse(null);
         if(device == null) return false;
         if(device.getBkavUserId() == null) return false;
-        if(device.getStatus() != 1) return false;
-        device.setStatus(-1);
+        if(device.getStatus() != Constants.Common.NUMBER_1_INT) return false;
+        device.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
         device.setBkavUserId(null);
         try{
             deviceRepository.save(device);

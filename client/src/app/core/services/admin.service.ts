@@ -38,7 +38,7 @@ export class AdminService {
    */
   getUser(userId: string, page: number): Observable<any> {
     // Make an HTTP POST request to fetch the user details
-    return this.httpService.post<any>('/api/admin/user-detail', { userId: userId, page:page }).pipe(
+    return this.httpService.get<any>('/api/admin/user-detail', { userId: userId, page:page }).pipe(
       catchError((error) => {
         // Log an error message if the request fails
         console.error('Error fetching user details:', error);
@@ -72,7 +72,7 @@ export class AdminService {
    */
   updateUser(payload: any): Observable<any> {
     // Make an HTTP PUT request to update a user
-    return this.httpService.put<any>('/api/admin/user', payload).pipe(
+    return this.httpService.post<any>('/api/admin/user', payload).pipe(
       catchError((error) => {
         // Log an error message if the request fails
         console.error('Error updating user:', error);
@@ -89,13 +89,7 @@ export class AdminService {
    */
   resetPassword(payload: any): Observable<any> {
     // Make an HTTP PUT request to reset a user's password
-    return this.httpService.put<any>('/api/admin/reset-password', payload).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error resetting user password:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.put<any>('/api/admin/reset-password', payload);
   }
 
   /**
@@ -122,7 +116,7 @@ export class AdminService {
    */
   getUsernames(): Observable<any> {
     // Make an HTTP GET request to fetch all usernames
-    return this.httpService.get<any>('/api/admin/user-name', {}).pipe(
+    return this.httpService.get<any>('/api/admin/user-select').pipe(
       catchError((error) => {
         // Log an error message if the request fails
         console.error('Error fetching usernames:', error);

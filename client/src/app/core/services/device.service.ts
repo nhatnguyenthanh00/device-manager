@@ -60,7 +60,7 @@ export class DeviceService {
    * @returns An observable of the updated device data or null in case of an error.
    */
   updateDevice(device: object): Observable<any> {
-    return this.httpService.put<any>('/api/admin/device', device).pipe(
+    return this.httpService.post<any>('/api/admin/device', device).pipe(
       catchError((error) => {
         // Log an error message if the request fails
         console.error('Error updating device:', error);
@@ -76,7 +76,7 @@ export class DeviceService {
    * @returns An observable of the deleted device data or null in case of an error.
    */
   deleteDevice(deviceId: string): Observable<any> {
-    return this.httpService.delete<any>('/api/admin/device', { params: { id: deviceId } });
+    return this.httpService.delete<any>('/api/admin/device',  { id: deviceId } );
   }
 
   /**
@@ -90,7 +90,7 @@ export class DeviceService {
    * with a success message if the request is processed successfully.
    */
   requestReturnDevice(deviceId: string): Observable<any> {
-    return this.httpService.post<any>('/api/device-return', { id: deviceId });
+    return this.httpService.post<any>('/api/device-return',{}, { id: deviceId });
   }
 
   /**
@@ -104,7 +104,7 @@ export class DeviceService {
    * with a success message if the request is processed successfully.
    */
   acceptReturnDevice(deviceId: string): Observable<any> {
-    return this.httpService.post<any>('/api/admin/accept-return', { id: deviceId });
+    return this.httpService.post<any>('/api/admin/accept-return',{}, { id: deviceId });
   }
 }
 

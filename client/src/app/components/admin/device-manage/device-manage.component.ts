@@ -52,6 +52,7 @@ export class DeviceManageComponent {
 
   selectedDeviceId: String = ''; // Holds the selected device's ID for editing or deletion
   selectedDeviceUserName: String = ''; // Holds the username associated with the selected device
+  selectedDerviceUserId: string | null = null;
   selectedDeviceStatus: number | null = null; // Holds the status of the selected device
   selectedOption: string | null = null; // For handling dropdown selection
   isDropdownOpen = false; // Controls dropdown visibility
@@ -67,11 +68,13 @@ export class DeviceManageComponent {
    * Handles the selection of a username from the dropdown
    * @param option The selected username
    */
-  selectOption(option: string) {
-    if (this.selectedDeviceUserName === option) {
+  selectOption(option: any) {
+    if (this.selectedDeviceUserName === option.username) {
       this.selectedDeviceUserName = '';
+      this.selectedDerviceUserId = null ;
     } else {
-      this.selectedDeviceUserName = option;
+      this.selectedDeviceUserName = option.username;
+      this.selectedDerviceUserId = option.id; 
     }
     this.isDropdownOpen = false;
   }
@@ -185,35 +188,52 @@ export class DeviceManageComponent {
    * to <username>.
    */
   getStatusStr(device: Device): string {
-    if (device.status === -1) return 'NA'; 
-    if (device.status === 0) return `AT ${device.username}`; 
+    if (device.status === -1) return 'NA';
+    if (device.status === 0) return `AT ${device.username}`;
     if (device.status === 1) return `RR ${device.username}`;
     return '';
   }
 
+  /**
+   * Triggers the getDevices() function when the user selects a new option in the
+   * search, category, or status filters. Also resets the current page to 1.
+   */
   onFilterChange() {
     this.currentPage = 1;
     this.getDevices();
   }
 
+  /**
+   * Triggers the getDevices() function when the user navigates to the previous page.
+   * Also decrements the current page number.
+   */
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.deviceUpdated.emit({page: this.currentPage}); 
+      this.deviceUpdated.emit({page: this.currentPage});
       this.getDevices();
     }
   }
 
+  /**
+   * Triggers the getDevices() function when the user navigates to the next page.
+   * Also increments the current page number.
+   */
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.deviceUpdated.emit({page: this.currentPage}); 
+      this.deviceUpdated.emit({page: this.currentPage});
       this.getDevices();
     }
   }
 
-  onCreateNewDevice() {
+  /**
+   * Triggers the creation of a new device by showing a modal to enter the
+   * device's name, category, description, and image.
+   */
+  onOpenModalCreateNewDevice() {
     this.showCreateDeviceModal = true;
+    // Reset the values of the new device
     this.newDevice = {
       name: '',
       category: '',
@@ -222,21 +242,41 @@ export class DeviceManageComponent {
     };
   }
 
+  /**
+   * Hides the modal to create a new device.
+   */
   closeModal() {
+    // Reset the modal
     this.showCreateDeviceModal = false;
   }
 
-  onImageChange(event: any) {
+  /**
+   * Handles the change event for the image input.
+   * Reads the selected file and updates the newDevice's image property with the base64 string.
+   * 
+   * @param event The change event triggered by the file input
+   */
+  onImageChange(event: any, type: string) {
     if (event.target.files && event.target.files[0]) {
-      const file: File = event.target.files[0];
-      const reader = new FileReader();
+      const file: File = event.target.files[0]; 
+      const reader = new FileReader(); 
+      
       reader.readAsDataURL(file);
+      
       reader.onloadend = () => {
-        this.newDevice.image = reader.result as string;
+        if(type === 'create') this.newDevice.image = reader.result as string;
+        else if(type === 'update') this.updateDevice.image = reader.result as string;
+        // this.newDevice.image = reader.result as string;
       };
     }
   }
 
+  /**
+   * Validates the input in the create new device modal.
+   * If any of the input is invalid, sets the error message and returns false.
+   * Otherwise, trims the name and returns true.
+   * @returns boolean
+   */
   validateInput(): boolean {
     if (!this.newDevice.name) {
       this.errMsg = 'Name is required';
@@ -246,7 +286,6 @@ export class DeviceManageComponent {
       this.newDevice.name = trimmedName;
     }
 
-    // Gender validation
     if (!this.newDevice.category) {
       this.errMsg = 'Category is required';
       return false;
@@ -254,26 +293,38 @@ export class DeviceManageComponent {
     return true;
   }
 
+  /**
+   * Handles the creation of a new device.
+   * Validates the input, submits the device data to the server, and updates the device list on success.
+   * 
+   * @param event The form submission event
+   */
   createDevice(event: Event) {
     event.preventDefault();
+
     if (this.validateInput()) {
-      this.deviceService
-        .addDevice(this.newDevice as NewDevice)
-        .subscribe((response) => {
-          if (response?.errMsg) {
-            this.toastr.error(response?.errMsg, 'Error');
-          } else {
-            this.toastr.success('Device created successfully!', 'Success');
-            this.getDevices();
-            this.closeModal();
-          }
-        });
+      this.deviceService.addDevice(this.newDevice as NewDevice).subscribe((response) => {
+        if (response?.errMsg) {
+          this.toastr.error(response?.errMsg, 'Error');
+        } else {
+          this.toastr.success('Device created successfully!', 'Success');
+          this.getDevices();
+          this.closeModal();
+        }
+      });
     }
   }
 
+  /**
+   * Shows the details of a device in a modal dialog.
+   * Sets the 'selectedDeviceId', 'selectedDeviceUserName', 'selectedDeviceStatus',
+   * and 'updateDevice' properties to the device's values.
+   * And then opens the modal dialog.
+   * 
+   * @param device The device to show details
+   */
   viewDetails(device: Device) {
 
-    console.log('In viewDetails', this.usernames);
     this.selectedDeviceId = device.id;
     this.selectedDeviceUserName =
       device.username == null ? '' : device.username;
@@ -286,37 +337,52 @@ export class DeviceManageComponent {
     this.showDetailsModal = true;
   }
 
+  /**
+   * Converts the status of the device to a human-readable string to be used in the details view.
+   * 'AT' for assigned to, 'RR' for request return.
+   * @returns A string representing the status of the device.
+   */
   getStatusViewDetail(): string {
-    if (this.selectedDeviceStatus === 0) return `AT`;
-    if (this.selectedDeviceStatus === 1) return `RR`;
+    if (this.selectedDeviceStatus === 0) return 'AT';
+    if (this.selectedDeviceStatus === 1) return 'RR';
     return '';
   }
 
+  /**
+   * Closes the device details modal and resets related states.
+   */
   closeModalDetails() {
     this.showDetailsModal = false;
     this.isDropdownOpen = false;
   }
 
-  onImageUpdateChange(event: any) {
-    if (event.target.files && event.target.files[0]) {
-      const file: File = event.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        this.updateDevice.image = reader.result as string;
-      };
-    }
-  }
+  // onImageUpdateChange(event: any) {
+  //   if (event.target.files && event.target.files[0]) {
+  //     const file: File = event.target.files[0];
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onloadend = () => {
+  //       this.updateDevice.image = reader.result as string;
+  //     };
+  //   }
+  // }
 
+  /**
+   * Handles the update of a device's information.
+   * Validates the input, submits the updated device data to the server, and updates the device list on success.
+   * 
+   * @param event The form submission event
+   */
   updateDeviceInfo(event: Event) {
     event.preventDefault();
     const payload = {
-      deviceId: this.selectedDeviceId,
+      id: this.selectedDeviceId,
       name: this.updateDevice.name,
       description: this.updateDevice.description,
       category: this.updateDevice.category,
       image: this.updateDevice.image,
-      userName: this.selectedDeviceUserName,
+      // userName: this.selectedDeviceUserName,
+      userId: this.selectedDerviceUserId
     };
     this.deviceService.updateDevice(payload).subscribe((response) => {
       if (response?.errMsg) {
@@ -330,7 +396,13 @@ export class DeviceManageComponent {
     });
   }
 
-  // Delete Device
+  /**
+   * Deletes a device by its ID.
+   * Shows a confirmation dialog before deleting the device.
+   * If confirmed, calls the delete device API and updates the device list on success.
+   * @param deviceId The ID of the device to delete
+   * @param deviceName The name of the device to delete
+   */
   deleteDevice(deviceId: string, deviceName: string) {
     Swal.fire({
       title: 'Are you sure?',
@@ -357,6 +429,12 @@ export class DeviceManageComponent {
     });
   }
 
+  /**
+   * Requests to return a device.
+   * Shows a confirmation dialog before submitting the request.
+   * If confirmed, calls the request return device API and updates the device list on success.
+   * @param device The device to request return
+   */
   requestReturnDevice(device: Device) {
     if(device.status == 1) {
       this.toastr.error('Device is already have request return!', 'Error');
@@ -387,8 +465,15 @@ export class DeviceManageComponent {
     })
   }
 
+  /**
+   * Accepts the return request for a device.
+   * Validates the device status before showing a confirmation dialog.
+   * If confirmed, calls the accept return device API and updates the device list on success.
+   * 
+   * @param device The device for which to accept the return request
+   */
   acceptRequestReturnDevice(device: Device) {
-    if(device.status != 1) {
+    if (device.status != 1) {
       this.toastr.error('Device does not have request return!', 'Error');
       return;
     }
@@ -409,11 +494,11 @@ export class DeviceManageComponent {
             this.toastr.error(response?.errMsg, 'Error');
           } else {
             this.toastr.success('Accept return device successfully!', 'Success');
-            this.deviceUpdated.emit({page: this.currentPage}); 
+            this.deviceUpdated.emit({page: this.currentPage});
             this.getDevices();
           }
         });
       }
-    })
+    });
   }
 }
