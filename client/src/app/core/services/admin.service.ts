@@ -7,26 +7,22 @@ import { User } from '../../models/user.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { UserList } from '../../models/user-list.model';
 import { NewUser } from '../../models/new-user.model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
   constructor(private httpService: HttpService) {}
+
   /**
    * Retrieves a list of users.
    *
    * @param params - The parameters for querying users.
    * @returns An observable of the user list or null in case of an error.
    */
-  getListUser(params: object): Observable<UserList | null> {
+  getListUser(params: object): Observable<UserList> {
     // Make an HTTP GET request to fetch the user list
-    return this.httpService.get<UserList>('/api/admin/user', params).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error fetching user list:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.get<UserList>('/api/admin/user', params);
   }
 
   /**
@@ -38,13 +34,7 @@ export class AdminService {
    */
   getUser(userId: string, page: number): Observable<any> {
     // Make an HTTP POST request to fetch the user details
-    return this.httpService.get<any>('/api/admin/user-detail', { userId: userId, page:page }).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error fetching user details:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.get<any>('/api/admin/user-detail', { userId: userId, page:page });
   }
 
   /**
@@ -55,13 +45,7 @@ export class AdminService {
    */
   addUser(user: NewUser): Observable<any> {
     // Make an HTTP POST request to create a new user
-    return this.httpService.post<any>('/api/admin/user', user).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error creating user:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.post<any>('/api/admin/user', user);
   }
 
   /**
@@ -72,13 +56,7 @@ export class AdminService {
    */
   updateUser(payload: any): Observable<any> {
     // Make an HTTP PUT request to update a user
-    return this.httpService.post<any>('/api/admin/user', payload).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error updating user:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.post<any>('/api/admin/user', payload);
   }
 
   /**
@@ -100,13 +78,7 @@ export class AdminService {
    */
   deleteUser(userId: string): Observable<any> {
     // Make an HTTP DELETE request to delete a user
-    return this.httpService.delete<any>('/api/admin/user', { id: userId }).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error deleting user:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.delete<any>('/api/admin/user', { id: userId });
   }
 
   /**
@@ -116,12 +88,6 @@ export class AdminService {
    */
   getUsernames(): Observable<any> {
     // Make an HTTP GET request to fetch all usernames
-    return this.httpService.get<any>('/api/admin/user-select').pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error fetching usernames:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.get<any>('/api/admin/user-select');
   }
 }

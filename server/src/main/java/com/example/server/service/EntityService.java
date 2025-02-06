@@ -1,11 +1,11 @@
 package com.example.server.service;
 
-import com.example.server.model.response.SampleResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
 public interface EntityService<T> {
-    SampleResponse<T> save(T entity);
-    SampleResponse<Boolean> deleteById(UUID id);
+    ResponseEntity<?> save(T entity);
+    ResponseEntity<?> deleteById(UUID id);
 
 }

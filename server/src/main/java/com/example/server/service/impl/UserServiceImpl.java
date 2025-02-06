@@ -6,7 +6,7 @@ import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.dto.SelectUser;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.response.DetailUserResponse;
-import com.example.server.model.response.SampleResponse;
+import com.example.server.model.response.ErrorResponse;
 import com.example.server.model.resquest.*;
 import com.example.server.repository.dao.idao.BkavUserDao;
 import com.example.server.repository.dao.idao.DeviceDao;
@@ -18,6 +18,8 @@ import com.example.server.utils.constants.Constants;
 import com.example.server.utils.enums.Gender;
 import com.example.server.utils.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,103 +63,99 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public SampleResponse<Boolean> changePassWord(String username, String oldPassword, String newPassword) {
-
-        try {
-            BkavUserDto user = bkavUserDao.findByUserName(username);
-            if(newPassword.equals(oldPassword))
-                return new SampleResponse<>(false,Constants.ErrorMessage.NEW_PASSWORD_SAME_OLD_PASSWORD);
-            if (!encoder.matches(oldPassword, user.getPassword())) {
-                return new SampleResponse<>(false, Constants.ErrorMessage.INCORRECT_PASSWORD);
-            }
-            String encodeNewPassword = encoder.encode(newPassword);
-            user.setPassword(encodeNewPassword);
-            bkavUserDao.save(user);
-            return new SampleResponse<>(true);
-        } catch (Exception e) {
-            return new SampleResponse<>(false, e.getMessage());
+    public ResponseEntity<?> changePassWord(String username, String oldPassword, String newPassword) {
+        BkavUserDto user = bkavUserDao.findByUserName(username);
+        if (newPassword.equals(oldPassword))
+            return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NEW_PASSWORD_SAME_OLD_PASSWORD), HttpStatus.BAD_REQUEST);
+        if (!encoder.matches(oldPassword, user.getPassword())) {
+            return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INCORRECT_PASSWORD), HttpStatus.BAD_REQUEST);
         }
+        String encodeNewPassword = encoder.encode(newPassword);
+        user.setPassword(encodeNewPassword);
+        bkavUserDao.save(user);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Override
-    public SampleResponse<Boolean> resetPassword(ResetPasswordRequest request) {
+    public ResponseEntity<?> resetPassword(ResetPasswordRequest request) {
 
-        try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            UserPrincipal userPrincipal = (UserPrincipal) principal;
-            if (!encoder.matches(request.getAdminPassword(), userPrincipal.getPassword())) {
-                throw new Exception(Constants.ErrorMessage.ADMIN_PASSWORD_INCORRECT);
-            }
-            BkavUserDto userDto = new BkavUserDto();
-            userDto.setUserId(request.getUserId());
-            userDto.setPassword(request.getPassword());
-            save(userDto);
-            return new SampleResponse<>(true);
-        } catch (Exception e) {
-            return new SampleResponse<>(false, e.getMessage());
+//        try {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal) principal;
+        if (!encoder.matches(request.getAdminPassword(), userPrincipal.getPassword())) {
+            return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.ADMIN_PASSWORD_INCORRECT), HttpStatus.BAD_REQUEST);
         }
+        BkavUserDto userDto = new BkavUserDto();
+        userDto.setUserId(request.getUserId());
+        userDto.setPassword(request.getPassword());
+        save(userDto);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
 
     @Override
-    public SampleResponse<DetailUserResponse> findDetailUser(String userId, int page) {
-        try {
-            UUID id = UUID.fromString(userId);
-            BkavUserDto userDto = findById(id);
-            if (userDto == null) return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
-            PageView<DeviceInfoView> pageView = deviceDao.findAllDeviceByUsername(userDto.getUsername(), page);
-            return new SampleResponse<>(new DetailUserResponse(userDto, pageView));
-        } catch (Exception e) {
-            return new SampleResponse<>(null, e.getMessage());
+    public ResponseEntity<?> findDetailUser(String userId, int page) {
+
+        UUID id = UUID.fromString(userId);
+        BkavUserDto userDto = findById(id);
+        if (userDto == null) {
+            return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER), HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
         }
+        PageView<DeviceInfoView> pageView = deviceDao.findAllDeviceByUsername(userDto.getUsername(), page);
+        return new ResponseEntity<>(new DetailUserResponse(userDto, pageView), HttpStatus.OK);
+//            return new SampleResponse<>(new DetailUserResponse(userDto, pageView));
+
     }
 
     @Override
-    public SampleResponse<List<SelectUser>> findAllSelectUser() {
-        try{
-            return new SampleResponse<>(bkavUserDao.findAllSelectUser());
-        } catch (Exception e){
-            return new SampleResponse<>(null,e.getMessage());
-        }
+    public List<SelectUser> findAllSelectUser() {
+        return bkavUserDao.findAllSelectUser();
     }
 
     @Override
-    public SampleResponse<BkavUserDto> save(BkavUserDto userDto) {
+    public ResponseEntity<?> save(BkavUserDto userDto) {
 
         UUID userId = userDto.getUserId();
         // case create
         if (userId == null) {
             if (!validateInputCreateUser(userDto)) {
-                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
+                return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INVALID_INPUT),HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
             }
             BkavUserDto findUser = bkavUserDao.findByUserName(userDto.getUsername());
             if (findUser != null) {
-                return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
+                return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USERNAME_EXISTED),HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
             }
             String password = userDto.getPassword();
             userDto.setPassword(encoder.encode(password));
             userDto.setRole(Role.USER);
-            return new SampleResponse<>(bkavUserDao.save(userDto));
+            return new ResponseEntity<>(bkavUserDao.save(userDto),HttpStatus.OK);
+//            return new SampleResponse<>(bkavUserDao.save(userDto));
         }
         // case update
         else {
             if (!validateInputUpdateUser(userDto)) {
-                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
+                return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INVALID_INPUT),HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
 
             }
             BkavUserDto findUser = bkavUserDao.findById(userId).orElse(null);
             if (findUser == null) {
-                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
+                return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER),HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
             }
             String username = userDto.getUsername();
 
-            if (!username.equals(findUser.getUsername())) {
+            if (username != null && !username.equals(findUser.getUsername())) {
                 BkavUserDto findExistUser = bkavUserDao.findByUserName(username);
                 if (findExistUser != null) {
-                    return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
+                    return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USERNAME_EXISTED),HttpStatus.BAD_REQUEST);
+//                    return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
                 }
             }
-            findUser.setUsername(userDto.getUsername());
+            if (username != null) findUser.setUsername(userDto.getUsername());
             String name = userDto.getName();
             String password = userDto.getPassword();
             Role role = userDto.getRole();
@@ -167,26 +165,29 @@ public class UserServiceImpl implements UserService {
             if (role != null) findUser.setRole(role);
             if (gender != null) findUser.setGender(gender);
 
-            return new SampleResponse<>(bkavUserDao.save(findUser));
+            return new ResponseEntity<>(bkavUserDao.save(findUser),HttpStatus.OK);
+//            return new SampleResponse<>(bkavUserDao.save(findUser));
 
         }
     }
 
     @Override
-    public SampleResponse<Boolean> deleteById(UUID id) {
-        try {
-            BkavUserDto findUser = bkavUserDao.findById(id).orElse(null);
-            if (findUser == null) return new SampleResponse<>(false,Constants.ErrorMessage.NOT_FOUND_USER);
-            if (findUser.getRole().name().equals("USER")) {
-                if (deviceInfoViewRepository.countDeviceInfoViewByUsername(findUser.getUsername()) > 0) {
-                    return new SampleResponse<>(false,Constants.ErrorMessage.USER_NOW_CONTROL_DEVICES);
-                }
-                bkavUserDao.deleteById(id);
-                return new SampleResponse<>(true);
+    public ResponseEntity<?> deleteById(UUID id) {
+        BkavUserDto findUser = bkavUserDao.findById(id).orElse(null);
+        if (findUser == null) {
+            return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER), HttpStatus.BAD_REQUEST);
+//                return new SampleResponse<>(false, Constants.ErrorMessage.NOT_FOUND_USER);
+        }
+        if (findUser.getRole().name().equals("USER")) {
+            if (deviceInfoViewRepository.countDeviceInfoViewByUsername(findUser.getUsername()) > 0) {
+                return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USER_NOW_CONTROL_DEVICES), HttpStatus.BAD_REQUEST);
+//                    return new SampleResponse<>(false, Constants.ErrorMessage.USER_NOW_CONTROL_DEVICES);
             }
-            return new SampleResponse<>(true,"Can't delete admin");
-        } catch (Exception e){
-            return new SampleResponse<>(false,e.getMessage());
+            bkavUserDao.deleteById(id);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+//                return new SampleResponse<>(true);
+        } else {
+            return new ResponseEntity<>(new ErrorResponse("Can't delete admin"), HttpStatus.BAD_REQUEST);
         }
     }
 

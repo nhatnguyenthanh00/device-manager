@@ -2,13 +2,13 @@ package com.example.server.controller;
 
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.dto.SelectUser;
-import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.PageView;
-import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.*;
 import com.example.server.service.iservice.UserService;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +31,13 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Constants.ApiEndpoint.ADMIN_USER_PATH)
-    public SampleResponse<PageView<BkavUserDto>> getUserList(@RequestParam String gender,
+    public ResponseEntity<PageView<BkavUserDto>> getUserList(@RequestParam String gender,
                                                              @RequestParam String search,
                                                              @RequestParam(defaultValue = Constants.Common.NUMBER_1_STRING) Integer page){
 
         PageView<BkavUserDto> data = userService.findAllUser(gender,search,page);
-        return new SampleResponse<>(data);
+//        throw new RuntimeException("Test loi");
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     /**
@@ -47,7 +48,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Constants.ApiEndpoint.ADMIN_USER_PATH)
-    public SampleResponse<BkavUserDto> createOrUpdateUser(@RequestBody BkavUserDto request) {
+    public ResponseEntity<?> createOrUpdateUser(@RequestBody BkavUserDto request) {
         return userService.save(request);
     }
 
@@ -60,7 +61,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(Constants.ApiEndpoint.ADMIN_RESET_PASSWORD)
-    public SampleResponse<Boolean> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         return userService.resetPassword(request);
     }
 
@@ -72,7 +73,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(Constants.ApiEndpoint.ADMIN_USER_PATH)
-    public SampleResponse<Boolean> deleteUser(@RequestParam UUID id ){
+    public ResponseEntity<?> deleteUser(@RequestParam UUID id ){
         return userService.deleteById(id);
     }
 
@@ -85,7 +86,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Constants.ApiEndpoint.ADMIN_USER_DETAIL)
-    public SampleResponse<DetailUserResponse> getDetailUser(@RequestParam String userId,
+    public ResponseEntity<?> getDetailUser(@RequestParam String userId,
                                                             @RequestParam(defaultValue = Constants.Common.NUMBER_1_STRING) Integer page){
         return userService.findDetailUser(userId,page);
     }
@@ -97,7 +98,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Constants.ApiEndpoint.ADMIN_USER_SELECT)
-    public SampleResponse<List<SelectUser>> getAllUserSelect(){
-        return userService.findAllSelectUser();
+    public ResponseEntity<List<SelectUser>> getAllUserSelect(){
+        return new ResponseEntity<>(userService.findAllSelectUser(),HttpStatus.OK);
     }
 }

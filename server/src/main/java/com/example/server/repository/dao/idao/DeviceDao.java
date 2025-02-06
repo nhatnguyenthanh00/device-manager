@@ -15,5 +15,5 @@ public interface DeviceDao extends EntityDao<DeviceDto> {
     DeviceDto findDeviceByName(String name);
 
     Boolean requestReturnDevice(String username,String deviceId);
-    Boolean acceptReturnDevice(String deviceId);
+    Boolean responseReturnDevice(String deviceId, boolean accept);
 }

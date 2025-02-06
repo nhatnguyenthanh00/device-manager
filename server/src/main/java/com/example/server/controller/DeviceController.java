@@ -3,11 +3,12 @@ package com.example.server.controller;
 import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.response.PageView;
-import com.example.server.model.response.SampleResponse;
 import com.example.server.service.iservice.DeviceService;
 import com.example.server.utils.CommonUtils;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +35,12 @@ public class DeviceController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Constants.ApiEndpoint.ADMIN_DEVICE_PATH)
-    public SampleResponse<PageView<DeviceInfoView>> getAllDevice(@RequestParam String category,
+    public ResponseEntity<PageView<DeviceInfoView>> getAllDevice(@RequestParam String category,
                                                                  @RequestParam(defaultValue = Constants.Common.EMPTY) Integer status,
                                                                  @RequestParam String search,
                                                                  @RequestParam(defaultValue = Constants.Common.NUMBER_1_STRING) Integer page){
         PageView<DeviceInfoView> data = deviceService.findAllDevice(search,category,status,page);
-        return new SampleResponse<>(data);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     /**
@@ -52,13 +53,13 @@ public class DeviceController {
      * @return   PageResponse<DeviceInfoView> containing the user's device information
      */
     @GetMapping(Constants.ApiEndpoint.MY_DEVICE_PATH)
-    public SampleResponse<PageView<DeviceInfoView>> getMyDevice(@RequestParam String category,
+    public ResponseEntity<PageView<DeviceInfoView>> getMyDevice(@RequestParam String category,
                                                                 @RequestParam(defaultValue = Constants.Common.EMPTY) Integer status,
                                                                 @RequestParam String search,
                                                                 @RequestParam(defaultValue = Constants.Common.NUMBER_1_STRING) Integer page){
         String username = commonUtils.getCurrentUser().getUsername();
         PageView<DeviceInfoView> data = deviceService.findDeviceByUsername(username,search,category,status,page);
-        return new SampleResponse<>(data);
+        return new ResponseEntity<>(data,HttpStatus.OK);
     }
 
     /**
@@ -69,7 +70,7 @@ public class DeviceController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Constants.ApiEndpoint.ADMIN_DEVICE_PATH)
-    public SampleResponse<DeviceDto> createOrUpdateDevice(@RequestBody DeviceDto request) {
+    public ResponseEntity<?> createOrUpdateDevice(@RequestBody DeviceDto request) {
         return deviceService.save(request);
     }
 
@@ -82,7 +83,7 @@ public class DeviceController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(Constants.ApiEndpoint.ADMIN_DEVICE_PATH)
-    public SampleResponse<Boolean> deleteDevice(@RequestParam UUID id){
+    public ResponseEntity<?> deleteDevice(@RequestParam UUID id){
         return deviceService.deleteById(id);
     }
 
@@ -93,7 +94,7 @@ public class DeviceController {
      * @return   Boolean true if the return request is created successfully
      */
     @PostMapping(Constants.ApiEndpoint.DEVICE_RETURN)
-    public SampleResponse<Boolean> returnDevice(@RequestParam String id){
+    public ResponseEntity<?> returnDevice(@RequestParam String id){
         return deviceService.requestReturnDevice(commonUtils.getCurrentUser().getUsername(),id);
     }
 
@@ -101,11 +102,23 @@ public class DeviceController {
      * @description Accept a device return request
      * @endpoint  POST /api/admin/accept-return
      * @param    id of the device to accept return
-     * @return   Boolean true if the return request is accepted successfully
+     * @return   null if the return request is accepted successfully
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Constants.ApiEndpoint.ADMIN_ACCEPT_RETURN)
-    public SampleResponse<Boolean> acceptReturnDevice(@RequestParam String id){
+    public ResponseEntity<?> acceptReturnDevice(@RequestParam String id){
         return deviceService.acceptReturnDevice(commonUtils.getCurrentUser().getUsername(),id);
+    }
+
+    /**
+     * @description Refuse a device return request
+     * @endpoint  POST /api/admin/accept-return
+     * @param    id of the device to accept return
+     * @return   null if the return request is refused successfully
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(Constants.ApiEndpoint.ADMIN_REFUSE_RETURN)
+    public ResponseEntity<?> refuseReturnDevice(@RequestParam String id){
+        return deviceService.refuseReturnDevice(commonUtils.getCurrentUser().getUsername(),id);
     }
 }

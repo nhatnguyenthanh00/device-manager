@@ -55,16 +55,18 @@ export class UserDetailManageComponent {
 
   getUserDetails(page: number = 1) {
     if (this.userId == null) return;
-    this.adminService.getUser(this.userId, page).subscribe((res) => {
-      if (res.errMsg) {
-        alert(res?.errMsg);
-      } else {
-        this.name = res?.data?.userDetail?.name;
-        this.username = res?.data?.userDetail?.username;
-        this.gender = res?.data?.userDetail?.gender;
-        this.totalDevice = res?.data?.devices?.content?.length;
-        this.listDevice = res?.data?.devices;
-        this.role = res?.data?.userDetail?.role;
+
+    this.adminService.getUser(this.userId, page).subscribe({
+      next: (res) => {
+        this.name = res?.userDetail?.name;
+        this.username = res?.userDetail?.username;
+        this.gender = res?.userDetail?.gender;
+        this.totalDevice = res?.devices?.content?.length;
+        this.listDevice = res?.devices;
+        this.role = res?.userDetail?.role;
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
       }
     });
   }
@@ -138,12 +140,14 @@ export class UserDetailManageComponent {
         gender: this.gender,
         role: this.role,
       };
-      this.adminService.updateUser(payload).subscribe((response) => {
-        if (response?.errMsg) {
-          this.toastr.error(response?.errMsg, 'Error');
-        } else {
+
+      this.adminService.updateUser(payload).subscribe({
+        next: (response) => {
           this.toastr.success('User updated successfully!', 'Success');
           this.getUserDetails();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.errMsg, 'Error');
         }
       });
     }
@@ -151,6 +155,25 @@ export class UserDetailManageComponent {
 
   onResetPassword(event: Event) {
     event.preventDefault();
+    if (!this.newPassword || !this.adminPassword) {
+      this.toastr.error('All fields are required', 'Error');
+      return;
+    }
+
+    if (this.newPassword.length < 8) {
+      this.toastr.error('New password must be at least 8 characters long', 'Error');
+      return;
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
+    if (!passwordRegex.test(this.newPassword)) {
+      this.toastr.error(
+        'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+        'Error'
+      );
+      return;
+    }
     const payload = {
       userId: this.userId,
       password: this.newPassword,
@@ -160,14 +183,12 @@ export class UserDetailManageComponent {
       next: (response) => {
         console.log('In onResetPassword');
         console.log(response);
-        if(response && response.errMsg == null && response.data == true){
-          this.toastr.success('User password reset successfully!', 'Success');
-          this.getUserDetails();
-        }
-        else{
-          this.toastr.error(response?.errMsg || 'Internal server error', 'Error');
-        }
-      }
+        this.toastr.success('User password reset successfully!', 'Success');
+        this.getUserDetails();
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
+      },
     });
   }
 }

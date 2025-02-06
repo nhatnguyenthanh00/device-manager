@@ -17,22 +17,9 @@ export class AuthService {
    * @param password - The password of the user.
    * @returns An observable of a string or null. If the request is successful, the observable will emit null. If the request fails, the observable will emit the error message.
    */
-  login(username: string, password: string): Observable<string | null> {
+  login(username: string, password: string): Observable<any> {
     const payload = { username, password };
-    return this.httpService.post<any>('/api/login', payload).pipe(
-      // If the request is successful, return the token and store it in local storage
-      map((response) => {
-        if (response?.errMsg) return response?.errMsg;
-        if (response?.data?.token) {
-          localStorage.setItem('currentToken', (response?.data?.token));
-          return null;
-        } 
-        // If the request fails, return an error message
-        return 'System Busy, Please try again later';
-      }),
-      // If the request fails, catch the error and return an error message
-      catchError(() => of('System Busy, Please try again later'))
-    );
+    return this.httpService.post<any>('/api/login', payload);
   }
 
 

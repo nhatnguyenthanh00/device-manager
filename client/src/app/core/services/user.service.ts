@@ -9,11 +9,7 @@ export class UserService {
   constructor(private httpService: HttpService) {}
 
   getUserProfile(): Observable<any> {
-    const params = {};
-
-    return this.httpService.get<any>('/api/profile', params).pipe(
-      catchError(error => of(null))
-    );
+    return this.httpService.get<any>('/api/profile');
   }
 
   changePassword(oldPassword: string, newPassword: string): Observable<any> {

@@ -3,8 +3,8 @@ package com.example.server.service.iservice;
 import com.example.server.model.dto.DeviceDto;
 import com.example.server.model.entity.view.DeviceInfoView;
 import com.example.server.model.response.PageView;
-import com.example.server.model.response.SampleResponse;
 import com.example.server.service.EntityService;
+import org.springframework.http.ResponseEntity;
 
 public interface DeviceService extends EntityService<DeviceDto> {
 
@@ -13,6 +13,7 @@ public interface DeviceService extends EntityService<DeviceDto> {
 
 
 
-    SampleResponse<Boolean> requestReturnDevice(String username, String id);
-    SampleResponse<Boolean> acceptReturnDevice(String username, String id);
+    ResponseEntity<?> requestReturnDevice(String username, String id);
+    ResponseEntity<?> acceptReturnDevice(String username, String id);
+    ResponseEntity<?> refuseReturnDevice(String username, String id);
 }

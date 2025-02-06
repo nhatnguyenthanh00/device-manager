@@ -2,11 +2,10 @@ package com.example.server.service.iservice;
 
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.dto.SelectUser;
-import com.example.server.model.response.DetailUserResponse;
 import com.example.server.model.response.PageView;
-import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.*;
 import com.example.server.service.EntityService;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,11 +20,11 @@ public interface UserService extends EntityService<BkavUserDto> {
 
 //    BkavUser getByUsername(String username);
 
-    SampleResponse<Boolean> changePassWord(String username, String oldPassword, String newPassword);
+    ResponseEntity<?> changePassWord(String username, String oldPassword, String newPassword);
 
-    SampleResponse<Boolean> resetPassword(ResetPasswordRequest request);
+    ResponseEntity<?> resetPassword(ResetPasswordRequest request);
 
-    SampleResponse<DetailUserResponse> findDetailUser(String userId, int page);
+    ResponseEntity<?> findDetailUser(String userId, int page);
 
-    SampleResponse<List<SelectUser>> findAllSelectUser();
+    List<SelectUser> findAllSelectUser();
 }

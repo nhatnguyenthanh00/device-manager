@@ -26,12 +26,14 @@ export class UserProfileComponent {
 
   loadUserProfile() {
     // Call your service to get user profile
-    this.userService.getUserProfile().subscribe((response: any) => {
-      if (response.errMsg) {
-        this.errorMsg = response.errMsg;
-      } else {
-        this.userProfile = response.data;
-      }
+
+    this.userService.getUserProfile().subscribe({
+      next: (response: any) => {
+        this.userProfile = response;
+      },
+      error: (err) => {
+        alert(err.error?.errMsg);
+      },
     });
   }
 
@@ -64,20 +66,21 @@ export class UserProfileComponent {
     ''
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
     if (!passwordRegex.test(this.newPassword)) {
-      this.errorMsg = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+      this.errorMsg = 'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character';
       return;
     } 
 
-    this.userService.changePassword(this.oldPassword, this.newPassword).subscribe((response) => {
-      if (response.errMsg) {
-        this.toastr.error(response.errMsg, 'Error');
-      } else {
+    this.userService.changePassword(this.oldPassword, this.newPassword).subscribe({
+      next: (response) => {
         this.toastr.success('Password changed successfully!', 'Success');
         this.oldPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
         this.showPassword = false;
-      }
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
+      },
     })
   }
 }

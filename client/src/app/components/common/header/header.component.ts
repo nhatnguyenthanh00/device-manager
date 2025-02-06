@@ -15,7 +15,6 @@ export class HeaderComponent implements OnInit {
   tokennService = inject(TokenService);
   router = inject(Router);
   homePageService = inject(HomePageService);
-  // @Input() name !: string ;
   name: string|null = '';
 
   ngOnInit(): void {

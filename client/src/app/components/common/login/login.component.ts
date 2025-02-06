@@ -19,27 +19,22 @@ export class LoginComponent {
   tokenService = inject(TokenService);
   router = inject(Router);
   onSubmit() {
-    this.authService.login(this.username, this.password).subscribe((result) => {
-      if (result == null) {
-        // const token = result?.data?.token;
 
-        let token = localStorage.getItem('currentToken');
-        if (token == null) token = '';
-        if (this.tokenService.getRoleFromToken(token) === 'ROLE_ADMIN') {
-          // alert('Welcome admin');
-          this.router.navigate(['/admin/homepage']);
-        } else {
-          if (this.tokenService.getRoleFromToken(token) === 'ROLE_USER') {
-            // alert('Welcome user');
+    this.authService.login(this.username, this.password).subscribe({
+      next: (response) => {
+        const token = response?.token;
+        if (token) {
+          localStorage.setItem('currentToken', token);
+          if (this.tokenService.getRoleFromToken(token) === 'ROLE_ADMIN') {
+            this.router.navigate(['/admin/homepage']);
+          } else {
             this.router.navigate(['/homepage']);
           }
-          else {
-            this.router.navigate(['/notfound']);
-          }
         }
-      } else {
-        alert(result);
-      }
+      },
+      error: (err) => {
+        alert(err.error?.errMsg);
+      },
     });
   }
   togglePasswordVisibility() {

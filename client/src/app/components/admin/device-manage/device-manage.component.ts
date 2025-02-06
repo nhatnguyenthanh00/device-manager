@@ -119,12 +119,14 @@ export class DeviceManageComponent {
    * input dataDeviceByAccount has changed.
    */
   getUsernames(): void {
-    this.adminService.getUsernames().subscribe((response) => {
-      if (response?.errMsg) {
-        this.toastr.error(response?.errMsg, 'Error');
-      } else {
-        this.usernames = response?.data;
-      }
+
+    this.adminService.getUsernames().subscribe({
+      next: (response) => {
+        this.usernames = response;
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
+      },
     });
   }
 
@@ -140,10 +142,18 @@ export class DeviceManageComponent {
       page: this.currentPage,
     };
 
-    this.deviceService.getAllDevice(params).subscribe((response) => {
-      this.devices = response?.data.content;
-      this.totalPages = response?.data?.totalPages;
-      this.totalItems = response?.data?.totalItems;
+    this.deviceService.getAllDevice(params).subscribe({
+      next: (response) => {
+        this.devices = response?.content;
+        this.totalPages = response?.totalPages;
+        this.totalItems = response?.totalItems;
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
+        this.devices = [];
+        this.totalPages = 1;
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -159,10 +169,19 @@ export class DeviceManageComponent {
       status: this.statusFilter,
       page: this.currentPage,
     };
-    this.deviceService.getMyDevice(params).subscribe((response) => {
-      this.devices = response?.data.content;
-      this.totalPages = response?.data?.totalPages;
-      this.totalItems = response?.data?.totalItems;
+
+    this.deviceService.getMyDevice(params).subscribe({
+      next: (response) => {
+        this.devices = response?.content;
+        this.totalPages = response?.totalPages;
+        this.totalItems = response?.totalItems;
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
+        this.devices = [];
+        this.totalPages = 1;
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -303,13 +322,15 @@ export class DeviceManageComponent {
     event.preventDefault();
 
     if (this.validateInput()) {
-      this.deviceService.addDevice(this.newDevice as NewDevice).subscribe((response) => {
-        if (response?.errMsg) {
-          this.toastr.error(response?.errMsg, 'Error');
-        } else {
+
+      this.deviceService.addDevice(this.newDevice as NewDevice).subscribe({
+        next: (response) => {
           this.toastr.success('Device created successfully!', 'Success');
           this.getDevices();
           this.closeModal();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.errMsg, 'Error');
         }
       });
     }
@@ -356,16 +377,6 @@ export class DeviceManageComponent {
     this.isDropdownOpen = false;
   }
 
-  // onImageUpdateChange(event: any) {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const file: File = event.target.files[0];
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onloadend = () => {
-  //       this.updateDevice.image = reader.result as string;
-  //     };
-  //   }
-  // }
 
   /**
    * Handles the update of a device's information.
@@ -384,14 +395,16 @@ export class DeviceManageComponent {
       // userName: this.selectedDeviceUserName,
       userId: this.selectedDerviceUserId
     };
-    this.deviceService.updateDevice(payload).subscribe((response) => {
-      if (response?.errMsg) {
-        this.toastr.error(response?.errMsg, 'Error');
-      } else {
+
+    this.deviceService.updateDevice(payload).subscribe({
+      next: (response) => {
         this.toastr.success('Device updated successfully!', 'Success');
         if(this.getAll == 'device-manager') this.getDevices()
         else if(this.getAll == 'user-detail') this.deviceUpdated.emit({page: this.currentPage}); 
         this.closeModalDetails();
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.errMsg, 'Error');
       }
     });
   }
@@ -416,13 +429,15 @@ export class DeviceManageComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         // call API delete
-        this.deviceService.deleteDevice(deviceId).subscribe((response) => {
-          if (response?.errMsg) {
-            this.toastr.error(response?.errMsg, 'Error');
-          } else {
+
+        this.deviceService.deleteDevice(deviceId).subscribe({
+          next: (response) => {
             this.toastr.success(`Delete device ${deviceName} succes!`, 'Success');
             this.deviceUpdated.emit({page: this.currentPage}); 
             this.getDevices();
+          },
+          error: (err) => {
+            this.toastr.error(err.error?.errMsg, 'Error');
           }
         });
       }
@@ -452,13 +467,15 @@ export class DeviceManageComponent {
       cancelButtonColor: '#3085d6',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.deviceService.requestReturnDevice(device.id).subscribe((response) => {
-          if (response?.errMsg) {
-            this.toastr.error(response?.errMsg, 'Error');
-          } else {
+
+        this.deviceService.requestReturnDevice(device.id).subscribe({
+          next: (response) => {
             this.toastr.success('Request return device successfully!', 'Success');
-            this.deviceUpdated.emit({page: this.currentPage}); 
+            this.deviceUpdated.emit({page: this.currentPage});
             this.getDevices();
+          },
+          error: (err) => {
+            this.toastr.error(err.error?.errMsg, 'Error');
           }
         });
       }
@@ -484,18 +501,32 @@ export class DeviceManageComponent {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, accept!',
-      cancelButtonText: 'No, cancel',
+      cancelButtonText: 'No, refuse!',
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.deviceService.acceptReturnDevice(device.id).subscribe((response) => {
-          if (response?.errMsg) {
-            this.toastr.error(response?.errMsg, 'Error');
-          } else {
+
+        this.deviceService.acceptReturnDevice(device.id).subscribe({
+          next: (response) => {
             this.toastr.success('Accept return device successfully!', 'Success');
             this.deviceUpdated.emit({page: this.currentPage});
             this.getDevices();
+          },
+          error: (err) => {
+            this.toastr.error(err.error?.errMsg, 'Error');
+          }
+        });
+      }
+      else if(result.dismiss === Swal.DismissReason.cancel) {
+        this.deviceService.refuseReturnDevice(device.id).subscribe({
+          next: (response) => {
+            this.toastr.success('Refuse return device successfully!', 'Success');
+            this.deviceUpdated.emit({page: this.currentPage});
+            this.getDevices();
+          },  
+          error: (err) => {
+            this.toastr.error(err.error?.errMsg, 'Error');
           }
         });
       }

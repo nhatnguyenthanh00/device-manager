@@ -48,11 +48,12 @@ public class Constants {
         public static final String COMMON_BASE_PATH = "/api";
         public static final String LOGIN_PATH = "/login";
         public static final String PROFILE_PATH = "/profile";
-        public static final String CHANGE_PASSWORD_PATH = "/changePassword";
+        public static final String CHANGE_PASSWORD_PATH = "/change-password";
         public static final String ADMIN_DEVICE_PATH = "/admin/device";
         public static final String MY_DEVICE_PATH = "/my-device";
         public static final String DEVICE_RETURN = "/device-return";
         public static final String ADMIN_ACCEPT_RETURN = "/admin/accept-return";
+        public static final String ADMIN_REFUSE_RETURN = "/admin/refuse-return";
         public static final String EMPTY_PATH = "/";
 
         public static final String ADMIN_USER_PATH = "/admin/user";
@@ -67,6 +68,7 @@ public class Constants {
         public static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password";
         public static final String INCORRECT_PASSWORD = "Password incorrect";
         public static final String SYSTEM_BUSY = "Internal Server Error";
+        public static final String FORBIDDEN_ERROR = "You don't have permission";
         public static final String NEW_PASSWORD_SAME_OLD_PASSWORD = "New password is same old password";
         public static final String ADMIN_PASSWORD_INCORRECT = "Admin password incorrect";
         public static final String NOT_FOUND_USER = "Not found user";
@@ -75,6 +77,7 @@ public class Constants {
 
         public static final String REQUEST_RETURN_FAIL = "Request return fail";
         public static final String ACCEPT_RETURN_FAIL = "Accept return fail";
+        public static final String REFUSE_RETURN_FAIL = "Refuse return fail";
 
         public static final String USER_NOW_CONTROL_DEVICES = "User are having some device";
         public static final String INVALID_INPUT = "Invalid input";

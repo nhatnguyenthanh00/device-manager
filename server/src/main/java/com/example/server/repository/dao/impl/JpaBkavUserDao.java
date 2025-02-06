@@ -33,7 +33,7 @@ public class JpaBkavUserDao implements BkavUserDao {
     @Override
     public Optional<BkavUserDto> findById(UUID id) {
         BkavUser user = bkavUserRepository.findById(id).orElse(null);
-        return Optional.of(mapperDto.toDto(user));
+        return Optional.ofNullable(mapperDto.toDto(user));
     }
 
     @Override

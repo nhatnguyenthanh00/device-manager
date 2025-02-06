@@ -1,6 +1,6 @@
 package com.example.server.config.exception;
 
-import com.example.server.model.response.SampleResponse;
+import com.example.server.model.response.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,10 +20,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        SampleResponse<Object> responseBody = new SampleResponse<>(
-                null,
-                HttpStatus.UNAUTHORIZED.getReasonPhrase()
-        );
+
+        ErrorResponse responseBody = new ErrorResponse(HttpStatus.UNAUTHORIZED.getReasonPhrase());
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(responseBody));
     }

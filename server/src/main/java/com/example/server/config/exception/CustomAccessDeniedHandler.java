@@ -1,6 +1,6 @@
 package com.example.server.config.exception;
 
-import com.example.server.model.response.SampleResponse;
+import com.example.server.model.response.ErrorResponse;
 import com.example.server.utils.constants.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -21,11 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
-        SampleResponse<Object> responseBody = new SampleResponse<>(
-                null,
-                Constants.ErrorMessage.SYSTEM_BUSY
-        );
-
+        ErrorResponse responseBody = new ErrorResponse(Constants.ErrorMessage.FORBIDDEN_ERROR);
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(responseBody));
     }

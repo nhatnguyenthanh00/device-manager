@@ -3,7 +3,6 @@ package com.example.server.controller;
 import com.example.server.config.security.UserPrincipal;
 import com.example.server.model.dto.BkavUserDto;
 import com.example.server.model.response.LoginResponse;
-import com.example.server.model.response.SampleResponse;
 import com.example.server.model.resquest.ChangePasswordRequest;
 import com.example.server.model.resquest.LoginRequest;
 import com.example.server.service.AuthenService;
@@ -11,6 +10,8 @@ import com.example.server.service.iservice.UserService;
 import com.example.server.utils.CommonUtils;
 import com.example.server.utils.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,7 +34,7 @@ public class AuthenController {
      * @return   LoginResponse with JWT token if authentication is successful
      */
     @PostMapping(Constants.ApiEndpoint.LOGIN_PATH)
-    public SampleResponse<LoginResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){
         return authenService.verify(request);
     }
 
@@ -43,10 +44,10 @@ public class AuthenController {
      * @return   BkavUserDto containing the user's profile information
      */
     @GetMapping(Constants.ApiEndpoint.PROFILE_PATH)
-    public SampleResponse<BkavUserDto> findMyProfile(){
+    public ResponseEntity<BkavUserDto> findMyProfile(){
         UserPrincipal userPrincipal = commonUtils.getCurrentUser();
         BkavUserDto userDto = userService.findProfile(userPrincipal.getUsername());
-        return new SampleResponse<>(userDto);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     /**
@@ -56,7 +57,7 @@ public class AuthenController {
      * @return   Boolean true if the password is changed successfully
      */
     @PostMapping(Constants.ApiEndpoint.CHANGE_PASSWORD_PATH)
-    public SampleResponse<Boolean> changePassword(@RequestBody ChangePasswordRequest request){
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request){
         String userName = commonUtils.getCurrentUser().getUsername();
         return userService.changePassWord(userName,request.getOldPassword(),request.getNewPassword());
     }

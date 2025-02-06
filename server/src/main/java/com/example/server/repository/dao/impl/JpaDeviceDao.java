@@ -42,7 +42,7 @@ public class JpaDeviceDao implements DeviceDao {
 
     @Override
     public Optional<DeviceDto> findById(UUID id) {
-        return Optional.of(mapperDto.toDto(deviceRepository.findById(id).orElse(null)));
+        return Optional.ofNullable(mapperDto.toDto(deviceRepository.findById(id).orElse(null)));
     }
 
     @Override
@@ -154,14 +154,17 @@ public class JpaDeviceDao implements DeviceDao {
     }
 
     @Override
-    public Boolean acceptReturnDevice(String deviceId) {
+    public Boolean responseReturnDevice(String deviceId, boolean accept) {
         UUID id = UUID.fromString(deviceId);
         Device device = deviceRepository.findById(id).orElse(null);
         if(device == null) return false;
         if(device.getBkavUserId() == null) return false;
         if(device.getStatus() != Constants.Common.NUMBER_1_INT) return false;
-        device.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
-        device.setBkavUserId(null);
+        if(accept){
+            device.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
+            device.setBkavUserId(null);
+        }
+        else device.setStatus(Constants.Common.NUMBER_0_INT);
         try{
             deviceRepository.save(device);
             return true;
@@ -169,5 +172,6 @@ public class JpaDeviceDao implements DeviceDao {
             return false;
         }
     }
+
 
 }

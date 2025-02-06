@@ -17,13 +17,7 @@ export class DeviceService {
    */
   getAllDevice(params: object): Observable<any> {
     // Make an HTTP GET request to fetch all devices
-    return this.httpService.get<any>('/api/admin/device', params).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error fetching device list:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.get<any>('/api/admin/device', params);
   }
 
   /**
@@ -34,13 +28,7 @@ export class DeviceService {
    */
   getMyDevice(params: object): Observable<any> {
     // Make an HTTP GET request to fetch all devices owned by the current user
-    return this.httpService.get<any>('/api/my-device', params).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error fetching device list:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.get<any>('/api/my-device', params);
   }
 
   /**
@@ -60,13 +48,7 @@ export class DeviceService {
    * @returns An observable of the updated device data or null in case of an error.
    */
   updateDevice(device: object): Observable<any> {
-    return this.httpService.post<any>('/api/admin/device', device).pipe(
-      catchError((error) => {
-        // Log an error message if the request fails
-        console.error('Error updating device:', error);
-        return of(null); // Return null in case of an error
-      })
-    );
+    return this.httpService.post<any>('/api/admin/device', device);
   }
 
   /**
@@ -105,6 +87,10 @@ export class DeviceService {
    */
   acceptReturnDevice(deviceId: string): Observable<any> {
     return this.httpService.post<any>('/api/admin/accept-return',{}, { id: deviceId });
+  }
+
+  refuseReturnDevice(deviceId: string): Observable<any> {
+    return this.httpService.post<any>('/api/admin/refuse-return',{}, { id: deviceId });
   }
 }
 
