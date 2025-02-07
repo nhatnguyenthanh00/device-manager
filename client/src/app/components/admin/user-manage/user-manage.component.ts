@@ -216,4 +216,9 @@ export class UserManageComponent {
       });
     }
   }
+  canDelete(user: User): boolean {
+    // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
+    return user.totalDevice === 0;  
+  }
+  
 }

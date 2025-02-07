@@ -65,7 +65,7 @@
           <td>{{ getStatusStr(device) }}</td>
           <td class="actions">
             <!-- View and Delete icons -->
-            <button (click)="viewDetails(device)">
+            <!-- <button (click)="viewDetails(device)">
               <i class="fas fa-eye icon"></i>
             </button>
 
@@ -80,7 +80,50 @@
               <button (click)="deleteDevice(device.id, device.name)">
                 <i class="fas fa-trash icon" style="color: red"></i>
               </button>
-            </ng-template>
+            </ng-template> -->
+
+            <div class="icon-row">
+              <div class="icon-wrapper" (click)="viewDetails(device)" title="View detail">
+                <i class="fas fa-eye icon"></i>
+                <span class="tooltip">View detail</span>
+              </div>
+              <div *ngIf="getAll == 'my-device'; else elseBlockDiv">
+                <div
+                  class="icon-wrapper" 
+                  (click)="canRequestReturn(device)? requestReturnDevice(device): null"
+                  [ngClass]="{ disabled: !canRequestReturn(device) }"
+                  [title]="canRequestReturn(device) ? 'Request return device' : 'Cannot request return device'"
+                  [style.pointerEvents]="canRequestReturn(device) ? 'auto' : 'none'"
+                  title="Request return"
+                >
+                  <i class="fas fa-undo icon" style="color: #eed202"></i>
+                  <span class="tooltip">Request return</span>
+                </div>
+              </div>
+
+              <ng-template #elseBlockDiv>
+                <div
+                class="icon-wrapper"
+                (click)="canAccpetReturn(device)? acceptRequestReturnDevice(device): null"
+                [ngClass]="{ disabled: !canAccpetReturn(device) }"
+                [title]="canAccpetReturn(device) ? 'Accept return device' : 'Cannot accept return device'"
+                [style.pointerEvents]="canAccpetReturn(device) ? 'auto' : 'none'"
+                >
+                  <i class="fas fa-check icon" style="color: green"></i>
+                  <span class="tooltip">Accept return</span>
+                </div>
+                <div
+                class="icon-wrapper"
+                (click)="canDelete(device)? deleteDevice(device.id, device.name): null"
+                [ngClass]="{ disabled: !canDelete(device) }"
+                [title]="canDelete(device) ? 'Delete device' : 'Cannot delete device'"
+                [style.pointerEvents]="canDelete(device) ? 'auto' : 'none'"
+                >
+                  <i class="fas fa-trash icon" style="color: red"></i>
+                  <span class="tooltip">Delete device</span>
+                </div>
+              </ng-template>
+            </div>
 
           </td>
         </tr>

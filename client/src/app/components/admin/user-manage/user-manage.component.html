@@ -51,12 +51,28 @@
           <td>{{ user?.totalDevice }}</td>
           <td class="actions">
             <!-- View and Delete icons -->
-            <button (click)="viewDetails(user)">
+            <!-- <button (click)="viewDetails(user)">
               <i class="fas fa-eye icon"></i>
             </button>
             <button (click)="deleteUser(user.userId,user.username)">
               <i class="fas fa-trash icon"></i>
-            </button>
+            </button> -->
+            <div class="icon-row">
+              <div class="icon-wrapper" (click)="viewDetails(user)" title="View detail">
+                <i class="fas fa-eye icon"></i>
+                <span class="tooltip">View detail</span>
+              </div>
+              <div
+                class="icon-wrapper"
+                (click)="canDelete(user)? deleteUser(user.userId, user.username): null"
+                [ngClass]="{ disabled: !canDelete(user) }"
+                [title]="canDelete(user) ? 'Delete user' : 'Cannot delete user'"
+                [style.pointerEvents]="canDelete(user) ? 'auto' : 'none'"
+              >
+                <i class="fas fa-trash icon" style="color: red"></i>
+                <span class="tooltip">Delete user</span>
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>

@@ -1,4 +1,11 @@
-import { Component, inject, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeviceService } from '../../../core/services/device.service';
@@ -19,7 +26,7 @@ export class DeviceManageComponent {
   @Input() getAll!: string; // Determines the type of device data being displayed (user-detail, device-manager, my-device)
   @Input() dataDeviceByAccount: PageDevice | null = null; // Holds data related to devices associated with a specific account
   @Output() deviceUpdated = new EventEmitter<any>(); // Emits an event when a device is updated (for pagination)
-  
+
   // Service injections
   deviceService = inject(DeviceService);
   adminService = inject(AdminService);
@@ -34,7 +41,7 @@ export class DeviceManageComponent {
   totalPages: number = 1; // Total number of pages for pagination
   totalItems: number = 0; // Total number of items (devices) for pagination
   showCreateDeviceModal: boolean = false; // Controls visibility of the device creation modal
-  showDetailsModal:boolean = false; // Controls visibility of the device details modal
+  showDetailsModal: boolean = false; // Controls visibility of the device details modal
   // New and updated device data
   newDevice: Partial<NewDevice> = {
     name: '',
@@ -71,28 +78,31 @@ export class DeviceManageComponent {
   selectOption(option: any) {
     if (this.selectedDeviceUserName === option.username) {
       this.selectedDeviceUserName = '';
-      this.selectedDerviceUserId = null ;
+      this.selectedDerviceUserId = null;
     } else {
       this.selectedDeviceUserName = option.username;
-      this.selectedDerviceUserId = option.id; 
+      this.selectedDerviceUserId = option.id;
     }
     this.isDropdownOpen = false;
   }
 
   ngOnInit(): void {
     this.getDevices();
-    if(this.getAll == 'user-detail' || this.getAll == 'device-manager') this.getUsernames();
+    if (this.getAll == 'user-detail' || this.getAll == 'device-manager')
+      this.getUsernames();
   }
 
   /**
    * Handles changes to the input dataDeviceByAccount
-   * 
+   *
    * @param changes The changes to the input dataDeviceByAccount
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['dataDeviceByAccount'] && 
-        changes['dataDeviceByAccount'].currentValue && 
-        this.getAll == 'user-detail') {
+    if (
+      changes['dataDeviceByAccount'] &&
+      changes['dataDeviceByAccount'].currentValue &&
+      this.getAll == 'user-detail'
+    ) {
       this.getDevicesOfUserDetails();
     }
   }
@@ -119,7 +129,6 @@ export class DeviceManageComponent {
    * input dataDeviceByAccount has changed.
    */
   getUsernames(): void {
-
     this.adminService.getUsernames().subscribe({
       next: (response) => {
         this.usernames = response;
@@ -159,7 +168,7 @@ export class DeviceManageComponent {
 
   /**
    * Fetches devices owned by the current user based on the current search,
-   * category, status, and page filters. Updates the devices, total pages, 
+   * category, status, and page filters. Updates the devices, total pages,
    * and total items properties with the fetched data.
    */
   getMyDevices(): void {
@@ -229,7 +238,7 @@ export class DeviceManageComponent {
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.deviceUpdated.emit({page: this.currentPage});
+      this.deviceUpdated.emit({ page: this.currentPage });
       this.getDevices();
     }
   }
@@ -241,7 +250,7 @@ export class DeviceManageComponent {
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.deviceUpdated.emit({page: this.currentPage});
+      this.deviceUpdated.emit({ page: this.currentPage });
       this.getDevices();
     }
   }
@@ -272,19 +281,20 @@ export class DeviceManageComponent {
   /**
    * Handles the change event for the image input.
    * Reads the selected file and updates the newDevice's image property with the base64 string.
-   * 
+   *
    * @param event The change event triggered by the file input
    */
   onImageChange(event: any, type: string) {
     if (event.target.files && event.target.files[0]) {
-      const file: File = event.target.files[0]; 
-      const reader = new FileReader(); 
-      
+      const file: File = event.target.files[0];
+      const reader = new FileReader();
+
       reader.readAsDataURL(file);
-      
+
       reader.onloadend = () => {
-        if(type === 'create') this.newDevice.image = reader.result as string;
-        else if(type === 'update') this.updateDevice.image = reader.result as string;
+        if (type === 'create') this.newDevice.image = reader.result as string;
+        else if (type === 'update')
+          this.updateDevice.image = reader.result as string;
         // this.newDevice.image = reader.result as string;
       };
     }
@@ -315,14 +325,13 @@ export class DeviceManageComponent {
   /**
    * Handles the creation of a new device.
    * Validates the input, submits the device data to the server, and updates the device list on success.
-   * 
+   *
    * @param event The form submission event
    */
   createDevice(event: Event) {
     event.preventDefault();
 
     if (this.validateInput()) {
-
       this.deviceService.addDevice(this.newDevice as NewDevice).subscribe({
         next: (response) => {
           this.toastr.success('Device created successfully!', 'Success');
@@ -331,7 +340,7 @@ export class DeviceManageComponent {
         },
         error: (err) => {
           this.toastr.error(err.error?.errMsg, 'Error');
-        }
+        },
       });
     }
   }
@@ -341,11 +350,10 @@ export class DeviceManageComponent {
    * Sets the 'selectedDeviceId', 'selectedDeviceUserName', 'selectedDeviceStatus',
    * and 'updateDevice' properties to the device's values.
    * And then opens the modal dialog.
-   * 
+   *
    * @param device The device to show details
    */
   viewDetails(device: Device) {
-
     this.selectedDeviceId = device.id;
     this.selectedDeviceUserName =
       device.username == null ? '' : device.username;
@@ -377,11 +385,10 @@ export class DeviceManageComponent {
     this.isDropdownOpen = false;
   }
 
-
   /**
    * Handles the update of a device's information.
    * Validates the input, submits the updated device data to the server, and updates the device list on success.
-   * 
+   *
    * @param event The form submission event
    */
   updateDeviceInfo(event: Event) {
@@ -393,19 +400,20 @@ export class DeviceManageComponent {
       category: this.updateDevice.category,
       image: this.updateDevice.image,
       // userName: this.selectedDeviceUserName,
-      userId: this.selectedDerviceUserId
+      userId: this.selectedDerviceUserId,
     };
 
     this.deviceService.updateDevice(payload).subscribe({
       next: (response) => {
         this.toastr.success('Device updated successfully!', 'Success');
-        if(this.getAll == 'device-manager') this.getDevices()
-        else if(this.getAll == 'user-detail') this.deviceUpdated.emit({page: this.currentPage}); 
+        if (this.getAll == 'device-manager') this.getDevices();
+        else if (this.getAll == 'user-detail')
+          this.deviceUpdated.emit({ page: this.currentPage });
         this.closeModalDetails();
       },
       error: (err) => {
         this.toastr.error(err.error?.errMsg, 'Error');
-      }
+      },
     });
   }
 
@@ -432,13 +440,16 @@ export class DeviceManageComponent {
 
         this.deviceService.deleteDevice(deviceId).subscribe({
           next: (response) => {
-            this.toastr.success(`Delete device ${deviceName} succes!`, 'Success');
-            this.deviceUpdated.emit({page: this.currentPage}); 
+            this.toastr.success(
+              `Delete device ${deviceName} succes!`,
+              'Success'
+            );
+            this.deviceUpdated.emit({ page: this.currentPage });
             this.getDevices();
           },
           error: (err) => {
             this.toastr.error(err.error?.errMsg, 'Error');
-          }
+          },
         });
       }
     });
@@ -451,7 +462,7 @@ export class DeviceManageComponent {
    * @param device The device to request return
    */
   requestReturnDevice(device: Device) {
-    if(device.status == 1) {
+    if (device.status == 1) {
       this.toastr.error('Device is already have request return!', 'Error');
       return;
     }
@@ -467,26 +478,28 @@ export class DeviceManageComponent {
       cancelButtonColor: '#3085d6',
     }).then((result) => {
       if (result.isConfirmed) {
-
         this.deviceService.requestReturnDevice(device.id).subscribe({
           next: (response) => {
-            this.toastr.success('Request return device successfully!', 'Success');
-            this.deviceUpdated.emit({page: this.currentPage});
+            this.toastr.success(
+              'Request return device successfully!',
+              'Success'
+            );
+            this.deviceUpdated.emit({ page: this.currentPage });
             this.getDevices();
           },
           error: (err) => {
             this.toastr.error(err.error?.errMsg, 'Error');
-          }
+          },
         });
       }
-    })
+    });
   }
 
   /**
    * Accepts the return request for a device.
    * Validates the device status before showing a confirmation dialog.
    * If confirmed, calls the accept return device API and updates the device list on success.
-   * 
+   *
    * @param device The device for which to accept the return request
    */
   acceptRequestReturnDevice(device: Device) {
@@ -506,30 +519,49 @@ export class DeviceManageComponent {
       cancelButtonColor: '#3085d6',
     }).then((result) => {
       if (result.isConfirmed) {
-
         this.deviceService.acceptReturnDevice(device.id).subscribe({
           next: (response) => {
-            this.toastr.success('Accept return device successfully!', 'Success');
-            this.deviceUpdated.emit({page: this.currentPage});
+            this.toastr.success(
+              'Accept return device successfully!',
+              'Success'
+            );
+            this.deviceUpdated.emit({ page: this.currentPage });
             this.getDevices();
           },
           error: (err) => {
             this.toastr.error(err.error?.errMsg, 'Error');
-          }
+          },
         });
-      }
-      else if(result.dismiss === Swal.DismissReason.cancel) {
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
         this.deviceService.refuseReturnDevice(device.id).subscribe({
           next: (response) => {
-            this.toastr.success('Refuse return device successfully!', 'Success');
-            this.deviceUpdated.emit({page: this.currentPage});
+            this.toastr.success(
+              'Refuse return device successfully!',
+              'Success'
+            );
+            this.deviceUpdated.emit({ page: this.currentPage });
             this.getDevices();
-          },  
+          },
           error: (err) => {
             this.toastr.error(err.error?.errMsg, 'Error');
-          }
+          },
         });
       }
     });
+  }
+
+  canDelete(device: Device): boolean {
+    // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
+    return device.status === -1;
+  }
+
+  canAccpetReturn(device: Device): boolean {
+    // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
+    return device.status === 1;
+  }
+
+  canRequestReturn(device: Device): boolean {
+    // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
+    return device.status === 0;
   }
 }
