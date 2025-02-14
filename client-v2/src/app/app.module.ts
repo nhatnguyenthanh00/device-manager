@@ -3,7 +3,6 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { routes } from './app.routes';
-import { HelloWordModule } from './hello-word/hello-word.module';
 import { AuthModule } from './auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
 import { UserModule } from './user/user.module';
@@ -16,7 +15,6 @@ import { CoreModule } from './core/core.module';
   imports: [
     RouterModule.forRoot(routes),
     BrowserModule,
-    HelloWordModule,
     AuthModule,
     UserModule,
     AdminModule,

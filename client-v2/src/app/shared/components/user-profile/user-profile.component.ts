@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
-export class UserProfileComponent {
+export class UserProfileComponent implements OnInit{
   userProfile: any = null;
   oldPassword: string = '';
   newPassword: string = '';
@@ -17,12 +17,6 @@ export class UserProfileComponent {
   constructor(private userService: UserService, private toastr: ToastrService) {}
   ngOnInit() {
     // Load user profile data
-    this.loadUserProfile();
-  }
-
-  loadUserProfile() {
-    // Call your service to get user profile
-
     this.userService.getUserProfile().subscribe({
       next: (response: any) => {
         this.userProfile = response;

@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from '../../../core/services/token.service';
 import { HomePageService } from '../../../core/services/home-page.service';
+import { STORAGE_KEYS, ROUTES } from '../../../core/constants';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -15,12 +16,11 @@ export class HeaderComponent implements OnInit{
   name: string|null = '';
 
   ngOnInit(): void {
-    const token = localStorage.getItem('currentToken') === null ? '' : localStorage.getItem('currentToken')!;
-    this.name = this.tokenService.getUserNameFromToken(token);
+    this.name = this.tokenService.getUserNameFromToken(localStorage.getItem(STORAGE_KEYS.TOKEN) as string || '');
   }
   onLogout(){
-    localStorage.removeItem('currentToken');
-    this.router.navigate(['/login']);
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    this.router.navigate(['/'+ROUTES.LOGIN]);
   }
   goToProfile(){
     // this.router.navigate(['/profile']);

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { catchError, Observable } from 'rxjs';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { AuthService } from '../../auth/services/auth.service';
+import { STORAGE_KEYS, ROUTES } from '../constants';
 /**
  * HTTP Interceptor để thêm Authorization header với token.
  * Nếu token không hợp lệ, sẽ xóa token và chuyển hướng đến trang login.
@@ -15,7 +16,7 @@ export class JwtInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService, private router: Router) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>{
-    const token = localStorage.getItem('currentToken');
+    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     if (token!=null && token != '') {
       req = req.clone({
         setHeaders: {
@@ -26,8 +27,8 @@ export class JwtInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error) => {
         if (error.status === 401 || error.status === 403) {
-          localStorage.removeItem('currentToken');
-          this.router.navigate(['/login']);
+          localStorage.removeItem(STORAGE_KEYS.TOKEN);
+          this.router.navigate(['/'+ROUTES.LOGIN]);
         }
         throw error;
       })

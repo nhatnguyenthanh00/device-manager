@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
-import { UserList } from '../../models/user-list.model';
 import { NewUser } from '../../models/new-user.model';
-
+import { API_ENDPOINT } from '../../core/constants';
 @Injectable()
 export class AdminService {
   constructor(private httpService: HttpService) {}
@@ -14,9 +13,9 @@ export class AdminService {
    * @param params - The parameters for querying users.
    * @returns An observable of the user list or null in case of an error.
    */
-  getListUser(params: object): Observable<UserList> {
+  getListUser(params: object): Observable<any> {
     // Make an HTTP GET request to fetch the user list
-    return this.httpService.get<UserList>('/api/admin/user', params);
+    return this.httpService.get<any>(API_ENDPOINT.USER, params);
   }
 
   /**
@@ -28,7 +27,7 @@ export class AdminService {
    */
   getUser(userId: string, page: number): Observable<any> {
     // Make an HTTP POST request to fetch the user details
-    return this.httpService.get<any>('/api/admin/user-detail', { userId: userId, page:page });
+    return this.httpService.get<any>(API_ENDPOINT.USER_DETAIL, { userId: userId, page:page });
   }
 
   /**
@@ -39,7 +38,7 @@ export class AdminService {
    */
   addUser(user: NewUser): Observable<any> {
     // Make an HTTP POST request to create a new user
-    return this.httpService.post<any>('/api/admin/user', user);
+    return this.httpService.post<any>(API_ENDPOINT.USER, user);
   }
 
   /**
@@ -50,7 +49,7 @@ export class AdminService {
    */
   updateUser(payload: any): Observable<any> {
     // Make an HTTP PUT request to update a user
-    return this.httpService.post<any>('/api/admin/user', payload);
+    return this.httpService.post<any>(API_ENDPOINT.USER, payload);
   }
 
   /**
@@ -61,7 +60,7 @@ export class AdminService {
    */
   resetPassword(payload: any): Observable<any> {
     // Make an HTTP PUT request to reset a user's password
-    return this.httpService.put<any>('/api/admin/reset-password', payload);
+    return this.httpService.put<any>(API_ENDPOINT.RESET_PASWORD, payload);
   }
 
   /**
@@ -72,7 +71,7 @@ export class AdminService {
    */
   deleteUser(userId: string): Observable<any> {
     // Make an HTTP DELETE request to delete a user
-    return this.httpService.delete<any>('/api/admin/user', { id: userId });
+    return this.httpService.delete<any>(API_ENDPOINT.USER, { id: userId });
   }
 
 }

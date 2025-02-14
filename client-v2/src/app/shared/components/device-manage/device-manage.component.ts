@@ -14,9 +14,7 @@ export class DeviceManageComponent {
   @Input() dataDeviceByAccount: any; // Holds data related to devices associated with a specific account
   @Output() deviceUpdated = new EventEmitter<any>(); // Emits an event when a device is updated (for pagination)
 
-  // constructor(private deviceService: DeviceService, private toastr: ToastrService) {}
-  deviceService = inject(DeviceService);
-  toastr = inject(ToastrService);
+  constructor(private deviceService: DeviceService, private toastr: ToastrService) {}
 
   devices: Device[] = []; // Stores the list of devices to display
   usernames: any[] = []; // Stores the list of usernames for filtering devices

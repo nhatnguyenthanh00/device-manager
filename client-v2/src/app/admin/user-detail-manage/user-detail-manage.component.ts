@@ -66,7 +66,6 @@ export class UserDetailManageComponent {
   }
 
   onDeviceUpdated(event: { page: number }) {
-    console.log('hay hay update');
     this.getUserDetails(event.page);
   }
 
@@ -175,8 +174,6 @@ export class UserDetailManageComponent {
     };
     this.adminService.resetPassword(payload).subscribe({
       next: (response) => {
-        console.log('In onResetPassword');
-        console.log(response);
         this.toastr.success('User password reset successfully!', 'Success');
         this.getUserDetails();
       },

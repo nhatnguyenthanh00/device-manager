@@ -1,0 +1,16 @@
+<div class="error-page">
+  <div class="error-container">
+    <div class="error-code">{{data?.code}}</div>
+    <div class="error-line"></div>
+    <div class="error-message">
+      <h2>{{ data?.title }}</h2>
+      <p>{{data?.message}}</p>
+    </div>
+    <div class="error-actions">
+      <button class="login-btn" (click)="goToLogin()">
+        <i class="fas fa-sign-in-alt"></i>
+        Đăng nhập
+      </button>
+    </div>
+  </div>
+</div>

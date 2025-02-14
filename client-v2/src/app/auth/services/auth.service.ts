@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
-
+import {STORAGE_KEYS} from '../../core/constants';
+import { API_ENDPOINT } from '../../core/constants';
 @Injectable()
 export class AuthService {
   constructor(private httpService: HttpService) {}
@@ -15,7 +16,7 @@ export class AuthService {
    */
   login(username: string, password: string): Observable<any> {
     const payload = { username, password };
-    return this.httpService.post<any>('/api/login', payload);
+    return this.httpService.post<any>(API_ENDPOINT.LOGIN, payload);
   }
 
 
@@ -25,6 +26,6 @@ export class AuthService {
    * This method is called when the user clicks the logout button in the header.
    */
   logout() {
-    localStorage.removeItem('currentToken');
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
   }
 }

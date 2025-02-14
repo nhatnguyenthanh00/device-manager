@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
 import { NewDevice } from '../../models/new-device.model';
+import { API_ENDPOINT } from '../../core/constants';
 @Injectable()
 export class DeviceService {
 
@@ -15,7 +16,7 @@ export class DeviceService {
    */
   getAllDevice(params: object): Observable<any> {
     // Make an HTTP GET request to fetch all devices
-    return this.httpService.get<any>('/api/admin/device', params);
+    return this.httpService.get<any>(API_ENDPOINT.DEVICE, params);
   }
 
   /**
@@ -26,7 +27,7 @@ export class DeviceService {
    */
   getMyDevice(params: object): Observable<any> {
     // Make an HTTP GET request to fetch all devices owned by the current user
-    return this.httpService.get<any>('/api/my-device', params);
+    return this.httpService.get<any>(API_ENDPOINT.MY_DEVICE, params);
   }
 
   /**
@@ -36,7 +37,7 @@ export class DeviceService {
    * @returns An observable of the created device data or null in case of an error.
    */
   addDevice(device: NewDevice): Observable<any> {
-    return this.httpService.post<any>('/api/admin/device', device);
+    return this.httpService.post<any>(API_ENDPOINT.DEVICE, device);
   }
 
   /**
@@ -46,7 +47,7 @@ export class DeviceService {
    * @returns An observable of the updated device data or null in case of an error.
    */
   updateDevice(device: object): Observable<any> {
-    return this.httpService.post<any>('/api/admin/device', device);
+    return this.httpService.post<any>(API_ENDPOINT.DEVICE, device);
   }
 
   /**
@@ -56,7 +57,7 @@ export class DeviceService {
    * @returns An observable of the deleted device data or null in case of an error.
    */
   deleteDevice(deviceId: string): Observable<any> {
-    return this.httpService.delete<any>('/api/admin/device',  { id: deviceId } );
+    return this.httpService.delete<any>(API_ENDPOINT.DEVICE,  { id: deviceId } );
   }
 
   /**
@@ -70,7 +71,7 @@ export class DeviceService {
    * with a success message if the request is processed successfully.
    */
   requestReturnDevice(deviceId: string): Observable<any> {
-    return this.httpService.post<any>('/api/device-return',{}, { id: deviceId });
+    return this.httpService.post<any>(API_ENDPOINT.DEVICE_RETURN,{}, { id: deviceId });
   }
 
   /**
@@ -84,11 +85,11 @@ export class DeviceService {
    * with a success message if the request is processed successfully.
    */
   acceptReturnDevice(deviceId: string): Observable<any> {
-    return this.httpService.post<any>('/api/admin/accept-return',{}, { id: deviceId });
+    return this.httpService.post<any>(API_ENDPOINT.ACCEPT_RETUEN,{}, { id: deviceId });
   }
 
   refuseReturnDevice(deviceId: string): Observable<any> {
-    return this.httpService.post<any>('/api/admin/refuse-return',{}, { id: deviceId });
+    return this.httpService.post<any>(API_ENDPOINT.REFUSE_RETURN,{}, { id: deviceId });
   }
 
   /**
@@ -98,7 +99,7 @@ export class DeviceService {
    */
   getUsernames(): Observable<any> {
     // Make an HTTP GET request to fetch all usernames
-    return this.httpService.get<any>('/api/admin/user-select');
+    return this.httpService.get<any>(API_ENDPOINT.USER_SELECT);
   }
 }
 

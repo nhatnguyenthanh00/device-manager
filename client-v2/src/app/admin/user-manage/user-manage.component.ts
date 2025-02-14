@@ -82,7 +82,6 @@ export class UserManageComponent {
 
   viewDetails(user: User) {
     // Navigate to user detail page (use Angular Router)
-    console.log('View details for user:', user);
     this.homePageService.setActiveTab('user-detail');
     this.homePageService.setDetailUserId(user.userId);
   }
