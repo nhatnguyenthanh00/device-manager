@@ -1,0 +1,411 @@
+/* General Styles */
+.device-manage-container {
+  /* padding: 20px; */
+  font-family: Arial, sans-serif;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
+}
+
+.search-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.search-container input {
+  flex-grow: 1;
+  height: 40px;
+  padding: 0px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.search-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 15px;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.search-container button:hover {
+  background-color: #0056b3;
+}
+
+input,
+select,
+button {
+  height: 40px; /* Ensure equal height for all form elements */
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  flex-wrap: nowrap;
+}
+
+input {
+  width: 250px;
+}
+
+select {
+  width: 160px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+.total-item {
+  font-style: bold;
+}
+.status-info {
+  padding-top: 5px;
+  font-size: 12px;
+  font-style: italic;
+  color: red;
+}
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+td {
+  background-color: #ffffff;
+  font-size: 14px;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+.actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
+  font-size: 16px;
+}
+
+.actions button:hover {
+  color: #0056b3;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
+  font-size: 20px;
+}
+
+.pagination button:hover {
+  color: #0056b3;
+}
+
+/* Paging Disabled States */
+.pagination button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+  color: #555;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ddd;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: "Arial", sans-serif;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px; /* Tạo khoảng cách giữa các trường */
+}
+
+.row-layout {
+  display: flex;
+  gap: 15px; /* Khoảng cách giữa 2 cột */
+}
+
+.col {
+  flex: 1; /* Chia đều không gian cho 2 cột */
+}
+.col select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding-right: 40px;
+}
+
+.password-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-container i {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #333;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.error-msg {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.modal-content {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.modal-content img {
+  grid-row: 1; /* Ảnh nằm ở hàng đầu */
+  width: auto;
+  max-height: 80px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown {
+  position: relative;
+  width: 200px;
+}
+
+.dropdown-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.dropdown-input {
+  width: 100%;
+  padding: 10px;
+  padding-right: 30px; /* Chừa chỗ cho mũi tên */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+.dropdown-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Mũi tên xuống */
+.dropdown-arrow {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 120px; /* Chiều cao tối đa */
+  overflow-y: auto; /* Hiển thị thanh cuộn */
+  background: #fff;
+  border: 1px solid #ccc;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-menu li.active {
+  background-color: #007bff !important;
+  color: white;
+}
+
+.dropdown-menu li:hover {
+  background: #f0f0f0;
+}
+
+.readonly-field {
+  background-color: #f5f5f5; /* Xám nhạt */
+  color: #888; /* Màu chữ nhạt */
+  border: 1px solid #ddd; /* Viền nhạt */
+  pointer-events: none; /* Vô hiệu hóa tương tác */
+}
+
+.readonly-field:focus {
+  outline: none;
+}
+
+/* Nút dropdown trong chế độ readonly */
+.dropdown.readonly-field .dropdown-input-wrapper {
+  background-color: #f5f5f5;
+  color: #888;
+}
+
+.dropdown.readonly-field .dropdown-arrow {
+  display: none; /* Ẩn mũi tên trong chế độ readonly */
+}
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #007bff;
+}
+
+.icon-wrapper:hover {
+  /* color: #007bff; */
+}
+
+.icon-wrapper .tooltip {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 4px;
+  position: absolute;
+  /* bottom: -30px; */
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.icon-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

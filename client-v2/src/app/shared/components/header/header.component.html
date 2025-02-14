@@ -1,0 +1,21 @@
+<div class="header-container">
+  <div class="left-side">
+    <img src="assets/logoBkav.jpg" alt="Logo" class="logo" />
+  </div>
+
+  <div class="right-side">
+    <p>Hello {{ name !== null ? name : "" }}</p>
+
+    <div class="icon-row">
+      <div class="icon-wrapper" (click)="goToProfile()" title="Your Profile">
+        <i class="fas fa-user"></i>
+        <span class="tooltip">Your Profile</span>
+      </div>
+
+      <div class="icon-wrapper" (click)="onLogout()" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="tooltip">Logout</span>
+      </div>
+    </div>
+  </div>
+</div>

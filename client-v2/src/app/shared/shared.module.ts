@@ -1,0 +1,30 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from './components/header/header.component';
+import { BaseDashboardComponent } from './components/base-dashboard/base-dashboard.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { DeviceManageComponent } from './components/device-manage/device-manage.component';
+import { DeviceService } from './services/device.service';
+
+
+@NgModule({
+  declarations: [
+    HeaderComponent,
+    BaseDashboardComponent,
+    UserProfileComponent,
+    DeviceManageComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
+  exports: [
+    HeaderComponent,
+    BaseDashboardComponent,
+    UserProfileComponent,
+    DeviceManageComponent
+  ],
+  providers: [DeviceService]
+})
+export class SharedModule { }

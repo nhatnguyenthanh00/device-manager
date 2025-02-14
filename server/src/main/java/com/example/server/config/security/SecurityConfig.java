@@ -83,6 +83,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin(allowedOrigin); // Cho phép nguồn Angular
+        configuration.addAllowedOrigin("http://localhost:52538");
         configuration.addAllowedMethod("*"); // Cho phép tất cả các method (GET, POST, PUT, DELETE, ...)
         configuration.addAllowedHeader("*"); // Cho phép tất cả các header
         configuration.setAllowCredentials(true); // Cho phép gửi cookie hoặc thông tin xác thực

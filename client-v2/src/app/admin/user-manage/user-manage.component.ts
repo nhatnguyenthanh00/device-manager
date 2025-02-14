@@ -1,21 +1,18 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { User } from '../../../models/user.model';
-import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../../core/services/admin.service';
-import { NewUser } from '../../../models/new-user.model';
+import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { AdminService } from '../services/admin.service';
+import { HomePageService } from '../../core/services/home-page.service';
+import { User } from '../../models/user.model';
+import { NewUser } from '../../models/new-user.model';
 import Swal from 'sweetalert2';
-import { HomePageService } from '../../../core/services/home-page.service';
 @Component({
   selector: 'app-user-manage',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './user-manage.component.html',
-  styleUrl: './user-manage.component.css',
+  styleUrl: './user-manage.component.css'
 })
 export class UserManageComponent {
-  homePageService = inject(HomePageService);
+
+  constructor(private adminService: AdminService, private toastr: ToastrService, private homePageService: HomePageService) {}
 
   users: User[] = [];
   search: string = '';
@@ -32,10 +29,6 @@ export class UserManageComponent {
   };
   errMsg: string = '';
 
-  constructor(
-    private adminService: AdminService,
-    private toastr: ToastrService
-  ) {}
 
   ngOnInit() {
     this.getUsers();
@@ -218,5 +211,4 @@ export class UserManageComponent {
     // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
     return user.totalDevice === 0;  
   }
-  
 }
