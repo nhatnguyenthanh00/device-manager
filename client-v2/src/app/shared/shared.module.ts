@@ -9,6 +9,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { DeviceManageComponent } from './components/device-manage/device-manage.component';
 import { DeviceService } from './services/device.service';
 import { ErrorPageComponent } from './components/error-page/error-page.component';
+import { CheckLoginComponent } from './components/check-login/check-login.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { ErrorPageComponent } from './components/error-page/error-page.component
     UserProfileComponent,
     DeviceManageComponent,
     ErrorPageComponent,
+    CheckLoginComponent,
   ],
   imports: [
     CommonModule,
