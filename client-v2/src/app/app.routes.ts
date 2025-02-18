@@ -38,11 +38,11 @@ export const routes: Routes = [
         canActivate: [authGuard], data: { role: 'ROLE_ADMIN' }
 
     },
-    // {
-    //     path: '',
-    //     redirectTo: ROUTES.LOGIN,
-    //     pathMatch: 'full'
-    // },
+    {
+        path: '',
+        redirectTo: ROUTES.LOGIN,
+        pathMatch: 'full'
+    },
     {
         path : '**',
         component: ErrorPageComponent,
