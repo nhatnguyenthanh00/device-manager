@@ -12,4 +12,7 @@ spring.datasource.password= your_pass_word
 Chạy backend => http://localhost:8080
 Lấy token từ /api/login truyền vào các authorization Bearer để có thể chạy được
 
+Chạy npm i ở client-v2 để download các dependencies
+Chạy front-end : npm start
+
 Default password : admin
