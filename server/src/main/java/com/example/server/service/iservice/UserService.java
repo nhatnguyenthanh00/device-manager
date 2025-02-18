@@ -18,8 +18,6 @@ public interface UserService extends EntityService<BkavUserDto> {
 
     BkavUserDto findProfile(String userName);
 
-//    BkavUser getByUsername(String username);
-
     ResponseEntity<?> changePassWord(String username, String oldPassword, String newPassword);
 
     ResponseEntity<?> resetPassword(ResetPasswordRequest request);

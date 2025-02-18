@@ -9,7 +9,6 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { DeviceManageComponent } from './components/device-manage/device-manage.component';
 import { DeviceService } from './services/device.service';
 import { ErrorPageComponent } from './components/error-page/error-page.component';
-import { HelloWordComponent } from './components/hello-word/hello-word.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,6 @@ import { HelloWordComponent } from './components/hello-word/hello-word.component
     UserProfileComponent,
     DeviceManageComponent,
     ErrorPageComponent,
-    HelloWordComponent
   ],
   imports: [
     CommonModule,

@@ -79,7 +79,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> resetPassword(ResetPasswordRequest request) {
 
-//        try {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserPrincipal userPrincipal = (UserPrincipal) principal;
         if (!encoder.matches(request.getAdminPassword(), userPrincipal.getPassword())) {
@@ -100,11 +99,9 @@ public class UserServiceImpl implements UserService {
         BkavUserDto userDto = findById(id);
         if (userDto == null) {
             return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER), HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
         }
         PageView<DeviceInfoView> pageView = deviceDao.findAllDeviceByUsername(userDto.getUsername(), page);
         return new ResponseEntity<>(new DetailUserResponse(userDto, pageView), HttpStatus.OK);
-//            return new SampleResponse<>(new DetailUserResponse(userDto, pageView));
 
     }
 
@@ -121,30 +118,25 @@ public class UserServiceImpl implements UserService {
         if (userId == null) {
             if (!validateInputCreateUser(userDto)) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INVALID_INPUT),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
             }
             BkavUserDto findUser = bkavUserDao.findByUserName(userDto.getUsername());
             if (findUser != null) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USERNAME_EXISTED),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
             }
             String password = userDto.getPassword();
             userDto.setPassword(encoder.encode(password));
             userDto.setRole(Role.USER);
             return new ResponseEntity<>(bkavUserDao.save(userDto),HttpStatus.OK);
-//            return new SampleResponse<>(bkavUserDao.save(userDto));
         }
         // case update
         else {
             if (!validateInputUpdateUser(userDto)) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INVALID_INPUT),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
 
             }
             BkavUserDto findUser = bkavUserDao.findById(userId).orElse(null);
             if (findUser == null) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
             }
             String username = userDto.getUsername();
 
@@ -152,7 +144,6 @@ public class UserServiceImpl implements UserService {
                 BkavUserDto findExistUser = bkavUserDao.findByUserName(username);
                 if (findExistUser != null) {
                     return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USERNAME_EXISTED),HttpStatus.BAD_REQUEST);
-//                    return new SampleResponse<>(null, Constants.ErrorMessage.USERNAME_EXISTED);
                 }
             }
             if (username != null) findUser.setUsername(userDto.getUsername());
@@ -166,7 +157,6 @@ public class UserServiceImpl implements UserService {
             if (gender != null) findUser.setGender(gender);
 
             return new ResponseEntity<>(bkavUserDao.save(findUser),HttpStatus.OK);
-//            return new SampleResponse<>(bkavUserDao.save(findUser));
 
         }
     }
@@ -176,16 +166,13 @@ public class UserServiceImpl implements UserService {
         BkavUserDto findUser = bkavUserDao.findById(id).orElse(null);
         if (findUser == null) {
             return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER), HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(false, Constants.ErrorMessage.NOT_FOUND_USER);
         }
         if (findUser.getRole().name().equals("USER")) {
             if (deviceInfoViewRepository.countDeviceInfoViewByUsername(findUser.getUsername()) > 0) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.USER_NOW_CONTROL_DEVICES), HttpStatus.BAD_REQUEST);
-//                    return new SampleResponse<>(false, Constants.ErrorMessage.USER_NOW_CONTROL_DEVICES);
             }
             bkavUserDao.deleteById(id);
             return new ResponseEntity<>(null, HttpStatus.OK);
-//                return new SampleResponse<>(true);
         } else {
             return new ResponseEntity<>(new ErrorResponse("Can't delete admin"), HttpStatus.BAD_REQUEST);
         }

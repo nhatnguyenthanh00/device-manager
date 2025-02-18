@@ -38,14 +38,5 @@ public class BkavUser {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-//    @OneToMany(mappedBy = "bkavUser")
-////    @JsonManagedReference
-////    @JsonIdentityInfo(
-////            generator = ObjectIdGenerators.PropertyGenerator.class,
-////            property = "id"
-////    )
-//    @JsonIgnore
-//    private List<Device> devices;
-
 
 }

@@ -33,7 +33,6 @@ public class DeviceServiceImpl implements DeviceService {
 
         if (!validateInputDevice(deviceDto)) {
             return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.INVALID_INPUT),HttpStatus.BAD_REQUEST);
-//            return new SampleResponse<>(null, Constants.ErrorMessage.INVALID_INPUT);
         }
 
         UUID id = deviceDto.getId();
@@ -45,24 +44,20 @@ public class DeviceServiceImpl implements DeviceService {
             DeviceDto findDevice = deviceDao.findDeviceByName(name);
             if (findDevice != null) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NAME_EXISTED),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.NAME_EXISTED);
             }
             deviceDto.setUserId(null);
             deviceDto.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
             return new ResponseEntity<>(deviceDao.save(deviceDto),HttpStatus.OK);
-//            return new SampleResponse<>(deviceDao.save(deviceDto));
         } else {
             DeviceDto foundDevice = deviceDao.findById(id).orElse(null);
             if (foundDevice == null) {
                 return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_DEVICE),HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_DEVICE);
             }
 
             if (!foundDevice.getName().equals(deviceDto.getName())) {
                 DeviceDto findExistDevice = deviceDao.findDeviceByName(deviceDto.getName());
                 if (findExistDevice != null) {
                     return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NAME_EXISTED),HttpStatus.BAD_REQUEST);
-//                    return new SampleResponse<>(null, Constants.ErrorMessage.NAME_EXISTED);
                 }
             }
             UUID userId = deviceDto.getUserId();
@@ -70,18 +65,12 @@ public class DeviceServiceImpl implements DeviceService {
                 BkavUserDto userDto = bkavUserDao.findById(userId).orElse(null);
                 if (userDto == null) {
                     return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_USER),HttpStatus.BAD_REQUEST);
-//                    return new SampleResponse<>(null, Constants.ErrorMessage.NOT_FOUND_USER);
                 }
                 deviceDto.setStatus(Constants.Common.NUMBER_0_INT);
             } else {
                 deviceDto.setStatus(Constants.Common.NUMBER_1_INT_NEGATIVE);
             }
 
-//            try {
-//                return new SampleResponse<>(deviceDao.save(deviceDto));
-//            } catch (Exception e) {
-//                return new SampleResponse<>(null, e.getMessage());
-//            }
             return new ResponseEntity<>(deviceDao.save(deviceDto),HttpStatus.OK);
         }
 
@@ -93,15 +82,12 @@ public class DeviceServiceImpl implements DeviceService {
         DeviceDto findDevice = deviceDao.findById(id).orElse(null);
         if (findDevice == null) {
             return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.NOT_FOUND_DEVICE), HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(false, Constants.ErrorMessage.NOT_FOUND_DEVICE);
         }
         if (findDevice.getStatus() != Constants.Common.NUMBER_1_INT_NEGATIVE) {
             return new ResponseEntity<>(new ErrorResponse(Constants.ErrorMessage.DEVICE_ASSIGNED), HttpStatus.BAD_REQUEST);
-//                return new SampleResponse<>(false, Constants.ErrorMessage.DEVICE_ASSIGNED);
         }
         deviceDao.deleteById(id);
         return new ResponseEntity<>(null, HttpStatus.OK);
-//            return new SampleResponse<>(true);
     }
 
     @Override

@@ -29,18 +29,10 @@ public class Device {
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false, length = 20)
     private DeviceCategory category;
-//    @Column(name = "category", nullable = false, length = 20)
-//    private String category;
 
 //    @Column(nullable = false)
     private Integer status;  // -1: Unassigned, 0: Assigned, 1: Requested for return
 
     @JoinColumn(name = "bkav_user_id")
-//    @JsonBackReference
-//    @JsonIgnore
-//    @JsonIdentityInfo(
-//            generator = ObjectIdGenerators.PropertyGenerator.class,
-//            property = "id"
-//    )
     private UUID bkavUserId;
 }

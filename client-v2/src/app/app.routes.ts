@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HelloWordComponent } from './shared/components/hello-word/hello-word.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ErrorPageComponent } from './shared/components/error-page/error-page.component';
 import { authGuard } from './core/guards/auth.guard';
@@ -26,13 +25,11 @@ export const routes: Routes = [
     {   
         path: ROUTES.HOME,
         component: UserHomePageComponent,
-        // loadChildren: () => import('./user/user.module').then(m => m.UserModule),
         canActivate: [authGuard]
     },
     {   
         path: ROUTES.ADMIN_HOME,
         component: AdminHomePageComponent,
-        // loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
         canActivate: [authGuard], data: { role: 'ROLE_ADMIN' }
     },
     {
@@ -43,7 +40,8 @@ export const routes: Routes = [
     },
     {
         path: '',
-        component: HelloWordComponent
+        redirectTo: ROUTES.LOGIN,
+        pathMatch: 'full'
     },
     {
         path : '**',
