@@ -12,9 +12,9 @@ VALUES
 -- Insert sample data into device
 INSERT INTO device (id, name, description, category, status, bkav_user_id)
 VALUES
-    (gen_random_uuid(), 'Laptop Dell XPS 13', 'Laptop Dell hiệu suất cao, phù hợp cho công việc và giải trí.', 'LAPTOP', 0, (select id from bkav_user where username = 'nhatnt')),
-    (gen_random_uuid(), 'iPhone 14 Pro', 'Smartphone cao cấp với camera đỉnh cao và hiệu năng mạnh mẽ.', 'PHONE', 0, (select id from bkav_user where username = 'nhatnt')),
-    (gen_random_uuid(), 'Logitech MX Master 3', 'Chuột không dây dành cho dân văn phòng và sáng tạo.', 'MOUSE', 0, (select id from bkav_user where username = 'nhatnt')),
-    (gen_random_uuid(), 'Lenovo ThinkPad T14', 'Laptop doanh nghiệp với độ bền cao và hiệu năng ổn định.', 'LAPTOP', -1, NULL),
-    (gen_random_uuid(), 'Razer DeathAdder V2', 'Chuột chơi game với thiết kế công thái học và cảm biến chính xác.', 'MOUSE', -1, NULL)
+    (gen_random_uuid(), 'LAP_00', 'Laptop Dell XPS 13.', 'LAPTOP', 0, (select id from bkav_user where username = 'nhatnt')),
+    (gen_random_uuid(), 'IP_00', 'iPhone 14 Pro hỏng cam.', 'PHONE', 0, (select id from bkav_user where username = 'nhatnt')),
+    (gen_random_uuid(), 'MOUSE_00', 'Logitech MX Master 3 mới.', 'MOUSE', 0, (select id from bkav_user where username = 'nhatnt')),
+    (gen_random_uuid(), 'LAP_01', 'Lenovo ThinkPad T14.', 'LAPTOP', -1, NULL),
+    (gen_random_uuid(), 'MOUSE_02', 'Razer DeathAdder V2 chơi game tốt.', 'MOUSE', -1, NULL)
     ON CONFLICT (name) DO NOTHING;
