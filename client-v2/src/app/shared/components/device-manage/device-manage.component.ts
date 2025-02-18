@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DeviceService } from '../../services/device.service';
 import Swal from 'sweetalert2';
 import { Device } from '../../../models/device.model';
-import { NewDevice } from '../../../models/new-device.model';
 @Component({
   selector: 'app-device-manage',
   templateUrl: './device-manage.component.html',
@@ -27,23 +27,26 @@ export class DeviceManageComponent {
   showCreateDeviceModal: boolean = false; // Controls visibility of the device creation modal
   showDetailsModal: boolean = false; // Controls visibility of the device details modal
   // New and updated device data
-  newDevice: Partial<NewDevice> = {
-    name: '',
-    category: '',
-    description: '',
-    image: '',
-  };
-  updateDevice: Partial<NewDevice> = {
-    name: '',
-    category: '',
-    description: '',
-    image: '',
-  };
-  errMsg: string = ''; // Error message for validation
+  newDeviceForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    category: new FormControl('', Validators.required),
+    description: new FormControl(''),
+    image: new FormControl(''),
+  });
+
+  updateDeviceForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    category: new FormControl('', Validators.required),
+    description: new FormControl(''),
+    image: new FormControl(''),
+  })
+  // Error message for validation
+  errCreateMsg: { [key: string]: string } = {};
+  errUpdateMsg: { [key: string]: string } = {};
 
   selectedDeviceId: String = ''; // Holds the selected device's ID for editing or deletion
   selectedDeviceUserName: String = ''; // Holds the username associated with the selected device
-  selectedDerviceUserId: string | null = null;
+  selectedDeviceUserId: string | null = null;
   selectedDeviceStatus: number | null = null; // Holds the status of the selected device
   selectedOption: string | null = null; // For handling dropdown selection
   isDropdownOpen = false; // Controls dropdown visibility
@@ -62,10 +65,10 @@ export class DeviceManageComponent {
   selectOption(option: any) {
     if (this.selectedDeviceUserName === option.username) {
       this.selectedDeviceUserName = '';
-      this.selectedDerviceUserId = null;
+      this.selectedDeviceUserId = null;
     } else {
       this.selectedDeviceUserName = option.username;
-      this.selectedDerviceUserId = option.id;
+      this.selectedDeviceUserId = option.id;
     }
     this.isDropdownOpen = false;
   }
@@ -246,12 +249,8 @@ export class DeviceManageComponent {
   onOpenModalCreateNewDevice() {
     this.showCreateDeviceModal = true;
     // Reset the values of the new device
-    this.newDevice = {
-      name: '',
-      category: '',
-      description: '',
-      image: '',
-    };
+    this.newDeviceForm.reset();
+    this.errCreateMsg = {};
   }
 
   /**
@@ -276,10 +275,12 @@ export class DeviceManageComponent {
       reader.readAsDataURL(file);
 
       reader.onloadend = () => {
-        if (type === 'create') this.newDevice.image = reader.result as string;
-        else if (type === 'update')
-          this.updateDevice.image = reader.result as string;
-        // this.newDevice.image = reader.result as string;
+        if (type === 'create'){
+          this.newDeviceForm.get('image')?.setValue(reader.result as string);
+        }
+        else if (type === 'update'){
+          this.updateDeviceForm.get('image')?.setValue(reader.result as string);
+        }
       };
     }
   }
@@ -290,20 +291,39 @@ export class DeviceManageComponent {
    * Otherwise, trims the name and returns true.
    * @returns boolean
    */
-  validateInput(): boolean {
-    if (!this.newDevice.name) {
-      this.errMsg = 'Name is required';
-      return false;
-    } else {
-      const trimmedName = this.newDevice.name.trim();
-      this.newDevice.name = trimmedName;
-    }
 
-    if (!this.newDevice.category) {
-      this.errMsg = 'Category is required';
-      return false;
+  validateCreateInput(): boolean {
+    this.errCreateMsg = {};
+    for (const key in this.newDeviceForm.controls) {
+      const control = this.newDeviceForm.get(key);
+      if (control?.invalid) {
+        if (control.errors?.['required']) {
+          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
+        } else if (control.errors?.['minlength']) {
+          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
+            control.errors['minlength'].requiredLength
+          } characters.`;
+        }
+      }
     }
-    return true;
+    return Object.keys(this.errCreateMsg).length === 0;
+  }
+
+  validateUpdateInput(): boolean {
+    this.errUpdateMsg = {};
+    for (const key in this.updateDeviceForm.controls) {
+      const control = this.updateDeviceForm.get(key);
+      if (control?.invalid) {
+        if (control.errors?.['required']) {
+          this.errUpdateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
+        } else if (control.errors?.['minlength']) {
+          this.errUpdateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
+            control.errors['minlength'].requiredLength
+          } characters.`;
+        }
+      }
+    }
+    return Object.keys(this.errUpdateMsg).length === 0;
   }
 
   /**
@@ -315,10 +335,12 @@ export class DeviceManageComponent {
   createDevice(event: Event) {
     event.preventDefault();
 
-    if (this.validateInput()) {
-      this.deviceService.addDevice(this.newDevice as NewDevice).subscribe({
+    if (this.validateCreateInput()) {
+      const newDevice = this.newDeviceForm.getRawValue();
+      this.deviceService.addDevice(newDevice).subscribe({
         next: (response) => {
           this.toastr.success('Device created successfully!', 'Success');
+          this.currentPage = 1;
           this.getDevices();
           this.closeModal();
         },
@@ -341,12 +363,13 @@ export class DeviceManageComponent {
     this.selectedDeviceId = device.id;
     this.selectedDeviceUserName =
       device.username == null ? '' : device.username;
+    this.selectedDeviceUserId = this.usernames.find(u => u.username === device.username)?.id;
     this.selectedDeviceStatus = device.status;
 
-    this.updateDevice.name = device.name;
-    this.updateDevice.category = device.category;
-    this.updateDevice.description = device.description;
-    this.updateDevice.image = device.image;
+    this.updateDeviceForm.get('name')?.setValue(device.name);
+    this.updateDeviceForm.get('category')?.setValue(device.category);
+    this.updateDeviceForm.get('description')?.setValue(device.description);
+    this.updateDeviceForm.get('image')?.setValue(device.image);
     this.showDetailsModal = true;
   }
 
@@ -377,28 +400,27 @@ export class DeviceManageComponent {
    */
   updateDeviceInfo(event: Event) {
     event.preventDefault();
-    const payload = {
-      id: this.selectedDeviceId,
-      name: this.updateDevice.name,
-      description: this.updateDevice.description,
-      category: this.updateDevice.category,
-      image: this.updateDevice.image,
-      // userName: this.selectedDeviceUserName,
-      userId: this.selectedDerviceUserId,
-    };
-
-    this.deviceService.updateDevice(payload).subscribe({
-      next: (response) => {
-        this.toastr.success('Device updated successfully!', 'Success');
-        if (this.getAll == 'device-manager') this.getDevices();
-        else if (this.getAll == 'user-detail')
-          this.deviceUpdated.emit({ page: this.currentPage });
-        this.closeModalDetails();
-      },
-      error: (err) => {
-        this.toastr.error(err.error?.errMsg, 'Error');
-      },
-    });
+    if(this.validateUpdateInput()){
+      const payload = {
+        ...this.updateDeviceForm.getRawValue(),
+        id: this.selectedDeviceId,
+        userId: this.selectedDeviceUserId,
+      }
+  
+      this.deviceService.updateDevice(payload).subscribe({
+        next: (response) => {
+          this.toastr.success('Device updated successfully!', 'Success');
+          this.currentPage = 1;
+          if (this.getAll == 'device-manager') this.getDevices();
+          else if (this.getAll == 'user-detail')
+            this.deviceUpdated.emit({ page: this.currentPage });
+          this.closeModalDetails();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.errMsg, 'Error');
+        },
+      });
+    }
   }
 
   /**
@@ -429,6 +451,7 @@ export class DeviceManageComponent {
               'Success'
             );
             this.deviceUpdated.emit({ page: this.currentPage });
+            this.currentPage = 1;
             this.getDevices();
           },
           error: (err) => {
@@ -548,4 +571,9 @@ export class DeviceManageComponent {
     // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
     return device.status === 0;
   }
+
+  get updateImage() {
+    return this.updateDeviceForm.get('image')?.value;
+  }
+  
 }

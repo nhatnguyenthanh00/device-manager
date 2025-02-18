@@ -5,6 +5,7 @@ import { ErrorPageComponent } from './shared/components/error-page/error-page.co
 import { authGuard } from './core/guards/auth.guard';
 import { AdminHomePageComponent } from './admin/admin-home-page/admin-home-page.component';
 import { UserHomePageComponent } from './user/user-home-page/user-home-page.component';
+import { UserDetailComponent } from './admin/user-detail/user-detail.component';
 import {ROUTES} from './core/constants';
 export const routes: Routes = [
     {
@@ -33,6 +34,12 @@ export const routes: Routes = [
         component: AdminHomePageComponent,
         // loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
         canActivate: [authGuard], data: { role: 'ROLE_ADMIN' }
+    },
+    {
+        path: 'admin/user-detail/:userId',
+        component: UserDetailComponent,
+        canActivate: [authGuard], data: { role: 'ROLE_ADMIN' }
+
     },
     {
         path: '',

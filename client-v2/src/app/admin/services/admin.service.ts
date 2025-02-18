@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
-import { NewUser } from '../../models/new-user.model';
 import { API_ENDPOINT } from '../../core/constants';
 @Injectable()
 export class AdminService {
@@ -36,7 +35,7 @@ export class AdminService {
    * @param user - The new user to create.
    * @returns An observable of the created user or null in case of an error.
    */
-  addUser(user: NewUser): Observable<any> {
+  addUser(user: any): Observable<any> {
     // Make an HTTP POST request to create a new user
     return this.httpService.post<any>(API_ENDPOINT.USER, user);
   }

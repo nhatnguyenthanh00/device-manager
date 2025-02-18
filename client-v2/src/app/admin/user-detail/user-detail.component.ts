@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AdminService } from '../services/admin.service';
 import { HomePageService } from '../../core/services/home-page.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ROUTES } from '../../core/constants';
 @Component({
-  selector: 'app-user-detail-manage',
-  templateUrl: './user-detail-manage.component.html',
-  styleUrl: './user-detail-manage.component.css'
+  selector: 'app-user-detail',
+  templateUrl: './user-detail.component.html',
+  styleUrl: './user-detail.component.css'
 })
-export class UserDetailManageComponent {
+export class UserDetailComponent {
   listDevice: any;
   userId: string | null = null;
   name: string = '';
@@ -20,27 +21,10 @@ export class UserDetailManageComponent {
   adminPassword: string = '';
   totalDevice: number = 0;
   role: string = '';
-  private subscription: Subscription;
-  constructor(
-    private homePageService: HomePageService,
-    private adminService: AdminService,
-    private toastr: ToastrService
-  ) {
-    this.subscription = new Subscription();
-  }
+  constructor(private homePageService: HomePageService, private adminService: AdminService, private toastr: ToastrService, private route: ActivatedRoute, private router : Router) {}
   ngOnInit() {
-    this.subscription = this.homePageService.detailUserId$.subscribe(
-      (userId) => {
-        this.userId = userId;
-        this.getUserDetails();
-      }
-    );
-  }
-
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.userId = this.route.snapshot.paramMap.get('userId');
+    this.getUserDetails();
   }
 
   togglePasswordVisibility() {
@@ -181,5 +165,10 @@ export class UserDetailManageComponent {
         this.toastr.error(err.error?.errMsg, 'Error');
       },
     });
+  }
+
+  backHomePage(){
+    this.homePageService.setActiveTab('user');
+    this.router.navigate(['/'+ROUTES.ADMIN_HOME]);
   }
 }

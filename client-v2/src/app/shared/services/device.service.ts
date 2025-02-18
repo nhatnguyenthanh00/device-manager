@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../../core/services/http.service';
-import { NewDevice } from '../../models/new-device.model';
 import { API_ENDPOINT } from '../../core/constants';
 @Injectable()
 export class DeviceService {
@@ -36,7 +35,7 @@ export class DeviceService {
    * @param device - The new device to be created.
    * @returns An observable of the created device data or null in case of an error.
    */
-  addDevice(device: NewDevice): Observable<any> {
+  addDevice(device: object): Observable<any> {
     return this.httpService.post<any>(API_ENDPOINT.DEVICE, device);
   }
 

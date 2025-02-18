@@ -4,8 +4,8 @@
     <ng-container *ngFor="let item of config.sidebarItems">
       <button
         *ngIf="item.hidden"
-        (click)="activeTab = item.id"
-        [class.active]="activeTab === item.id"
+        (click)="homePageService.setActiveTab(item.id)"
+        [class.active]="(activeTab$ | async) === item.id"
       >
         <i *ngIf="item.icon" [class]="item.icon"></i>
         {{ item.label }}
@@ -15,7 +15,7 @@
 
   <div class="content">
     <ng-container *ngFor="let item of config.sidebarItems">
-      <div *ngIf="activeTab === item.id">
+      <div *ngIf="(activeTab$ | async) === item.id">
         <ng-container
           *ngComponentOutlet="item.component; inputs: item.inputs"
         ></ng-container>

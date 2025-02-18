@@ -65,22 +65,6 @@
             <td>{{ getStatusStr(device) }}</td>
             <td class="actions">
               <!-- View and Delete icons -->
-              <!-- <button (click)="viewDetails(device)">
-                <i class="fas fa-eye icon"></i>
-              </button>
-  
-              <button *ngIf="getAll == 'my-device'; else elseBlock" (click)="requestReturnDevice(device)">
-                <i class="fas fa-undo icon" style="color: #eed202"></i>
-              </button>
-  
-              <ng-template #elseBlock>
-                <button (click)="acceptRequestReturnDevice(device)">
-                  <i class="fas fa-check icon" style="color: green" ></i>
-                </button>
-                <button (click)="deleteDevice(device.id, device.name)">
-                  <i class="fas fa-trash icon" style="color: red"></i>
-                </button>
-              </ng-template> -->
   
               <div class="icon-row">
                 <div class="icon-wrapper" (click)="viewDetails(device)" title="View detail">
@@ -146,30 +130,19 @@
   <div *ngIf="showCreateDeviceModal" class="modal-container">
     <div class="modal-content">
       <h2>Create New Device</h2>
-      <form (submit)="createDevice($event)">
+      <form [formGroup]="newDeviceForm" (submit)="createDevice($event)">
         <!-- Name Input -->
         <div class="form-group">
           <label for="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            [(ngModel)]="newDevice.name"
-            name="name"
-            required
-          />
+          <input type="text" id="name" formControlName="name"/>
+          <div *ngIf="errCreateMsg['name']" class="error-msg">{{ errCreateMsg['name'] }}</div>
         </div>
   
         <!-- Description Input -->
         <div class="form-group">
           <label for="username">Description</label>
-          <textarea
-            id="username"
-            [(ngModel)]="newDevice.description"
-            name="username"
-            rows="3"
-            style="width: 100%"
-          >
-          </textarea>
+          <textarea id="description"  formControlName="description" rows="3" style="width: 100%"></textarea>
+          <div *ngIf="errCreateMsg['description']" class="error-msg">{{ errCreateMsg['description'] }}</div>
         </div>
   
         <!-- Category Input -->
@@ -177,9 +150,8 @@
         <div class="form-group">
           <label for="gender">Category</label>
           <select
-            id="gender"
-            [(ngModel)]="newDevice.category"
-            name="gender"
+            id="category"
+            formControlName="category"
             required
             style="width: fit-content"
           >
@@ -189,6 +161,7 @@
             <option value="MOUSE">MOUSE</option>
             <option value="PHONE">PHONE</option>
           </select>
+          <div *ngIf="errCreateMsg['category']" class="error-msg">{{ errCreateMsg['category'] }}</div>
         </div>
         <!-- Password Generation -->
         <div class="form-group">
@@ -200,10 +173,7 @@
             accept="image/*"
           />
         </div>
-  
-        <div *ngIf="errMsg.length > 0" class="error-msg">
-          {{ errMsg }}
-        </div>
+
   
         <!-- Buttons -->
         <div class="modal-actions">
@@ -223,24 +193,25 @@
   <div *ngIf="showDetailsModal" class="modal-container">
     <div class="modal-content">
       <h2>Device Info</h2>
-      <form (submit)="updateDeviceInfo($event)">
+      <form [formGroup]="updateDeviceForm" (submit)="updateDeviceInfo($event)">
         <div class="form-group">
           <label for="detail_name">Name</label>
           <input
             type="text"
             id="detail_name"
-            [(ngModel)]="updateDevice.name"
+            formControlName="name"
             name="detail_name"
             required
             [readonly]="getAll === 'my-device'"
             [class.readonly-field]="getAll === 'my-device'"
           />
+          <div *ngIf="errUpdateMsg['name']" class="error-msg">{{ errUpdateMsg['name'] }}</div>
         </div>
         <div class="form-group">
           <label for="detail_description">Description</label>
           <textarea
             id="detail_description"
-            [(ngModel)]="updateDevice.description"
+            formControlName="description"
             name="detail_description"
             rows="3"
             style="width: 100%"
@@ -248,6 +219,7 @@
             [class.readonly-field]="getAll === 'my-device'"
           >
           </textarea>
+          <div *ngIf="errUpdateMsg['description']" class="error-msg">{{ errUpdateMsg['description'] }}</div>
         </div>
   
         <div>
@@ -256,7 +228,7 @@
               <label for="detail_category">Category</label>
               <select
                 id="detail_category"
-                [(ngModel)]="updateDevice.category"
+                formControlName="category"
                 name="detail_category"
                 required
                 [disabled]="getAll === 'my-device'"
@@ -313,9 +285,9 @@
   
           <img
             *ngIf="
-              updateDevice && updateDevice.image && updateDevice.image.length > 0; else noImage
+              updateImage && updateImage.length > 0; else noImage
             "
-            [src]="updateDevice.image"
+            [src]="updateImage"
             alt="Hình ảnh"
           />
           <ng-template #noImage>
@@ -328,10 +300,6 @@
             (change)="onImageChange($event,'update')"
             accept="image/*"
           />
-        </div>
-  
-        <div *ngIf="errMsg.length > 0" class="error-msg">
-          {{ errMsg }}
         </div>
   
         <div class="modal-actions">

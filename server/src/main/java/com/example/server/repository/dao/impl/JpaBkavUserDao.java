@@ -76,6 +76,7 @@ public class JpaBkavUserDao implements BkavUserDao {
         int totalItems = (int) pageUser.getTotalElements();
         int totalPages = pageUser.getTotalPages();
         List<BkavUserDto> pageUserDto = pageUser.getContent().stream().map(mapperDto::toDto).collect(Collectors.toList());
+        pageUserDto.forEach(user -> user.setPassword(null));
         return new PageView<>(pageUserDto, totalItems, totalPages);
     }
 

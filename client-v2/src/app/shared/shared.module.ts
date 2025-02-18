@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { BaseDashboardComponent } from './components/base-dashboard/base-dashboard.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
@@ -22,7 +23,8 @@ import { HelloWordComponent } from './components/hello-word/hello-word.component
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule
   ],
   exports: [
     HeaderComponent,

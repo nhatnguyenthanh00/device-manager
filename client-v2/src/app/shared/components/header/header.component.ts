@@ -23,7 +23,9 @@ export class HeaderComponent implements OnInit{
     this.router.navigate(['/'+ROUTES.LOGIN]);
   }
   goToProfile(){
-    // this.router.navigate(['/profile']);
     this.homePageService.setActiveTab('profile');
+    const role = this.tokenService.getRoleFromToken(localStorage.getItem(STORAGE_KEYS.TOKEN) as string || '');
+    if(role === 'ROLE_ADMIN') this.router.navigate(['/'+ROUTES.ADMIN_HOME]);
+    else if(role == 'ROLE_USER') this.router.navigate(['/'+ROUTES.HOME]);
   }
 }

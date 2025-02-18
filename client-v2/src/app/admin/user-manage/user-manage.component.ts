@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AdminService } from '../services/admin.service';
 import { HomePageService } from '../../core/services/home-page.service';
 import { User } from '../../models/user.model';
-import { NewUser } from '../../models/new-user.model';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-user-manage',
@@ -13,7 +14,7 @@ import Swal from 'sweetalert2';
 export class UserManageComponent {
 
   constructor(private adminService: AdminService, private toastr: ToastrService, private homePageService: HomePageService) {}
-
+  router = inject(Router);
   users: User[] = [];
   search: string = '';
   genderFilter: string = '';
@@ -21,14 +22,21 @@ export class UserManageComponent {
   totalPages: number = 1;
   totalItems: number = 0;
   showCreateUserModal: boolean = false;
-  newUser: Partial<NewUser> = {
-    name: '',
-    username: '',
-    gender: '',
-    password: '',
-  };
-  errMsg: string = '';
+  userForm = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^[\p{L}\s]+$/u) // Chỉ cho phép chữ cái và khoảng trắng
+    ]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.pattern(/^\S+$/) // Không chứa khoảng trắng
+    ]),
+    gender: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required) // Chỉ đọc
+  });
 
+  errMsg: { [key: string]: string } = {};
 
   ngOnInit() {
     this.getUsers();
@@ -82,8 +90,10 @@ export class UserManageComponent {
 
   viewDetails(user: User) {
     // Navigate to user detail page (use Angular Router)
-    this.homePageService.setActiveTab('user-detail');
-    this.homePageService.setDetailUserId(user.userId);
+    // this.homePageService.setActiveTab('user-detail');
+    // this.homePageService.setDetailUserId(user.userId);
+    // window.location.href = '/admin/user-detail';
+    this.router.navigate(['/admin/user-detail/' + user.userId]);
   }
 
   deleteUser(userId: string, userName: string) {
@@ -115,12 +125,8 @@ export class UserManageComponent {
 
   onCreateNewUser() {
     this.showCreateUserModal = true;
-    this.newUser = {
-      name: '',
-      username: '',
-      gender: '',
-      password: '',
-    };
+    this.userForm.reset();
+    this.errMsg = {};
   }
   closeModal() {
     this.showCreateUserModal = false;
@@ -146,55 +152,46 @@ export class UserManageComponent {
     }
 
     // Shuffle the password to randomize the order
-    this.newUser.password = password.sort(() => Math.random() - 0.5).join('');
+    this.userForm.get('password')?.setValue(password.sort(() => Math.random() - 0.5).join(''));
   }
 
-  validateInput(): boolean {
-    if (!this.newUser.name) {
-      this.errMsg = 'Name is required';
-      return false;
-    } else {
-      const trimmedName = this.newUser.name.trim();
-      const nameRegex = /^[\p{L}\s]+$/u;
-      if (!nameRegex.test(trimmedName)) {
-        this.errMsg = 'Name can only contain letters and spaces';
-        return false;
-      }
-      this.newUser.name = trimmedName;
-    }
-    if (!this.newUser.username) {
-      this.errMsg = 'Username is required';
-      return false;
-    } else {
-      if (this.newUser.username.length < 6) {
-        this.errMsg = 'Username must be at least 6 characters';
-        return false;
-      }
-      if (this.newUser.username.includes(' ')) {
-        this.errMsg = 'Username cannot contain spaces';
-        return false;
+  validateForm(): boolean {
+    this.errMsg = {}; // Reset thông báo lỗi
+    for (const key in this.userForm.controls) {
+      const control = this.userForm.get(key);
+      if (control?.invalid) {
+        if (control.errors?.['required']) {
+          this.errMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
+        } else if (control.errors?.['minlength']) {
+          this.errMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
+            control.errors['minlength'].requiredLength
+          } characters.`;
+        } else if (control.errors?.['pattern']) {
+          this.errMsg[key] = this.getPatternErrorMessage(key);
+        }
       }
     }
 
-    if (!this.newUser.password) {
-      this.errMsg = 'Password is required';
-      return false;
-    }
+    return Object.keys(this.errMsg).length === 0;
+  }
 
-    // Gender validation
-    if (!this.newUser.gender) {
-      this.errMsg = 'Gender is required';
-      return false;
+  getPatternErrorMessage(key: string): string {
+    switch (key) {
+      case 'name':
+        return 'Name can only contain letters and spaces.';
+      case 'username':
+        return 'Username cannot contain spaces.';
+      default:
+        return 'Invalid input.';
     }
-
-    return true;
   }
 
   createUser(event: Event) {
     event.preventDefault();
-    if (this.validateInput()) {
-
-      this.adminService.addUser(this.newUser as NewUser).subscribe({
+    if(this.validateForm()){
+      const newUser = this.userForm.getRawValue();
+      console.log('Creating user:', newUser);
+      this.adminService.addUser(newUser).subscribe({
         next: (response) => {
           this.toastr.success('User created successfully!', 'Success');
           this.getUsers();
@@ -206,8 +203,10 @@ export class UserManageComponent {
       });
     }
   }
+  
   canDelete(user: User): boolean {
     // Điều kiện để cho phép xóa, ví dụ: chỉ Admin mới được xóa
     return user.totalDevice === 0;  
   }
+
 }
