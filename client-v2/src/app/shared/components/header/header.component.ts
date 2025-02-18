@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit{
   }
   onLogout(){
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    this.homePageService.resetActiveTab();
     this.router.navigate(['/'+ROUTES.LOGIN]);
   }
   goToProfile(){
