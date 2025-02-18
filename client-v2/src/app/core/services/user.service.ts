@@ -12,7 +12,7 @@ export class UserService {
     return this.httpService.get<any>(API_ENDPOINT.PROFILE);
   }
 
-  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+  changePassword(oldPassword: string, newPassword: string|null): Observable<any> {
     return this.httpService.post<any>(API_ENDPOINT.CHANGE_PASSWORD, {
       oldPassword,
       newPassword,

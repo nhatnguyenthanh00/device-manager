@@ -3,7 +3,6 @@
     <h2>{{ config.title }}</h2>
     <ng-container *ngFor="let item of config.sidebarItems">
       <button
-        *ngIf="item.hidden"
         (click)="homePageService.setActiveTab(item.id)"
         [class.active]="(activeTab$ | async) === item.id"
       >

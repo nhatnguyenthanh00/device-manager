@@ -11,10 +11,6 @@ export class BaseDashboardComponent {
   activeTab: string|null = null;
 
   constructor(public homePageService: HomePageService) {
-    // this.homePageService.activeTab$.subscribe(tabId => {
-    //   console.log('In BaseDashboardComponent, tabId:', tabId);
-    //   this.activeTab = tabId;
-    // })
   }
 
   activeTab$ = this.homePageService.activeTab$;

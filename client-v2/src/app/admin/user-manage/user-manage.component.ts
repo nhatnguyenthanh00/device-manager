@@ -190,7 +190,6 @@ export class UserManageComponent {
     event.preventDefault();
     if(this.validateForm()){
       const newUser = this.userForm.getRawValue();
-      console.log('Creating user:', newUser);
       this.adminService.addUser(newUser).subscribe({
         next: (response) => {
           this.toastr.success('User created successfully!', 'Success');

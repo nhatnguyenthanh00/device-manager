@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
@@ -8,11 +9,17 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UserProfileComponent implements OnInit{
   userProfile: any = null;
-  oldPassword: string = '';
-  newPassword: string = '';
   showPassword: boolean = false;
-  confirmPassword: string = '';
-  errorMsg: string = '';
+  changePasswordForm = new FormGroup({
+    oldPassword: new FormControl('', [Validators.required]),
+    newPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+    ]),
+    confirmPassword: new FormControl('', [Validators.required]),
+  })
+  errChangePasswordMsg: { [key: string]: string } = {};
 
   constructor(private userService: UserService, private toastr: ToastrService) {}
   ngOnInit() {
@@ -32,45 +39,51 @@ export class UserProfileComponent implements OnInit{
     this.showPassword = !this.showPassword;
   }
 
+  validateChangePassword(): boolean{
+    this.errChangePasswordMsg = {};
+    for (const key in this.changePasswordForm.controls) {
+      const control = this.changePasswordForm.get(key);
+      if (control?.invalid) {
+        if (control.errors?.['required']) {
+          this.errChangePasswordMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
+        } else if (control.errors?.['minlength']) {
+          this.errChangePasswordMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
+            control.errors['minlength'].requiredLength
+          } characters.`;
+        } else if (control.errors?.['pattern']) {
+          this.errChangePasswordMsg[key] = this.getPatternErrorMessage(key);
+        }
+      }
+    }
+    if(this.changePasswordForm.value.confirmPassword){
+      if(this.changePasswordForm.value.newPassword !== this.changePasswordForm.value.confirmPassword){
+        this.errChangePasswordMsg['confirmPassword'] = 'Passwords do not match!';
+      }
+    }
+    return Object.keys(this.errChangePasswordMsg).length === 0;
+  }
+
+  getPatternErrorMessage(key: string): string {
+    switch (key) {
+      case 'newPassword':
+        return 'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
+      default:
+        return 'Invalid input.';
+    }
+  }
+
   changePassword() {
-    // Reset error message
-    this.errorMsg = '';
-
-    // Validation
-    if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
-      this.errorMsg = 'All fields are required';
-      return;
+    if(this.validateChangePassword()){
+      this.userService.changePassword(this.changePasswordForm.value.oldPassword as string, this.changePasswordForm.value.newPassword as string).subscribe({
+        next: (response) => {
+          this.toastr.success('Password changed successfully!', 'Success');
+          this.changePasswordForm.reset();
+          this.showPassword = false;
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.errMsg, 'Error');
+        },
+      });
     }
-
-    if (this.newPassword !== this.confirmPassword) {
-      this.errorMsg = 'New passwords do not match';
-      return;
-    }
-
-    if (this.newPassword.length < 8) {
-      this.errorMsg = 'New password must be at least 8 characters long';
-      return;
-    }
-
-    // Password strength validation
-    ''
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
-    if (!passwordRegex.test(this.newPassword)) {
-      this.errorMsg = 'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-      return;
-    } 
-
-    this.userService.changePassword(this.oldPassword, this.newPassword).subscribe({
-      next: (response) => {
-        this.toastr.success('Password changed successfully!', 'Success');
-        this.oldPassword = '';
-        this.newPassword = '';
-        this.confirmPassword = '';
-        this.showPassword = false;
-      },
-      error: (err) => {
-        this.toastr.error(err.error?.errMsg, 'Error');
-      },
-    })
   }
 }

@@ -3,7 +3,6 @@ export interface SidebarItem {
   label?: string;
   icon?: string;
   component: any;
-  hidden: boolean;
   inputs?: Record<string, any>; 
 }
 

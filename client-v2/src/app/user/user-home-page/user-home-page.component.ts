@@ -15,7 +15,6 @@ export class UserHomePageComponent {
         label: 'My Profile',
         icon: 'fas fa-user',
         component: SHARED_COMPONENT_REGISTRY['userProfile'],
-        hidden: true
       },
       {
         id: 'devices',
@@ -25,7 +24,6 @@ export class UserHomePageComponent {
         inputs: {
           getAll: 'my-device'
         },
-        hidden: true
       }
     ]
   };

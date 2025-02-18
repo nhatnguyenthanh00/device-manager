@@ -16,14 +16,12 @@ export class AdminHomePageComponent {
         label: 'My Profile',
         icon: 'fas fa-user',
         component: SHARED_COMPONENT_REGISTRY['userProfile'],
-        hidden: true
       },
       {
         id: 'device',
         label: 'Device Manage',
         icon: 'fas fa-mobile-alt',
         component: SHARED_COMPONENT_REGISTRY['deviceManage'],
-        hidden: true,
         inputs: {
           getAll: 'device-manager'
         }
@@ -33,7 +31,6 @@ export class AdminHomePageComponent {
         label: 'User Manage',
         icon: 'fas fa-users',
         component: ADMIN_COMPONENT_REGISTRY['userManage'],
-        hidden: true
       }
     ],
   };
