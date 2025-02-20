@@ -23,3 +23,8 @@ export const ROUTES = {
 export const STORAGE_KEYS = {
     TOKEN: 'currentToken',
 } as const ;
+
+export const ROLES = {
+    ROLE_ADMIN: 'ROLE_ADMIN',
+    ROLE_USER: 'ROLE_USER',
+} as const ;

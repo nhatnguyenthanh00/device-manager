@@ -27,10 +27,6 @@ export class UserDetailComponent {
     this.getUserDetails();
   }
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
-
   getUserDetails(page: number = 1) {
     if (this.userId == null) return;
 

@@ -1,0 +1,72 @@
+<div class="modal-container">
+  <div class="modal-content">
+    <h2>Create New Device</h2>
+    <form [formGroup]="newDeviceForm" (submit)="createDevice($event)">
+      <!-- Name Input -->
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" formControlName="name" />
+        <div *ngIf="errCreateMsg['name']" class="error-msg">
+          {{ errCreateMsg["name"] }}
+        </div>
+      </div>
+
+      <!-- Description Input -->
+      <div class="form-group">
+        <label for="username">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          style="width: 100%"
+        ></textarea>
+        <div *ngIf="errCreateMsg['description']" class="error-msg">
+          {{ errCreateMsg["description"] }}
+        </div>
+      </div>
+
+      <!-- Category Input -->
+
+      <div class="form-group">
+        <label for="gender">Category</label>
+        <select
+          id="category"
+          formControlName="category"
+          required
+          style="width: fit-content"
+        >
+          <option value="" disabled selected>Select Category</option>
+          <option value="LAPTOP">LAPTOP</option>
+          <option value="PC">PC</option>
+          <option value="MOUSE">MOUSE</option>
+          <option value="PHONE">PHONE</option>
+        </select>
+        <div *ngIf="errCreateMsg['category']" class="error-msg">
+          {{ errCreateMsg["category"] }}
+        </div>
+      </div>
+      <!-- Image -->
+      <div class="form-group">
+        <label for="image">Image</label>
+        <input
+          type="file"
+          id="image"
+          (change)="onImageChange($event)"
+          accept="image/*"
+        />
+      </div>
+
+      <!-- Buttons -->
+      <div class="modal-actions">
+        <button
+          style="background-color: red"
+          type="button"
+          (click)="closeModal.emit()"
+        >
+          Cancel
+        </button>
+        <button type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+</div>

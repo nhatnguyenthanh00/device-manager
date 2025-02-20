@@ -374,10 +374,6 @@ input {
   color: #007bff;
 }
 
-.icon-wrapper:hover {
-  /* color: #007bff; */
-}
-
 .icon-wrapper .tooltip {
   visibility: hidden;
   background-color: #333;

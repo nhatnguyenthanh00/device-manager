@@ -8,13 +8,15 @@ import { AdminHomePageComponent } from './admin-home-page/admin-home-page.compon
 import { AdminService } from './services/admin.service';
 import { UserManageComponent } from './user-manage/user-manage.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { CreateUserComponent } from './create-user/create-user.component';
 
 
 @NgModule({
   declarations: [
     AdminHomePageComponent,
     UserManageComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    CreateUserComponent
   ],
   imports: [
     CommonModule,

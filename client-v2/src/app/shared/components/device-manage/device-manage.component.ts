@@ -26,13 +26,6 @@ export class DeviceManageComponent {
   totalItems: number = 0; // Total number of items (devices) for pagination
   showCreateDeviceModal: boolean = false; // Controls visibility of the device creation modal
   showDetailsModal: boolean = false; // Controls visibility of the device details modal
-  // New and updated device data
-  newDeviceForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(2)]),
-    category: new FormControl('', Validators.required),
-    description: new FormControl(''),
-    image: new FormControl(''),
-  });
 
   updateDeviceForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -145,7 +138,7 @@ export class DeviceManageComponent {
         this.totalItems = response?.totalItems;
       },
       error: (err) => {
-        this.toastr.error(err.error?.errMsg, 'Error');
+        this.toastr.error(err.error?.errMsg || 'Internal Server Error', 'Error');
         this.devices = [];
         this.totalPages = 1;
         this.totalItems = 0;
@@ -249,8 +242,8 @@ export class DeviceManageComponent {
   onOpenModalCreateNewDevice() {
     this.showCreateDeviceModal = true;
     // Reset the values of the new device
-    this.newDeviceForm.reset();
-    this.errCreateMsg = {};
+    // this.newDeviceForm.reset();
+    // this.errCreateMsg = {};
   }
 
   /**
@@ -261,13 +254,17 @@ export class DeviceManageComponent {
     this.showCreateDeviceModal = false;
   }
 
+  closeCreateDeviceModal(){
+    this.showCreateDeviceModal = false;
+  }
+
   /**
    * Handles the change event for the image input.
    * Reads the selected file and updates the newDevice's image property with the base64 string.
    *
    * @param event The change event triggered by the file input
    */
-  onImageChange(event: any, type: string) {
+  onImageChange(event: any) {
     if (event.target.files && event.target.files[0]) {
       const file: File = event.target.files[0];
       const reader = new FileReader();
@@ -275,38 +272,9 @@ export class DeviceManageComponent {
       reader.readAsDataURL(file);
 
       reader.onloadend = () => {
-        if (type === 'create'){
-          this.newDeviceForm.get('image')?.setValue(reader.result as string);
-        }
-        else if (type === 'update'){
-          this.updateDeviceForm.get('image')?.setValue(reader.result as string);
-        }
+        this.updateDeviceForm.get('image')?.setValue(reader.result as string);
       };
     }
-  }
-
-  /**
-   * Validates the input in the create new device modal.
-   * If any of the input is invalid, sets the error message and returns false.
-   * Otherwise, trims the name and returns true.
-   * @returns boolean
-   */
-
-  validateCreateInput(): boolean {
-    this.errCreateMsg = {};
-    for (const key in this.newDeviceForm.controls) {
-      const control = this.newDeviceForm.get(key);
-      if (control?.invalid) {
-        if (control.errors?.['required']) {
-          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
-        } else if (control.errors?.['minlength']) {
-          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
-            control.errors['minlength'].requiredLength
-          } characters.`;
-        }
-      }
-    }
-    return Object.keys(this.errCreateMsg).length === 0;
   }
 
   validateUpdateInput(): boolean {
@@ -326,30 +294,6 @@ export class DeviceManageComponent {
     return Object.keys(this.errUpdateMsg).length === 0;
   }
 
-  /**
-   * Handles the creation of a new device.
-   * Validates the input, submits the device data to the server, and updates the device list on success.
-   *
-   * @param event The form submission event
-   */
-  createDevice(event: Event) {
-    event.preventDefault();
-
-    if (this.validateCreateInput()) {
-      const newDevice = this.newDeviceForm.getRawValue();
-      this.deviceService.addDevice(newDevice).subscribe({
-        next: (response) => {
-          this.toastr.success('Device created successfully!', 'Success');
-          this.currentPage = 1;
-          this.getDevices();
-          this.closeModal();
-        },
-        error: (err) => {
-          this.toastr.error(err.error?.errMsg, 'Error');
-        },
-      });
-    }
-  }
 
   /**
    * Shows the details of a device in a modal dialog.
