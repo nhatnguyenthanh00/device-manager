@@ -3,69 +3,51 @@
     <h2>Create New Device</h2>
     <form [formGroup]="newDeviceForm" (submit)="createDevice($event)">
       <!-- Name Input -->
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" formControlName="name" />
-        <div *ngIf="errCreateMsg['name']" class="error-msg">
-          {{ errCreateMsg["name"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput id="name" formControlName="name" />
+        <mat-error *ngIf="newDeviceForm.get('name')?.hasError('required')">
+          Name is required.
+        </mat-error>
+        <mat-error *ngIf="newDeviceForm.get('name')?.hasError('minlength')">
+          Name must be at least 2 characters.
+        </mat-error>
+      </mat-form-field>
 
       <!-- Description Input -->
-      <div class="form-group">
-        <label for="username">Description</label>
-        <textarea
-          id="description"
-          formControlName="description"
-          rows="3"
-          style="width: 100%"
-        ></textarea>
-        <div *ngIf="errCreateMsg['description']" class="error-msg">
-          {{ errCreateMsg["description"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput id="description" formControlName="description" rows="3"></textarea>
+      </mat-form-field>
 
       <!-- Category Input -->
 
-      <div class="form-group">
-        <label for="gender">Category</label>
-        <select
-          id="category"
-          formControlName="category"
-          required
-          style="width: fit-content"
-        >
-          <option value="" disabled selected>Select Category</option>
-          <option value="LAPTOP">LAPTOP</option>
-          <option value="PC">PC</option>
-          <option value="MOUSE">MOUSE</option>
-          <option value="PHONE">PHONE</option>
-        </select>
-        <div *ngIf="errCreateMsg['category']" class="error-msg">
-          {{ errCreateMsg["category"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width">
+        <mat-label>Category</mat-label>
+        <mat-select id="category" formControlName="category">
+          <mat-option value="" disabled>Select Category</mat-option>
+          <mat-option value="LAPTOP">LAPTOP</mat-option>
+          <mat-option value="PC">PC</mat-option>
+          <mat-option value="MOUSE">MOUSE</mat-option>
+          <mat-option value="PHONE">PHONE</mat-option>
+        </mat-select>
+        <mat-error *ngIf="newDeviceForm.get('category')?.hasError('required')">
+          Category is required.
+        </mat-error>
+      </mat-form-field>
       <!-- Image -->
       <div class="form-group">
         <label for="image">Image</label>
-        <input
-          type="file"
-          id="image"
-          (change)="onImageChange($event)"
-          accept="image/*"
-        />
+        <input type="file" id="image" (change)="onImageChange($event)" accept="image/*" />
       </div>
-
       <!-- Buttons -->
       <div class="modal-actions">
-        <button
-          style="background-color: red"
-          type="button"
-          (click)="closeModal.emit()"
-        >
+        <button class="cancel-btn" type="button" (click)="closeModal.emit()">
           Cancel
         </button>
-        <button type="submit">Create</button>
+        <button class="create-btn " type="submit" [ngClass]="newDeviceForm.invalid ? 'disabled' : ''">
+          Create
+        </button>
       </div>
     </form>
   </div>

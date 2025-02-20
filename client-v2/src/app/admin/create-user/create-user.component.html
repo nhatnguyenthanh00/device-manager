@@ -4,66 +4,63 @@
     <h2>Create New User</h2>
     <form [formGroup]="userForm" (submit)="createUser($event)">
       <!-- Name Input -->
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" formControlName="name" />
-        <div *ngIf="errMsg['name']" class="error-msg">{{ errMsg["name"] }}</div>
-      </div>
+      <mat-form-field class="full-width small-height" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput type="text" formControlName="name" />
+        <mat-error *ngIf="userForm.get('name')?.hasError('required')">
+          Name is required.
+        </mat-error>
+        <mat-error *ngIf="userForm.get('name')?.hasError('pattern')">
+          Name can only contain letters and spaces.
+        </mat-error>
+      </mat-form-field>
 
       <!-- Username Input -->
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" formControlName="username" />
-        <div *ngIf="errMsg['username']" class="error-msg">
-          {{ errMsg["username"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width small-height" appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput type="text" formControlName="username" />
+        <mat-error *ngIf="userForm.get('username')?.hasError('required')">
+          Username is required.
+        </mat-error>
+        <mat-error *ngIf="userForm.get('username')?.hasError('minlength')">
+          Username must be at least 6 characters.
+        </mat-error>
+        <mat-error *ngIf="userForm.get('username')?.hasError('pattern')">
+          Username cannot contain spaces.
+        </mat-error>
+      </mat-form-field>
 
       <!-- Gender Input -->
-      <div class="form-group">
-        <label for="gender">Gender</label>
-        <select
-          id="gender"
-          formControlName="gender"
-          required
-          style="width: fit-content"
-        >
-          <option value="" disabled selected>Select Gender</option>
-          <option value="MALE">MALE</option>
-          <option value="FEMALE">FEMALE</option>
-        </select>
-        <div *ngIf="errMsg['gender']" class="error-msg">
-          {{ errMsg["gender"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width small-height" appearance="outline">
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender">
+          <mat-option value="" disabled>Select Gender</mat-option>
+          <mat-option value="MALE">MALE</mat-option>
+          <mat-option value="FEMALE">FEMALE</mat-option>
+        </mat-select>
+        <mat-error *ngIf="userForm.get('gender')?.hasError('required')">
+          Gender is required.
+        </mat-error>
+      </mat-form-field>
 
       <!-- Password Generation -->
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="password-container">
-          <input
-            type="text"
-            id="password"
-            formControlName="password"
-            readonly
-          />
-          <i class="fas" [class.fa-key]="true" (click)="generatePassword()"></i>
-        </div>
-        <div *ngIf="errMsg['password']" class="error-msg">
-          {{ errMsg["password"] }}
-        </div>
-      </div>
+      <mat-form-field class="full-width small-height" appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="text" formControlName="password" readonly />
+        <button type="button" mat-icon-button matSuffix class="small-btn" (click)="generatePassword()">
+          <mat-icon style="color: #007bff">key</mat-icon>
+        </button>
+        <mat-error *ngIf="userForm.get('password')?.hasError('required')">
+          Password is required.
+        </mat-error>
+      </mat-form-field>
 
       <!-- Buttons -->
       <div class="modal-actions">
-        <button
-          style="background-color: red"
-          type="button"
-          (click)="closeModal.emit()"
-        >
+        <button class="cancel-btn" type="button" (click)="closeModal.emit()">
           Cancel
         </button>
-        <button type="submit">Create</button>
+        <button type="submit" class="create-btn" [ngClass]="userForm.invalid ? 'disabled' : ''">Create</button>
       </div>
     </form>
   </div>

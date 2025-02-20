@@ -3,14 +3,14 @@ import { Observable, throwError, timer, MonoTypeOperatorFunction } from 'rxjs';
 import { retry, timeout, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-
+import { NUMBERS } from '../constants';
 @Injectable({
   providedIn: 'root',
 })
 export class HttpService {
-  private readonly TIMEOUT = 30000; // 30 seconds timeout
-  private readonly MAX_RETRIES = 10;
-  private readonly RETRY_DELAY = 100; // 1 second delay
+  private readonly TIMEOUT = NUMBERS.NUMBER_10000; // 10 seconds timeout
+  private readonly MAX_RETRIES = NUMBERS.NUMBER_15;
+  private readonly RETRY_DELAY = NUMBERS.NUMBER_100; // 0.1 second delay
 
   constructor(private http: HttpClient) {}
 
@@ -18,11 +18,20 @@ export class HttpService {
     return retry({
       count: this.MAX_RETRIES,
       delay: (error, retryCount) => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          return throwError(() => error);
+        if (error instanceof HttpErrorResponse) {
+          // Không retry nếu lỗi là 400 hoặc 401
+          if (error.status === 400 || error.status === 401) {
+            return throwError(() => error);
+          }
+  
+          // Retry nếu là lỗi 5xx hoặc lỗi mạng (status = 0)
+          if (error.status >= 500 || error.status === 0) {
+            console.log(`Retry lần ${retryCount} sau ${this.RETRY_DELAY}ms`);
+            return timer(this.RETRY_DELAY);
+          }
         }
-        console.log(`Retry lần ${retryCount} sau ${this.RETRY_DELAY}ms`);
-        return timer(this.RETRY_DELAY);
+  
+        return throwError(() => error);
       }
     });
   }

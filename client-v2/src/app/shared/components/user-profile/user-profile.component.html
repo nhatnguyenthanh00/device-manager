@@ -29,45 +29,45 @@
   <div class="change-password-container">
     <h2>Change Password</h2>
     <form [formGroup]="changePasswordForm" (submit)="changePassword()">
-      <div class="form-group">
-        <label for="oldPassword">Old password</label>
-        <div class="password-container">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            id="oldPassword"
-            formControlName="oldPassword"
-            required
-          />
-          <i
-            class="fas"
-            [class.fa-eye]="!showPassword"
-            [class.fa-eye-slash]="showPassword"
-            (click)="togglePasswordVisibility()"
-          ></i>
-        </div>
-        <div *ngIf="errChangePasswordMsg['oldPassword']" class="error-message">{{ errChangePasswordMsg['oldPassword'] }}</div>
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Old Password</mat-label>
+        <input
+          matInput
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="oldPassword"
+        />
+        <mat-icon matSuffix (click)="togglePasswordVisibility()">
+          {{ showPassword ? 'visibility_off' : 'visibility' }}
+        </mat-icon>
+        <mat-error *ngIf="changePasswordForm.controls['oldPassword'].hasError('required')">
+          Old password is required.
+        </mat-error>
+      </mat-form-field>
 
-      <div class="form-group">
-        <label for="newPassword">New password</label>
-        <input
-          type="password"
-          id="newPassword"
-          formControlName="newPassword"
-          required
-        />
-        <div *ngIf="errChangePasswordMsg['newPassword']" class="error-message">{{ errChangePasswordMsg['newPassword'] }}</div>
-      </div>
-      <div class="form-group">
-        <label for="confirmPassword">Confirm password</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          formControlName="confirmPassword"
-          required
-        />
-        <div *ngIf="errChangePasswordMsg['confirmPassword']" class="error-message">{{ errChangePasswordMsg['confirmPassword'] }}</div>
-      </div>
+      <mat-form-field appearance="outline" class="full-width big-height">
+        <mat-label>New Password</mat-label>
+        <input matInput type="password" formControlName="newPassword" />
+        <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('required')">
+          New password is required.
+        </mat-error>
+        <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength')">
+          Must be at least 8 characters.
+        </mat-error>
+        <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('pattern')">
+          Password must contain uppercase, lowercase, number, and special character.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Confirm Password</mat-label>
+      <input matInput type="password" formControlName="confirmPassword" />
+      <mat-error *ngIf="changePasswordForm.controls['confirmPassword'].hasError('required')">
+        Confirm password is required.
+      </mat-error>
+      <mat-error *ngIf="changePasswordForm.controls['confirmPassword'].hasError('mismatch')">
+        Passwords do not match!
+      </mat-error>
+    </mat-form-field>
 
       <button class="change-password-btn" type="submit">Change password</button>
     </form>

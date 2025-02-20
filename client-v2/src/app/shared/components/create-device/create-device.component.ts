@@ -34,26 +34,9 @@ export class CreateDeviceComponent {
     }
   }
 
-  validateForm(): boolean {
-    this.errCreateMsg = {};
-    for (const key in this.newDeviceForm.controls) {
-      const control = this.newDeviceForm.get(key);
-      if (control?.invalid) {
-        if (control.errors?.['required']) {
-          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
-        } else if (control.errors?.['minlength']) {
-          this.errCreateMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
-            control.errors['minlength'].requiredLength
-          } characters.`;
-        }
-      }
-    }
-    return Object.keys(this.errCreateMsg).length === 0;
-  }
-
   createDevice(event: Event) {
     event.preventDefault();
-    if(this.validateForm()){
+    if(this.newDeviceForm.valid){
       const newDevice = this.newDeviceForm.getRawValue();
       this.deviceService.addDevice(newDevice).subscribe({
         next: (response) => {

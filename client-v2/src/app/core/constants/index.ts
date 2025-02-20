@@ -28,3 +28,9 @@ export const ROLES = {
     ROLE_ADMIN: 'ROLE_ADMIN',
     ROLE_USER: 'ROLE_USER',
 } as const ;
+
+export const NUMBERS = {
+    NUMBER_15: 15,
+    NUMBER_100: 100,
+    NUMBER_10000: 10000,
+}

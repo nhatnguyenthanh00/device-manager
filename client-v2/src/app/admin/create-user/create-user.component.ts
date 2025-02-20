@@ -52,39 +52,9 @@ export class CreateUserComponent {
     this.userForm.get('password')?.setValue(password.sort(() => Math.random() - 0.5).join(''));
   }
 
-  validateForm(): boolean {
-    this.errMsg = {}; // Reset thông báo lỗi
-    for (const key in this.userForm.controls) {
-      const control = this.userForm.get(key);
-      if (control?.invalid) {
-        if (control.errors?.['required']) {
-          this.errMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
-        } else if (control.errors?.['minlength']) {
-          this.errMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
-            control.errors['minlength'].requiredLength
-          } characters.`;
-        } else if (control.errors?.['pattern']) {
-          this.errMsg[key] = this.getPatternErrorMessage(key);
-        }
-      }
-    }
-
-    return Object.keys(this.errMsg).length === 0;
-  }
-
-  getPatternErrorMessage(key: string): string {
-    switch (key) {
-      case 'name':
-        return 'Name can only contain letters and spaces.';
-      case 'username':
-        return 'Username cannot contain spaces.';
-      default:
-        return 'Invalid input.';
-    }
-  }
   createUser(event: Event) {
     event.preventDefault();
-    if (this.validateForm()) {
+    if (this.userForm.valid) {
       const newUser = this.userForm.getRawValue();
       this.adminService.addUser(newUser).subscribe({
         next: () => {

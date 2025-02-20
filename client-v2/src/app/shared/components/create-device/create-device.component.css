@@ -1,74 +1,3 @@
-/* General Styles */
-
-input,
-select,
-button {
-  height: 40px; /* Ensure equal height for all form elements */
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  flex-wrap: nowrap;
-}
-
-input {
-  width: 250px;
-}
-
-select {
-  width: 160px;
-}
-
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-.total-item {
-  font-style: bold;
-}
-.status-info {
-  padding-top: 5px;
-  font-size: 12px;
-  font-style: italic;
-  color: red;
-}
-/* Table Styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-th,
-td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #007bff;
-  color: white;
-}
-
-td {
-  background-color: #ffffff;
-  font-size: 14px;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-}
-
 .modal-container {
   position: fixed;
   top: 0;
@@ -97,6 +26,7 @@ tr:hover {
   margin-bottom: 20px;
   font-family: "Arial", sans-serif;
   color: #333;
+  font-weight: bold;
 }
 
 .form-group {
@@ -125,53 +55,11 @@ label {
   font-weight: bold;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  padding-right: 40px;
-}
-
-.password-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.password-container i {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
-  font-size: 18px;
-  color: #333;
-}
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-}
-
-.error-msg {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  width: fit-content;
-}
-
-.modal-content {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  gap: 8px;
 }
 
 .modal-content img {
@@ -181,6 +69,38 @@ input {
   margin-bottom: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.full-width {
+  width: 100%;
+  padding-bottom: 8px;
+}
+
+.cancel-btn {
+  background-color: red;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.create-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.mat-form-field {
+  display: flex;
+  align-items: center;
 }
 
 .disabled {

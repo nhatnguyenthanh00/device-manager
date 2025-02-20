@@ -1,38 +1,3 @@
-/* General Styles */
-
-input,
-select,
-button {
-  height: 40px; /* Ensure equal height for all form elements */
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  flex-wrap: nowrap;
-}
-
-input {
-  width: 250px;
-}
-
-select {
-  width: 160px;
-}
-
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.icon {
-  font-size: 18px;
-}
 
 .modal-container {
   position: fixed;
@@ -62,91 +27,39 @@ button:hover {
   margin-bottom: 20px;
   font-family: "Arial", sans-serif;
   color: #333;
-}
-
-.form-group {
-  margin-bottom: 15px; /* Tạo khoảng cách giữa các trường */
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
   font-weight: bold;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  padding-right: 40px;
-}
-
-.password-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.password-container i {
-  position: absolute;
-  right: 10px;
-  cursor: pointer;
-  font-size: 18px;
-  color: #333;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px; /* Khoảng cách giữa hai nút */
 }
 
-.error-msg {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  width: fit-content;
+.full-width {
+  width: 100%;
+  padding-bottom: 8px;
 }
 
-.icon-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.cancel-btn {
+  background-color: red;
+  color: white;
+  padding: 8px 16px;
+  border: none;
   cursor: pointer;
-  font-size: 18px;
-  color: #007bff;
 }
 
-
-.icon-wrapper .tooltip {
-  visibility: hidden;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 5px 10px;
-  border-radius: 4px;
-  position: absolute;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+.create-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
 }
 
-.icon-wrapper:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-}
-
-.icon-row {
+.mat-form-field {
   display: flex;
   align-items: center;
-  gap: 20px;
 }
 
 .disabled {

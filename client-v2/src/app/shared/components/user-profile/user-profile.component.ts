@@ -40,36 +40,13 @@ export class UserProfileComponent implements OnInit{
   }
 
   validateChangePassword(): boolean{
-    this.errChangePasswordMsg = {};
-    for (const key in this.changePasswordForm.controls) {
-      const control = this.changePasswordForm.get(key);
-      if (control?.invalid) {
-        if (control.errors?.['required']) {
-          this.errChangePasswordMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
-        } else if (control.errors?.['minlength']) {
-          this.errChangePasswordMsg[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be at least ${
-            control.errors['minlength'].requiredLength
-          } characters.`;
-        } else if (control.errors?.['pattern']) {
-          this.errChangePasswordMsg[key] = this.getPatternErrorMessage(key);
-        }
+    if (this.changePasswordForm.value.confirmPassword) {
+      if (this.changePasswordForm.value.newPassword !== this.changePasswordForm.value.confirmPassword) {
+        this.changePasswordForm.controls['confirmPassword'].setErrors({ mismatch: true });
+        return false;
       }
     }
-    if(this.changePasswordForm.value.confirmPassword){
-      if(this.changePasswordForm.value.newPassword !== this.changePasswordForm.value.confirmPassword){
-        this.errChangePasswordMsg['confirmPassword'] = 'Passwords do not match!';
-      }
-    }
-    return Object.keys(this.errChangePasswordMsg).length === 0;
-  }
-
-  getPatternErrorMessage(key: string): string {
-    switch (key) {
-      case 'newPassword':
-        return 'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
-      default:
-        return 'Invalid input.';
-    }
+    return this.changePasswordForm.valid;
   }
 
   changePassword() {

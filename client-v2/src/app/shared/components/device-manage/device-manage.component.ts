@@ -241,9 +241,7 @@ export class DeviceManageComponent {
    */
   onOpenModalCreateNewDevice() {
     this.showCreateDeviceModal = true;
-    // Reset the values of the new device
-    // this.newDeviceForm.reset();
-    // this.errCreateMsg = {};
+
   }
 
   /**

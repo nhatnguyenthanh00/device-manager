@@ -11,7 +11,11 @@ import { DeviceService } from './services/device.service';
 import { ErrorPageComponent } from './components/error-page/error-page.component';
 import { CheckLoginComponent } from './components/check-login/check-login.component';
 import { CreateDeviceComponent } from './components/create-device/create-device.component';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     HeaderComponent,
@@ -26,13 +30,23 @@ import { CreateDeviceComponent } from './components/create-device/create-device.
     CommonModule,
     FormsModule,
     RouterModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule
   ],
   exports: [
     HeaderComponent,
     BaseDashboardComponent,
     UserProfileComponent,
-    DeviceManageComponent
+    DeviceManageComponent,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [DeviceService]
 })
