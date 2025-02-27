@@ -7,8 +7,6 @@ import java.util.UUID;
 public interface EntityDao<T> {
     Optional<T> findById(UUID id);
 
-    List<T> findAll();
-
     T save(T t);
 
     void deleteById(UUID id);

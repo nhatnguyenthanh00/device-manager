@@ -37,14 +37,6 @@ public class JpaBkavUserDao implements BkavUserDao {
     }
 
     @Override
-    public List<BkavUserDto> findAll() {
-        List<BkavUser> users = bkavUserRepository.findAll();
-        return users.
-                stream().map(mapperDto::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public BkavUserDto save(BkavUserDto bkavUserDto) {
         BkavUser saveUser = mapperDto.toBkavUser(bkavUserDto);
         BkavUser user = bkavUserRepository.save(saveUser);

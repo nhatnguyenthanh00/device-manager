@@ -331,6 +331,7 @@ export class DeviceManageComponent {
    */
   closeModalDetails() {
     this.showDetailsModal = false;
+    this.errUpdateMsg = {};
     this.isDropdownOpen = false;
   }
 

@@ -36,7 +36,6 @@ public class UserController {
                                                              @RequestParam(defaultValue = Constants.Common.NUMBER_1_STRING) Integer page){
 
         PageView<BkavUserDto> data = userService.findAllUser(gender,search,page);
-//        throw new RuntimeException("Test loi");
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

@@ -46,13 +46,6 @@ public class JpaDeviceDao implements DeviceDao {
     }
 
     @Override
-    public List<DeviceDto> findAll() {
-        List<Device> devices = deviceRepository.findAll();
-        return devices.stream()
-                .map(mapperDto::toDto).collect(Collectors.toList());
-    }
-
-    @Override
     public DeviceDto save(DeviceDto deviceDto) {
         Device saveDevice = mapperDto.toDevice(deviceDto);
         Device device = deviceRepository.save(saveDevice);

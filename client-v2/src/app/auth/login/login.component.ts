@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../../core/services/token.service';
 import { Router } from '@angular/router';
-import { STORAGE_KEYS } from '../../core/constants';
+import { STORAGE_KEYS, ROLES } from '../../core/constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -23,7 +23,7 @@ export class LoginComponent {
         const token = response?.token;
         if (token) {
           localStorage.setItem(STORAGE_KEYS.TOKEN, token);
-          if (this.tokenService.getRoleFromToken(token) === 'ROLE_ADMIN') {
+          if (this.tokenService.getRoleFromToken(token) === ROLES.ROLE_ADMIN) {
             this.router.navigate(['/admin/homepage']);
           } else {
             this.router.navigate(['/homepage']);

@@ -4,12 +4,6 @@ import java.util.List;
 
 public class Constants {
 
-    public static class ErrCode {
-        public static final int ERROR_CODE_0 = 0;
-        public static final int ERROR_CODE_401 = 401;
-        public static final int ERROR_CODE_500 = 500;
-    }
-
     public static class Common {
 
         public static final String EMPTY = "";
@@ -27,14 +21,6 @@ public class Constants {
         public static final String MALE = "MALE";
         public static final String FEMALE = "FEMALE";
 
-        public static final String USER = "USER";
-        public static final String ADMIN = "ADMIN";
-
-        public static final List<String> ALL_GENDER = List.of("MALE","FEMALE");
-        public static final List<String> ALL_ROLE = List.of("USER","ADMIN");
-
-        public static final List<String> ALL_CATEGORY = List.of("LAPTOP","PC","MOUSE","PHONE");
-
     }
     public static class Security {
         public static final String AUTHORIZATION = "Authorization";
@@ -44,7 +30,6 @@ public class Constants {
     }
 
     public static class ApiEndpoint {
-        public static final String ADMIN_BASE_PATH = "/api/admin";
         public static final String COMMON_BASE_PATH = "/api";
         public static final String LOGIN_PATH = "/login";
         public static final String PROFILE_PATH = "/profile";
@@ -54,20 +39,16 @@ public class Constants {
         public static final String DEVICE_RETURN = "/device-return";
         public static final String ADMIN_ACCEPT_RETURN = "/admin/accept-return";
         public static final String ADMIN_REFUSE_RETURN = "/admin/refuse-return";
-        public static final String EMPTY_PATH = "/";
 
         public static final String ADMIN_USER_PATH = "/admin/user";
         public static final String ADMIN_RESET_PASSWORD = "/admin/reset-password";
         public static final String ADMIN_USER_DETAIL = "/admin/user-detail";
         public static final String ADMIN_USER_SELECT = "/admin/user-select";
-        public static final String USER_PATH = "/user";
-        public static final String DEVICE_PATH = "/device";
     }
 
     public static class ErrorMessage {
         public static final String WRONG_USERNAME_OR_PASSWORD = "Wrong username or password";
         public static final String INCORRECT_PASSWORD = "Password incorrect";
-        public static final String SYSTEM_BUSY = "Internal Server Error";
         public static final String FORBIDDEN_ERROR = "You don't have permission";
         public static final String NEW_PASSWORD_SAME_OLD_PASSWORD = "New password is same old password";
         public static final String ADMIN_PASSWORD_INCORRECT = "Admin password incorrect";
