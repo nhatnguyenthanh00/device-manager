@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 export class UserProfileComponent implements OnInit{
   userProfile: any = null;
   showPassword: boolean = false;
+  showNewPassword: boolean = false;
+  showConfirmPassword: boolean = false;
   changePasswordForm = new FormGroup({
     oldPassword: new FormControl('', [Validators.required]),
     newPassword: new FormControl('', [
@@ -18,7 +20,9 @@ export class UserProfileComponent implements OnInit{
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
     ]),
     confirmPassword: new FormControl('', [Validators.required]),
-  })
+  },
+  { validators: this.passwordMatchValidator }
+);
   errChangePasswordMsg: { [key: string]: string } = {};
 
   constructor(private userService: UserService, private toastr: ToastrService) {}
@@ -34,9 +38,31 @@ export class UserProfileComponent implements OnInit{
     });
   }
 
+  passwordMatchValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const newPassword = formGroup.get('newPassword');
+    const confirmPassword = formGroup.get('confirmPassword');
+  
+    if (!newPassword || !confirmPassword) return null;
+  
+    // Nếu password không khớp, đặt lỗi trực tiếp lên confirmPassword
+    if (newPassword.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ mismatch: true });
+    } else {
+      confirmPassword.setErrors(null); // Xóa lỗi nếu đã khớp
+    }
+  
+    return null; // FormGroup validator luôn trả về null
+  }
+
   onSubmit() {}
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+  toggleNewPasswordVisibility() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   validateChangePassword(): boolean{
@@ -50,12 +76,14 @@ export class UserProfileComponent implements OnInit{
   }
 
   changePassword() {
-    if(this.validateChangePassword()){
+    if(this.changePasswordForm.valid){
       this.userService.changePassword(this.changePasswordForm.value.oldPassword as string, this.changePasswordForm.value.newPassword as string).subscribe({
         next: (response) => {
           this.toastr.success('Password changed successfully!', 'Success');
           this.changePasswordForm.reset();
           this.showPassword = false;
+          this.showNewPassword = false;
+          this.showConfirmPassword = false;
         },
         error: (err) => {
           this.toastr.error(err.error?.errMsg, 'Error');

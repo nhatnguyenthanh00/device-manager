@@ -66,3 +66,13 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+mat-form-field {
+  mat-error {
+    display: none !important;
+  }
+
+  mat-error:first-child {
+    display: block !important;
+  }
+}

@@ -109,6 +109,17 @@ input {
   align-items: center;
 }
 
-.big-height{
-  padding-bottom: 45px !important;
+mat-form-field {
+  mat-error {
+    display: none !important;
+  }
+
+  mat-error:first-child {
+    display: block !important;
+  }
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

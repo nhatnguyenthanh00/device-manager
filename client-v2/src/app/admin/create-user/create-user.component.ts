@@ -23,7 +23,11 @@ export class CreateUserComponent {
       Validators.pattern(/^\S+$/), // Không chứa khoảng trắng
     ]),
     gender: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required), // Chỉ đọc
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+    ]), // Chỉ đọc
   });
 
   errMsg: { [key: string]: string } = {};
