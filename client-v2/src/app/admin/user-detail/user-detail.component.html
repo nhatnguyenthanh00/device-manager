@@ -1,114 +1,122 @@
 <app-header></app-header>
-<div class="icon-wrapper" (click)="backHomePage()" title="Your Profile">
-  <i class="fas fa-arrow-left"></i>
-  <span class="tooltip">Back User Manage</span>
-</div>
-
-<div class="user-detail-container">
-  <div class="user-detail-container-left">
-    <form (submit)="onUpdateUser($event)">
-      <div class="form-row">
-        <h2 style="margin-bottom: 0">User Info</h2>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            [(ngModel)]="username"
-            name="username"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            [(ngModel)]="name"
-            name="name"
-            required
-          />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="gender">Gender</label>
-          <select
-            id="gender"
-            [(ngModel)]="gender"
-            name="gender"
-            required
-            style="width: 100%"
-          >
-            <option value="" disabled selected>Select Gender</option>
-            <option value="MALE">MALE</option>
-            <option value="FEMALE">FEMALE</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="role">Role</label>
-          <select
-            id="role"
-            [(ngModel)]="role"
-            name="role"
-            required
-            style="width: 100%"
-          >
-            <option value="" disabled selected>Select Role</option>
-            <option value="ADMIN">ADMIN</option>
-            <option value="USER">USER</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="update-user-btn" type="submit">Update</button>
-    </form>
+<div style="padding-left: 20px;padding-right: 20px;">
+  <div class="icon-wrapper" (click)="backHomePage()" title="Your Profile" style="padding-top: 5px">
+    <i class="fas fa-arrow-left"></i>
+    <span class="tooltip">Back User Manage</span>
   </div>
-  <div class="user-detail-container-right">
-    <form (submit)="onResetPassword($event)">
-      <div class="form-row">
-        <h2 style="margin-bottom: 0">Reset password</h2>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="password">New password</label>
-          <div class="password-container">
+  
+  <div class="user-detail-container">
+    <div class="user-detail-container-left">
+      <form (submit)="onUpdateUser($event)">
+        <div class="form-row">
+          <h2 style="margin-bottom: 0">User Info</h2>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="username">Username</label>
             <input
               type="text"
-              id="password"
-              [(ngModel)]="newPassword"
-              name="password"
+              id="username"
+              [(ngModel)]="username"
+              name="username"
+              required
             />
-            <i
-              class="fas"
-              [class.fa-key]="true"
-              (click)="generatePassword()"
-            ></i>
+          </div>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              [(ngModel)]="name"
+              name="name"
+              required
+            />
           </div>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="password-admin">Enter your password to reset</label>
-          <input
-            type="password"
-            id="password-admin"
-            [(ngModel)]="adminPassword"
-            name="password-admin"
-          />
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select
+              id="gender"
+              [(ngModel)]="gender"
+              name="gender"
+              required
+              style="width: 100%"
+            >
+              <option value="" disabled selected>Select Gender</option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select
+              id="role"
+              [(ngModel)]="role"
+              name="role"
+              required
+              style="width: 100%"
+            >
+              <option value="" disabled selected>Select Role</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="USER">USER</option>
+            </select>
+          </div>
         </div>
-      </div>
-
-      <button class="update-user-btn" type="submit">Reset</button>
-    </form>
+  
+        <button class="update-user-btn" type="submit">Update</button>
+      </form>
+    </div>
+  
+    <div class="user-detail-container-right">
+      <h2>Reset password</h2>
+      <form [formGroup]="resetPasswordForm" (submit)="onResetPassword()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>New Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="newPassword"
+          />
+          <mat-icon matSuffix (click)="togglePasswordVisibility()">
+            {{ showPassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+          <mat-error *ngIf="resetPasswordForm.controls['newPassword'].hasError('required')">
+            New password is required.
+          </mat-error>
+          <mat-error *ngIf="resetPasswordForm.controls['newPassword'].hasError('minlength')">
+            Must be at least 8 characters.
+          </mat-error>
+          <mat-error *ngIf="resetPasswordForm.controls['newPassword'].hasError('pattern')">
+            Password must contain uppercase, lowercase, number, and special character.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Admin Password</mat-label>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="adminPassword"
+          />
+          <mat-icon matSuffix (click)="toggleAdminPasswordVisibility()">
+            {{ showPassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+          <mat-error *ngIf="resetPasswordForm.controls['adminPassword'].hasError('required')">
+            Admin password is required.
+          </mat-error>
+        </mat-form-field>
+        <button class="update-user-btn" type="submit" [ngClass]="resetPasswordForm.invalid ? 'disabled' : ''">Reset</button>
+      </form>
+    </div>
   </div>
-</div>
+  <div>
+    <app-device-manage
+    getAll="user-detail"
+    [dataDeviceByAccount]="listDevice"
+    (deviceUpdated)="onDeviceUpdated($event)"
+  ></app-device-manage>
+  </div>
 
-<app-device-manage
-  getAll="user-detail"
-  [dataDeviceByAccount]="listDevice"
-  (deviceUpdated)="onDeviceUpdated($event)"
-></app-device-manage>
+</div>

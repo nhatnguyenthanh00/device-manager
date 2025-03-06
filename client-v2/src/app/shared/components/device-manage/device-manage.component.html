@@ -229,14 +229,11 @@
   
           <img
             *ngIf="
-              updateImage && updateImage.length > 0; else noImage
+              updateImage && updateImage.length > 0;
             "
             [src]="updateImage"
             alt="Hình ảnh"
           />
-          <ng-template #noImage>
-            <div>none</div>
-          </ng-template>
           <input
             *ngIf="getAll !== 'my-device'"
             type="file"

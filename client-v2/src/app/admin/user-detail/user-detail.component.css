@@ -33,6 +33,7 @@ h2 {
   margin-bottom: 20px;
   font-family: "Arial", sans-serif;
   color: #333;
+  font-weight: bold;
 }
 
 /* Thêm style cho form-row */
@@ -93,7 +94,7 @@ input[type="password"] {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  width: 100%; /* Làm cho nút chiếm hết chiều rộng */
+  width: 80%; /* Làm cho nút chiếm hết chiều rộng */
   margin-top: 10px;
 }
 
@@ -148,4 +149,29 @@ input[type="password"] {
 .icon-wrapper:hover .tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+.full-width {
+  width: 80%;
+  padding-bottom: 8px;
+}
+
+.mat-form-field {
+  display: flex;
+  align-items: center;
+}
+
+mat-form-field {
+  mat-error {
+    display: none !important;
+  }
+
+  mat-error:first-child {
+    display: block !important;
+  }
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AdminService } from '../services/admin.service';
 import { HomePageService } from '../../core/services/home-page.service';
 import { ToastrService } from 'ngx-toastr';
@@ -15,16 +16,33 @@ export class UserDetailComponent {
   name: string = '';
   username: string = '';
   gender: string = '';
-  password: string = '';
   showPassword: boolean = false;
+  showAdminPassword: boolean = false;
   newPassword: string = '';
   adminPassword: string = '';
   totalDevice: number = 0;
   role: string = '';
+  resetPasswordForm = new FormGroup({
+      newPassword: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+      ]),
+      adminPassword: new FormControl('', [
+        Validators.required
+      ]),
+  });
   constructor(private homePageService: HomePageService, private adminService: AdminService, private toastr: ToastrService, private route: ActivatedRoute, private router : Router) {}
   ngOnInit() {
     this.userId = this.route.snapshot.paramMap.get('userId');
     this.getUserDetails();
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  toggleAdminPasswordVisibility() {
+    this.showAdminPassword = !this.showAdminPassword;
   }
 
   getUserDetails(page: number = 1) {
@@ -47,30 +65,6 @@ export class UserDetailComponent {
 
   onDeviceUpdated(event: { page: number }) {
     this.getUserDetails(event.page);
-  }
-
-  generatePassword() {
-    const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz';
-    const digits = '0123456789';
-    const specialChars = '!@#$%^&*()';
-    const allChars = upperCaseChars + lowerCaseChars + digits + specialChars;
-
-    // Ensure at least one character from each required category
-    const password = [
-      upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)], // One uppercase
-      lowerCaseChars[Math.floor(Math.random() * lowerCaseChars.length)], // One lowercase
-      digits[Math.floor(Math.random() * digits.length)], // One digit
-      specialChars[Math.floor(Math.random() * specialChars.length)], // One special char
-    ];
-
-    // Fill the remaining characters with random choices from all available characters
-    while (password.length < 8) {
-      password.push(allChars[Math.floor(Math.random() * allChars.length)]);
-    }
-
-    // Shuffle the password to randomize the order
-    this.newPassword = password.sort(() => Math.random() - 0.5).join('');
   }
 
   validateInput(): boolean {
@@ -126,41 +120,23 @@ export class UserDetailComponent {
     }
   }
 
-  onResetPassword(event: Event) {
-    event.preventDefault();
-    if (!this.newPassword || !this.adminPassword) {
-      this.toastr.error('All fields are required', 'Error');
-      return;
+  onResetPassword() {
+    if(this.resetPasswordForm.valid){
+      const payload = {
+        userId: this.userId,
+        password: this.newPassword,
+        adminPassword: this.adminPassword,
+      };
+      this.adminService.resetPassword(payload).subscribe({
+        next: (response) => {
+          this.toastr.success('User password reset successfully!', 'Success');
+          this.getUserDetails();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.errMsg, 'Error');
+        },
+      });
     }
-
-    if (this.newPassword.length < 8) {
-      this.toastr.error('New password must be at least 8 characters long', 'Error');
-      return;
-    }
-
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
-    if (!passwordRegex.test(this.newPassword)) {
-      this.toastr.error(
-        'Password must be contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-        'Error'
-      );
-      return;
-    }
-    const payload = {
-      userId: this.userId,
-      password: this.newPassword,
-      adminPassword: this.adminPassword,
-    };
-    this.adminService.resetPassword(payload).subscribe({
-      next: (response) => {
-        this.toastr.success('User password reset successfully!', 'Success');
-        this.getUserDetails();
-      },
-      error: (err) => {
-        this.toastr.error(err.error?.errMsg, 'Error');
-      },
-    });
   }
 
   backHomePage(){

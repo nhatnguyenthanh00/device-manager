@@ -15,7 +15,7 @@ export const routes: Routes = [
       notFoundData: {
         code: '403',
         title: 'ACCESS DENIED',
-        message: 'Xin lỗi, bạn không có quyền truy cập trang này!',
+        message: 'Sorry, you do not have permission to access this page!',
       },
     },
   },
@@ -49,7 +49,7 @@ export const routes: Routes = [
       notFoundData: {
         code: '404',
         title: 'PAGE NOT FOUND',
-        message: 'Xin lỗi, trang bạn đang tìm kiếm không tồn tại!',
+        message: 'Sorry, the page you are looking for does not exist!',
       },
     },
   },
