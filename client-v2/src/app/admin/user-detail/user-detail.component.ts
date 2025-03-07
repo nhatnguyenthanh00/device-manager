@@ -131,7 +131,8 @@ export class UserDetailComponent {
         next: (response) => {
           this.toastr.success('User password reset successfully!', 'Success');
           this.resetPasswordForm.reset();
-          this.getUserDetails();
+          this.resetPasswordForm.controls['newPassword'].setErrors(null);
+          this.resetPasswordForm.controls['adminPassword'].setErrors(null);
         },
         error: (err) => {
           this.toastr.error(err.error?.errMsg, 'Error');
