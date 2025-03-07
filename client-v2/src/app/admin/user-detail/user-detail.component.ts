@@ -124,12 +124,13 @@ export class UserDetailComponent {
     if(this.resetPasswordForm.valid){
       const payload = {
         userId: this.userId,
-        password: this.newPassword,
-        adminPassword: this.adminPassword,
+        password: this.resetPasswordForm.get('newPassword')?.value,
+        adminPassword: this.resetPasswordForm.get('adminPassword')?.value,
       };
       this.adminService.resetPassword(payload).subscribe({
         next: (response) => {
           this.toastr.success('User password reset successfully!', 'Success');
+          this.resetPasswordForm.reset();
           this.getUserDetails();
         },
         error: (err) => {

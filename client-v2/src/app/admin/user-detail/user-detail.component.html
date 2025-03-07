@@ -97,11 +97,11 @@
           <mat-label>Admin Password</mat-label>
           <input
             matInput
-            [type]="showPassword ? 'text' : 'password'"
+            [type]="showAdminPassword ? 'text' : 'password'"
             formControlName="adminPassword"
           />
           <mat-icon matSuffix (click)="toggleAdminPasswordVisibility()">
-            {{ showPassword ? 'visibility_off' : 'visibility' }}
+            {{ showAdminPassword ? 'visibility_off' : 'visibility' }}
           </mat-icon>
           <mat-error *ngIf="resetPasswordForm.controls['adminPassword'].hasError('required')">
             Admin password is required.

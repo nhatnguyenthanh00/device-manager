@@ -26,7 +26,7 @@ export class CreateUserComponent {
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(8),
-      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()?])[A-Za-z\d!@#$%^&*()?]+$/)
     ]), // Chỉ đọc
   });
 
@@ -36,7 +36,7 @@ export class CreateUserComponent {
     const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz';
     const digits = '0123456789';
-    const specialChars = '!@#$%^&*()';
+    const specialChars = '!@#$%^&*()?';
     const allChars = upperCaseChars + lowerCaseChars + digits + specialChars;
 
     // Ensure at least one character from each required category
