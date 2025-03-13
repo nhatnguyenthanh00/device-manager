@@ -13,15 +13,22 @@ import { ROUTES } from '../../core/constants';
 export class UserDetailComponent {
   listDevice: any;
   userId: string | null = null;
-  name: string = '';
-  username: string = '';
-  gender: string = '';
   showPassword: boolean = false;
   showAdminPassword: boolean = false;
-  newPassword: string = '';
-  adminPassword: string = '';
   totalDevice: number = 0;
-  role: string = '';
+  userInfoForm = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^[A-Za-zÀ-ỹ\s]+$/)
+    ]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.pattern(/^[A-Za-z0-9]+$/)
+    ]),
+    gender: new FormControl('', [Validators.required]),
+    role: new FormControl('', [Validators.required]),
+  })
   resetPasswordForm = new FormGroup({
       newPassword: new FormControl('', [
         Validators.required,
@@ -50,12 +57,16 @@ export class UserDetailComponent {
 
     this.adminService.getUser(this.userId, page).subscribe({
       next: (res) => {
-        this.name = res?.userDetail?.name;
-        this.username = res?.userDetail?.username;
-        this.gender = res?.userDetail?.gender;
+
+        this.userInfoForm.patchValue({
+          name: res?.userDetail?.name,
+          username: res?.userDetail?.username,
+          gender: res?.userDetail?.gender,
+          role: res?.userDetail?.role
+        });
+
         this.totalDevice = res?.devices?.content?.length;
         this.listDevice = res?.devices;
-        this.role = res?.userDetail?.role;
       },
       error: (err) => {
         this.toastr.error(err.error?.errMsg, 'Error');
@@ -67,45 +78,15 @@ export class UserDetailComponent {
     this.getUserDetails(event.page);
   }
 
-  validateInput(): boolean {
-    if (!this.name) {
-      this.toastr.error('Name is required', 'Error');
-      return false;
-    } else {
-      const trimmedName = this.name.trim();
-      const nameRegex = /^[\p{L}\s]+$/u;
-      if (!nameRegex.test(trimmedName)) {
-        this.toastr.error('Name can only contain letters and spaces');
-        return false;
-      }
-      this.name = trimmedName;
-    }
-    if (!this.username) {
-      this.toastr.error('Username is required');
-      return false;
-    } else {
-      if (this.username.length < 6) {
-        this.toastr.error('Username must be at least 6 characters');
-        return false;
-      }
-      if (this.username.includes(' ')) {
-        this.toastr.error('Username cannot contain spaces');
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   onUpdateUser(event: Event) {
     event.preventDefault();
-    if (this.validateInput()) {
+    if (this.userInfoForm.valid) {
       const payload = {
         userId: this.userId,
-        name: this.name,
-        username: this.username,
-        gender: this.gender,
-        role: this.role,
+        name: this.userInfoForm.get('name')?.value,
+        username: this.userInfoForm.get('username')?.value,
+        gender: this.userInfoForm.get('gender')?.value,
+        role: this.userInfoForm.get('role')?.value,
       };
 
       this.adminService.updateUser(payload).subscribe({

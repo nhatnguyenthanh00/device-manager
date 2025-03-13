@@ -6,7 +6,7 @@
   </div>
   
   <div class="user-detail-container">
-    <div class="user-detail-container-left">
+    <!-- <div class="user-detail-container-left">
       <form (submit)="onUpdateUser($event)">
         <div class="form-row">
           <h2 style="margin-bottom: 0">User Info</h2>
@@ -67,6 +67,69 @@
   
         <button class="update-user-btn" type="submit">Update</button>
       </form>
+    </div> -->
+
+
+    <div class="user-detail-container-left">
+      <form [formGroup]="userInfoForm" (submit)="onUpdateUser($event)">
+        <h2>User Info</h2>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput type='text' formControlName="username"/>
+            <mat-error *ngIf="userInfoForm.controls['username'].hasError('required')">
+              Username is required.
+            </mat-error>
+            <mat-error *ngIf="userInfoForm.controls['username'].hasError('minlength')">
+              Username must be at least 6 characters
+            </mat-error>
+            <mat-error *ngIf="userInfoForm.controls['username'].hasError('pattern')">
+              Username can only contain letters, digits
+            </mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput type='text' formControlName="name"/>
+            <mat-error *ngIf="userInfoForm.controls['name'].hasError('required')">
+              Name is required.
+            </mat-error>
+            <mat-error *ngIf="userInfoForm.controls['name'].hasError('pattern')">
+              Name can only contain letters, spaces
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender">
+              <mat-option value="" disabled>Select Gender</mat-option>
+              <mat-option value="MALE">MALE</mat-option>
+              <mat-option value="FEMALE">FEMALE</mat-option>
+            </mat-select>
+            <mat-error *ngIf="userInfoForm.get('gender')?.hasError('required')">
+              Gender is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role">
+              <mat-option value="" disabled>Select Role</mat-option>
+              <mat-option value="ADMIN">ADMIN</mat-option>
+              <mat-option value="USER">USER</mat-option>
+            </mat-select>
+            <mat-error *ngIf="userInfoForm.get('role')?.hasError('required')">
+              Gender is required.
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+        <div>
+          <button class="update-user-btn" type="submit" [ngClass]="userInfoForm.invalid ? 'disabled' : ''">Update</button>
+        </div>
+
+      </form>
     </div>
   
     <div class="user-detail-container-right">
@@ -107,7 +170,10 @@
             Admin password is required.
           </mat-error>
         </mat-form-field>
-        <button class="update-user-btn" type="submit" [ngClass]="resetPasswordForm.invalid ? 'disabled' : ''">Reset</button>
+
+        <div>
+          <button class="update-user-btn" type="submit" [ngClass]="resetPasswordForm.invalid ? 'disabled' : ''">Reset</button>
+        </div>
       </form>
     </div>
   </div>

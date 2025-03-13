@@ -4,7 +4,7 @@
     <h2>Create New User</h2>
     <form [formGroup]="userForm" (submit)="createUser($event)">
       <!-- Name Input -->
-      <mat-form-field class="full-width small-height" appearance="outline">
+      <mat-form-field class="full-width" appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput type="text" formControlName="name" />
         <mat-error *ngIf="userForm.get('name')?.hasError('required')">
@@ -16,7 +16,7 @@
       </mat-form-field>
 
       <!-- Username Input -->
-      <mat-form-field class="full-width small-height" appearance="outline">
+      <mat-form-field class="full-width" appearance="outline">
         <mat-label>Username</mat-label>
         <input matInput type="text" formControlName="username" />
         <mat-error *ngIf="userForm.get('username')?.hasError('required')">
@@ -31,7 +31,7 @@
       </mat-form-field>
 
       <!-- Gender Input -->
-      <mat-form-field class="full-width small-height" appearance="outline">
+      <mat-form-field class="full-width" appearance="outline">
         <mat-label>Gender</mat-label>
         <mat-select formControlName="gender">
           <mat-option value="" disabled>Select Gender</mat-option>
@@ -44,7 +44,7 @@
       </mat-form-field>
 
       <!-- Password Generation -->
-      <mat-form-field class="full-width small-height" appearance="outline">
+      <mat-form-field class="full-width" appearance="outline">
         <mat-label>Password</mat-label>
         <input matInput type="text" formControlName="password" />
         <button type="button" mat-icon-button matSuffix class="small-btn" (click)="generatePassword()">
